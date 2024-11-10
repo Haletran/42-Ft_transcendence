@@ -1,0 +1,38 @@
+services:
+  reverseproxy:
+    #    build: src/reverseproxy/.
+    image: nginx:latest
+    container_name: reverseproxy
+    networks:
+      - transcendence
+    restart: always
+    ports:
+      - "443:443"
+    volumes:
+      - ./src/reverseproxy/conf/core.conf:/etc/nginx/conf.d/core.conf
+      - ./src/reverseproxy/conf/proxy.conf:/etc/nginx/conf.d/proxy.conf
+        # location of static content:
+      - ./src/reverseproxy/static-content:/var/www/html
+      - ./src/reverseproxy/ssl/nginx.crt:/etc/nginx/ssl/nginx.crt
+      - ./src/reverseproxy/ssl/nginx.key:/etc/nginx/ssl/nginx.key
+
+        #database:
+      #container_name: postgres
+      #image: postgres:14
+      #restart: always
+      # env_file:
+      # - ../env_test.txt
+        # volumes:
+      #- pgdata:/var/lib/postgresql/data
+        # healthcheck:
+      #test: [ "CMD-SHELL", "pg_isready" ]
+        #interval: 5s
+        # timeout: 5s
+        #retries: 10
+        #      start_period: 30s
+        #    ports:
+#      - "5432:5432"
+
+networks:
+  transcendence:
+    driver: bridge

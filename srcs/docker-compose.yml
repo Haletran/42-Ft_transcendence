@@ -1,8 +1,0 @@
-services:
-  reverseproxy:
-    build: reverseproxy/.
-    container_name: reverseproxy
-    networks: transcendence
-    restart: always
-    ports :
-      - "443:443"

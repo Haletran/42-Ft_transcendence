@@ -1,3 +1,5 @@
+COMPOSE_FILE:=./docker-compose.yml
+
 all: banner build
 
 #game:
@@ -24,19 +26,19 @@ all: banner build
 
 build:
 	@echo "Building the project"
-	@docker compose -f ./srcs/docker-compose.yml up --build --remove-orphans
+	@docker compose -f ${COMPOSE_FILE} up --build --remove-orphans
 
 up:
 	@echo "Starting the project"
-	-docker compose -f ./srcs/docker-compose.yml up -d
+	-docker compose -f ${COMPOSE_FILE} up -d
 
 down:
 	@echo "Stopping the project"
-	-docker compose -f ./srcs/docker-compose.yml down -v
+	-docker compose -f ${COMPOSE_FILE} down -v
 
 stop:
 	@echo "Down the project"
-	-docker compose -f ./srcs/docker-compose.yml stop
+	-docker compose -f ${COMPOSE_FILE} stop
 
 
 reset: down
