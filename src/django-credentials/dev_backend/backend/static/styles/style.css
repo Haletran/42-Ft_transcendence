@@ -1,0 +1,152 @@
+@import url("https://fonts.googleapis.com/css2?family=Jersey+25&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+h1#game_name {
+	font-family: "Montserrat", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: bold;
+	font-style: normal;
+	font-size: 1.5em;
+}
+
+h1#game_name2 {
+	font-family: "Montserrat", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: bold;
+	font-style: normal;
+	font-size: 1.8em;
+}
+
+
+.montserrat-bold {
+	font-family: "Montserrat", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: bold;
+	font-style: normal;
+	font-size: 1.0em;
+}
+
+/* #logo:hover {
+    background: linear-gradient(
+        90deg,
+        rgba(80, 112, 205, 1) 0%,
+        rgba(136, 112, 209, 1) 50%,
+        rgba(200, 117, 218, 1) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+} */
+
+a.nav-link {
+	font-family: "Montserrat", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 500;
+	font-style: normal;
+	font-size: 1em;
+}
+
+body {
+	font-family: "Montserrat", sans-serif;
+	overflow: hidden;
+}
+
+#game_screen {
+	display: none !important;
+}
+
+#back_button {
+	display: none;
+}
+
+#game {
+	border: 2px solid white;
+	border-radius: 10px;
+	background-color: rgb(40, 41, 49);
+}
+
+.full-width {
+	width: 100%;
+}
+
+#register_42:hover {
+	background: #00babc;
+	color: white;
+}
+
+
+@media (max-width: 768px) {
+	h1#game_name {
+		font-size: 1.3em;
+	}
+
+	/* #main:nth-child(2) {
+        padding-left: 70px;
+    } */
+}
+
+@media (max-width: 480px) {
+	h1#game_name {
+		font-size: 0.9em;
+	}
+}
+
+.bg-custom {
+	background-color: #16171c;
+}
+
+.color-custom {
+	color: #9579cd;
+}
+
+.btn-gradient {
+	background: linear-gradient(90deg,
+			rgba(80, 112, 205, 1) 0%,
+			rgba(136, 112, 209, 1) 50%,
+			rgba(200, 117, 218, 1) 100%);
+}
+
+#main {
+	height: 85vh;
+}
+
+#login-screen {
+	display: none !important;
+}
+
+.blob {
+	position: absolute;
+	opacity: 0.5;
+	width: 300px;
+	aspect-ratio: 1/1;
+	animation: animate 4s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite alternate forwards;
+	filter: blur(40px);
+	z-index: -1;
+	background: linear-gradient(90deg,
+			rgba(80, 112, 205, 1) 0%,
+			rgba(136, 112, 209, 1) 50%,
+			rgba(200, 117, 218, 1) 100%);
+
+	box-shadow: inset 50px 50px 17px 0px #ff588b, inset 100px 100px 17px 0px #66319f;
+}
+
+@keyframes animate {
+	0% {
+		translate: 40% -25%;
+		border-radius: 60% 40% 30% 70% / 100% 85% 92% 74%;
+	}
+
+	50% {
+		translate: 0% 13%;
+		border-radius: 20% 71% 47% 70% / 81% 15% 22% 54%;
+		rotate: 41deg;
+		scale: 1.15;
+	}
+
+	100% {
+		translate: -45% 39%;
+		border-radius: 100% 75% 92% 74% / 60% 80% 30% 70%;
+		rotate: -60deg;
+		scale: 1.05;
+	}
+}

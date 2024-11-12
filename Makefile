@@ -2,27 +2,26 @@ COMPOSE_FILE:=./docker-compose.yml
 
 all: banner build
 
-#game:
-#	@echo "Starting the game"
-#	@if command -v nix-shell > /dev/null; then \
-#		nix-shell setup_scripts/shell/game.nix; \
-#	else \
-#	   echo "\033[1;31mnix-shell command does not exist\033[0m"; \
-#	   echo "Launching the game locally then..."; \
-#	   xdg-open http://localhost:8080 1> /dev/null 2>&1; \
-#	   cd dev_game && npm install && npm start; \
-#	fi
+game:
+	@echo "Starting the game"
+	@if command -v nix-shell > /dev/null; then \
+		nix-shell setup_scripts/shell/game.nix; \
+	else \
+	   echo "\033[1;31mnix-shell command does not exist\033[0m"; \
+	   echo "Launching the game locally then..."; \
+	   xdg-open http://localhost:8080 1> /dev/null 2>&1; \
+	   cd dev_game && npm install && npm start; \
+	fi
 
-#backend:
-#	@echo "Starting the backend"
-#	@if command -v nix-shell > /dev/null; then \
-#		nix-shell ./srcs/setup_scripts/shell/backend.nix; \
-#	else \
-#	   echo "\033[1;31mnix-shell command does not exist\033[0m"; \
-#	   echo "Unable to launch the backend"; \
-#	   exit 1; \
-#	fi
-
+backend:
+	@echo "Starting the backend"
+	@if command -v nix-shell > /dev/null; then \
+		nix-shell ./srcs/setup_scripts/shell/backend.nix; \
+	else \
+	   echo "\033[1;31mnix-shell command does not exist\033[0m"; \
+	   echo "Unable to launch the backend"; \
+	   exit 1; \
+	fi
 
 build:
 	@echo "Building the project"
