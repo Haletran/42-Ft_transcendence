@@ -45,18 +45,18 @@ services:
   django-credentials:
     container_name: django
     image: django:latest
-    build: ./requirements/django
+    build: ./src/django-credentials
     volumes:
-      - ./requirements/django/dev_backend:/app
-    listen:
+      - ./src/django-credenials/dev_backend:/app
+    expose:
       - "9000"
     stdin_open: true
     tty: true
     depends_on:
-      database:
+      dblogins:
         condition: service_healthy
     env_file:
-      - ../env_test.txt
+      - ./env_test.txt
     command: >
       sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     networks:
@@ -67,27 +67,27 @@ services:
     image: postgres:14
     restart: always
     env_file:
-    - ../env_test.txt
+    - ./env_test.txt
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - dblogins:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 5s
       timeout: 5s
       retries: 10
       start_period: 30s
-    listen:
+    expose:
       - "5432"
     networks:
       - transcendence
   
-  volumes:
-    dblogins:
-      driver: local
-      driver_opts:
-        type: 'none'
-        o: 'bind'
-        device: '/home/anouk/data_trans/dblogins'
+volumes:
+  dblogins:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './data/dblogins'
 
 networks:
   transcendence:

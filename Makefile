@@ -15,13 +15,14 @@ game:
 
 backend:
 	@echo "Starting the backend"
-	@if command -v nix-shell > /dev/null; then \
-		nix-shell ./srcs/setup_scripts/shell/backend.nix; \
-	else \
-	   echo "\033[1;31mnix-shell command does not exist\033[0m"; \
-	   echo "Unable to launch the backend"; \
-	   exit 1; \
-	fi
+	@bash ./setup_scripts/vol_dir.sh
+	# @if command -v nix-shell > /dev/null; then \
+	# 	nix-shell ./srcs/setup_scripts/shell/backend.nix; \
+	# else \
+	#    echo "\033[1;31mnix-shell command does not exist\033[0m"; \
+	#    echo "Unable to launch the backend"; \
+	#    exit 1; \
+	# fi
 
 build:
 	@echo "Building the project"
