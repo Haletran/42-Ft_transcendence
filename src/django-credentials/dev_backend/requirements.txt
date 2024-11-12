@@ -1,0 +1,4 @@
+Django==4.2  # Adjust the version as needed
+psycopg2-binary==2.9.6  # PostgreSQL adapter
+django-cors-headers  # For handling CORS
+djangorestframework  # If you're using DRF

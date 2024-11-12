@@ -1,0 +1,94 @@
+services:
+  reverseproxy:
+    #    build: src/reverseproxy/.
+    image: nginx:latest
+    container_name: reverseproxy
+    networks:
+      - transcendence
+    restart: always
+    ports:
+      - "443:443"
+    volumes:
+      - ./src/reverseproxy/conf/core.conf:/etc/nginx/conf.d/core.conf
+      - ./src/reverseproxy/conf/proxy.conf:/etc/nginx/conf.d/proxy.conf
+        # location of static content:
+      - ./src/reverseproxy/static-content:/var/www/html
+      - ./src/reverseproxy/ssl/nginx.crt:/etc/nginx/ssl/nginx.crt
+      - ./src/reverseproxy/ssl/nginx.key:/etc/nginx/ssl/nginx.key
+
+  kong-api:
+    build: src/kong-api/.
+    container_name: kong-api
+    restart: always
+    expose:
+     - "8443"
+     - "8000"
+     - "8444"
+     - "8002"
+     - "8445"
+     - "8003"
+     - "8004"
+    #- "8001"
+    ports:
+       - "8001:8001"
+      #- "8000:8000"
+    #   - "8443:8443"
+    #   - "8444:8444"
+    #   - "8002:8002"
+    #   - "8445:8445"
+    #   - "8003:8003"
+    #   - "8004:8004"
+    env_file: src/kong-api/.kong.env
+    networks:
+      - transcendence
+
+  django-credentials:
+    container_name: django
+    image: django:latest
+    build: ./src/django-credentials
+    volumes:
+      - ./src/django-credentials/dev_backend:/app
+    expose:
+      - "9000"
+    stdin_open: true
+    tty: true
+    depends_on:
+      dblogins:
+        condition: service_healthy
+    env_file:
+      - ./env_test.txt
+    command: >
+      sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - transcendence
+      
+  dblogins:
+    container_name: postgres
+    image: postgres:14
+    restart: always
+    env_file:
+    - ./env_test.txt
+    volumes:
+      - dblogins:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    expose:
+      - "5432"
+    networks:
+      - transcendence
+  
+volumes:
+  dblogins:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './data/dblogins'
+
+networks:
+  transcendence:
+    driver: bridge
