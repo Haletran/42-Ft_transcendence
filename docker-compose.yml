@@ -47,7 +47,7 @@ services:
     image: django:latest
     build: ./src/django-credentials
     volumes:
-      - ./src/django-credenials/dev_backend:/app
+      - ./src/django-credentials/dev_backend:/app
     expose:
       - "9000"
     stdin_open: true

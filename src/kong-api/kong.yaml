@@ -2,12 +2,10 @@ _format_version: "3.0"
 _transform: true
 
 services:
-- host: httpbin.konghq.com
-  name: example_service
-  port: 80
-  protocol: http
+- url: https://localhost:9000
+  name: django-credentials_service
   routes:
-  - name: example_route
+  - name: register_route
     paths:
-    - /mock
-    strip_path: true
+    - /api/register
+    strip_path: false
