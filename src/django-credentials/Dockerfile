@@ -1,11 +1,15 @@
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 WORKDIR /app
-COPY /dev_backend/requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
-RUN rm -rf ./requirements.txt
-COPY dev_backend/ .
 
-EXPOSE 8000
+COPY ../requirements.txt .
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+RUN pip install -r requirements.txt
+
+COPY . .
+
+RUN pip install gunicorn
+
+EXPOSE 9000
+
+CMD ["gunicorn", "--bind", "0.0.0.0:9000", "credentials.wsgi:application"]

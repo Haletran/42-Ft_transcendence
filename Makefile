@@ -61,7 +61,7 @@ hard-reset: reset
 
 rebuild: reset all
 
-sujet:
+subject:
 	@xdg-open https://cdn.intra.42.fr/pdf/pdf/133398/en.subject.pdf </dev/null >/dev/null 2>&1
 
 banner:
