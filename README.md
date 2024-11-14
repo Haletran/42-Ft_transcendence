@@ -9,3 +9,5 @@
 [Kong (Admin API)](https://docs.konghq.com/gateway/api/admin-oss/latest/#/Plugins/create-plugin-for-consumer)
 
 [Nginx (Reverse Proxy)](https://docs.nginx.com/nginx/admin-guide/web-server/)
+
+[Django (backend)](https://docs.djangoproject.com/en/5.1/)

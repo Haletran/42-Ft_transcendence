@@ -6,6 +6,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 RUN rm -rf ./requirements.txt
 COPY dev_backend/ .
 
-EXPOSE 8000
+EXPOSE 9000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

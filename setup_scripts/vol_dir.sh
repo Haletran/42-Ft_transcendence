@@ -2,4 +2,6 @@
 
 mkdir -p ./data/dblogins
 
-chmod -R 775 ./data
+chmod -R 777 ./data
+
+#chown -R root:root ./data
