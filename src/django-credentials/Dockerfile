@@ -12,4 +12,4 @@ RUN pip install gunicorn
 
 EXPOSE 9000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:9000", "credentials.wsgi:application"]
+CMD ["gunicorn", "--certfile=/etc/ssl/certs/django.crt", "--keyfile=/etc/ssl/private/django.key", "--bind", "0.0.0.0:9000", "credentials.wsgi:application"]

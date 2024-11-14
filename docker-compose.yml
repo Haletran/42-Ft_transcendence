@@ -22,7 +22,8 @@ services:
     restart: always
     expose:
      - "8443"
-     - "8001"
+    ports:
+     - "8001:8001"
     env_file: src/kong-api/.kong.env
     networks:
       - transcendence
@@ -32,7 +33,9 @@ services:
     container_name: django-credentials
     expose:
       - "9000"
-        #volumes: 
+    volumes:
+      - ./src/django-credentials/ssl/django-credentials.key:/etc/ssl/private/django.key
+      - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt
         # - src/django-credentials/credentials:/app
     restart: unless-stopped
     networks:

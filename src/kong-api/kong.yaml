@@ -2,10 +2,10 @@ _format_version: "3.0"
 _transform: true
 
 services:
-- url: https://localhost:9000 # pour l'instant on redir tout
-  name: django-credentials_service
+- name: django-credentials_service
+  url: https://django-credentials:9000 # pour l'instant on redir tout
   routes:
-  - name: register_route
+  - name: django-credentials_route
     paths:
-    - /api # could be api/register
-    strip_path: false
+    - /api/register
+    - /api/login
