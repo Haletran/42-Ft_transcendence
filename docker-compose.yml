@@ -28,6 +28,20 @@ services:
     networks:
       - transcendence
 
+  database:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: dboire
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: dboiredb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - transcendence
+
   django-credentials:
     build: src/django-credentials/.
     container_name: django-credentials
@@ -37,6 +51,8 @@ services:
       - ./src/django-credentials/ssl/django-credentials.key:/etc/ssl/private/django.key
       - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt
         # - src/django-credentials/credentials:/app
+    env_file:
+      - ./env_test.txt
     restart: unless-stopped
     networks:
       - transcendence
@@ -67,6 +83,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: './data/dblogins'
+  postgres_data:
 
 networks:
   transcendence:
