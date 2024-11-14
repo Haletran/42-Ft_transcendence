@@ -31,8 +31,8 @@ services:
   django-credentials:
     build: src/django-credentials/.
     container_name: django-credentials
-    expose:
-      - "9000"
+    ports:
+      - "9000:9000"
     volumes:
       - ./src/django-credentials/ssl/django-credentials.key:/etc/ssl/private/django.key
       - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt
