@@ -38,24 +38,24 @@ services:
     networks:
       - transcendence
       
-  dblogins:
-    container_name: postgres
-    image: postgres:14
-    restart: always
-    env_file:
-    - ./env_test.txt
-    volumes:
-      - dblogins:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-    expose:
-      - "5432"
-    networks:
-      - transcendence
+  # dblogins:
+  #   container_name: postgres
+  #   image: postgres:14
+  #   restart: always
+  #   env_file:
+  #   - ./env_test.txt
+  #   volumes:
+  #     - dblogins:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "pg_isready" ]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
+  #     start_period: 30s
+  #   expose:
+  #     - "5432"
+  #   networks:
+  #     - transcendence
   
 volumes:
   dblogins:
