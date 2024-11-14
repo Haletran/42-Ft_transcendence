@@ -3,7 +3,7 @@ _transform: true
 
 services:
 - name: django-credentials_service
-  url: https://django-credentials:9000 # pour l'instant on redir tout
+  url: https://www.google.com/ # pour l'instant on redir tout
   routes:
   - name: django-credentials_route
     paths:
