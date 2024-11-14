@@ -1,16 +1,16 @@
 """
-WSGI config for myproject project.
+WSGI config for credentials project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
+https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/
 """
 
 import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'credentials.settings')
 
 application = get_wsgi_application()

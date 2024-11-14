@@ -22,27 +22,19 @@ services:
     restart: always
     expose:
      - "8443"
+     - "8001"
     env_file: src/kong-api/.kong.env
     networks:
       - transcendence
 
   django-credentials:
-    container_name: django
-    image: django:latest
-    build: ./src/django-credentials
-    volumes:
-      - ./src/django-credentials/dev_backend:/app
+    build: src/django-credentials/.
+    container_name: django-credentials
     expose:
       - "9000"
-    stdin_open: true
-    tty: true
-    depends_on:
-      dblogins:
-        condition: service_healthy
-    env_file:
-      - ./env_test.txt
-    command: >
-      sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+        #volumes: 
+        # - src/django-credentials/credentials:/app
+    restart: unless-stopped
     networks:
       - transcendence
       
