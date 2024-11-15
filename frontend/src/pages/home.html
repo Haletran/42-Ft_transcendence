@@ -17,15 +17,29 @@
     <div class="header">
         <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
             <div class="container-fluid">
-                <a class="navbar-brand " href="#">
+                <a class="navbar-brand " href="/frontend/index.html">
                     <img src="../imgs/logo.png" alt="" width="25" class="d-inline-block align-text-top invert">
                     <p class="d-inline montserrat-bold">Ft_transcendence</p>
                 </a>
-                <img alt="Logo" width="40" height="40" class="rounded-circle" style="
-                    object-fit: cover;
-                  " src="https://cdn.intra.42.fr/users/65ca7a946948378f5cf99fb253ea4907/bapasqui.jpg"
-                    alt="profile_picture" />
+                <a class="nav-link active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img alt="Logo" width="40" height="40" class="rounded-circle" style="
+                              object-fit: cover;
+                            " src="https://cdn.intra.42.fr/users/65ca7a946948378f5cf99fb253ea4907/bapasqui.jpg"
+                        alt="profile_picture" />
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="#">Profile</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">Settings</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item fw-bold text-danger" href="#">Logout</a>
+                    </li>
+                </ul>
             </div>
+
         </nav>
     </div>
     <div class="app">
@@ -49,5 +63,9 @@
         </footer>
     </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
 
 </html>
