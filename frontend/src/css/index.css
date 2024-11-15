@@ -2,10 +2,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-
 body {
     overflow: hidden;
 }
+
 
 img.main-logo {
     filter: invert(1);
@@ -16,8 +16,18 @@ img.main-logo {
     font-optical-sizing: auto;
     font-weight: bold;
     font-style: normal;
-    font-size: 1.5em;
+    font-size: 1em;
 }
+
+
+.montserrat {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 0.8em;
+}
+
 
 .btn:hover .logo {
     filter: brightness(0);
@@ -46,7 +56,22 @@ img.main-logo {
     animation: rotate 5s linear infinite;
 }
 
-.dragme {
-    position: relative;
-    cursor: move;
+.invert {
+    filter: invert(1);
+}
+
+.block {
+    border: 1px solid white;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 10px;
+}
+
+.block:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
 }
