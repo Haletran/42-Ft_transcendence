@@ -14,6 +14,8 @@ services:
       - ./src/reverseproxy/static-content:/var/www/html
       - ./src/reverseproxy/ssl/nginx.crt:/etc/nginx/ssl/nginx.crt
       - ./src/reverseproxy/ssl/nginx.key:/etc/nginx/ssl/nginx.key
+    depends_on:
+      - django-credentials
 
   database:
     image: postgres:latest
@@ -46,6 +48,8 @@ services:
       - database
     networks:
       - transcendence
+    command: >
+      sh -c "python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 credentials.wsgi:application"
   
 volumes:
   dblogins:
