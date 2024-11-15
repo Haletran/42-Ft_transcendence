@@ -13,4 +13,4 @@ RUN pip install psycopg2-binary
 
 EXPOSE 9000
 
-CMD ["gunicorn", "--bind", "127.0.0.1:9000", "credentials.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:9000", "credentials.wsgi:application"]
