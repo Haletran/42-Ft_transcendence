@@ -12,16 +12,29 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from hvac import Client
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Vault configurations
+VAULT_ADDR = os.getenv('VAULT_ADDR', 'http://localhost:8200')  # Vault service name in Docker Compose
+VAULT_TOKEN = os.getenv('VAULT_TOKEN', '')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
+client = Client(url=VAULT_ADDR, token=VAULT_TOKEN)
+
+if not client.is_authenticated():
+        raise Exception("Vault authentication failed")
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!2#j8c0or)@3y3(g13=n%3ba%g#jzh$edcmz%@wucvb^sjfiu5'
+try:
+    # Attempt to fetch the secret stored at the given path in Vault
+    secret = client.secrets.kv.v2.read_secret_version(path='data/django/secret_key')
+    
+    # Correct way to access the 'value' field from Vault response
+    SECRET_KEY = secret['data']['data']['SECRET_KEY']
+except Exception as e:
+    raise RuntimeError(f"Unable to retrieve SECRET_KEY from Vault: {e}")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
