@@ -13,6 +13,15 @@ const routes = {
   '/pong' : Pong,
 };
 
+fetch('/set-csrf-token/')
+  .then(response => response.json())
+  .then(data => {
+    console.log('CSRF token set:', data);
+  })
+  .catch(error => {
+    console.error('Error setting CSRF token:', error);
+  });
+
 const router = new Router(routes);
 
 document.addEventListener('DOMContentLoaded', () => {
