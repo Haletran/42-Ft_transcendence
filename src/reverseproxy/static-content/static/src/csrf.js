@@ -1,13 +1,13 @@
-// export function getCSRFToken() {
-//     const cookies = document.cookie.split(';');
-//     for (let cookie of cookies) {
-//         const [name, value] = cookie.trim().split('=');
-//         if (name === 'csrftoken') {
-//             return value;
-//         }
-//     }
-//     return null;
-// }
+export function initializeCSRFToken() {
+    fetch('/api/set-csrf-token/')
+      .then(response => response.json())
+      .then(data => {
+    console.log('CSRF token set:', data);
+    })
+      .catch(error => {
+        console.error('Error setting CSRF token:', error);
+    });
+}
 
 export function getCSRFToken(name) {
     let cookieValue = null;
