@@ -19,12 +19,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Vault configurations
 VAULT_ADDR = os.getenv('VAULT_ADDR', 'http://localhost:8200')  # Vault service name in Docker Compose
-VAULT_TOKEN = os.getenv('VAULT_TOKEN', '')
+VAULT_TOKEN = os.getenv('VAULT_TOKEN', None)
 
+# Ensure that the Vault token is provided
+if VAULT_TOKEN is None:
+    raise ValueError("VAULT_TOKEN is not set in the environment. Please set it in your .env file.")
+
+# Create a client for Vault
 client = Client(url=VAULT_ADDR, token=VAULT_TOKEN)
 
+# Check if Vault authentication is successful
 if not client.is_authenticated():
-        raise Exception("Vault authentication failed")
+    raise Exception("Vault authentication failed")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 try:

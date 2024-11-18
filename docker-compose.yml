@@ -5,7 +5,6 @@ services:
     container_name: reverseproxy
     networks:
       - transcendence
-    restart: always
     ports:
       - "443:443"
     volumes:
@@ -41,6 +40,8 @@ services:
       - ./vault/config:/vault/config
       #- ./vault/policies:/vault/policies
       - ./vault/data:/vault/data
+    env_file:
+      - .env
     environment:
       - VAULT_ADDR=http://0.0.0.0:8200
       - VAULT_API_ADDR=http://0.0.0.0:8200
@@ -49,7 +50,7 @@ services:
       - IPC_LOCK
     networks:
       - transcendence
-    command: vault server -config=/vault/config/vault.json
+    command: /bin/sh -c "vault server -config=/vault/config/vault.json & sleep 10 && ./vault/config/unseal.sh && tail -f /dev/null"
 
   django-credentials:
     build: src/django-credentials/.
@@ -61,17 +62,15 @@ services:
       - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt
         # - src/django-credentials/credentials:/app
     env_file:
-      - ./env_test.txt
+      - .env
     environment:
       VAULT_ADDR: 'http://vault_container:8200'  # Vault service name here
-      VAULT_TOKEN: ''
-    restart: unless-stopped
     depends_on:
       - database
     networks:
       - transcendence
     command: >
-      sh -c "python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 credentials.wsgi:application"
+      sh -c "sleep 10 && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 credentials.wsgi:application"
   
 volumes:
   dblogins:
