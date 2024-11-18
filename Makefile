@@ -37,11 +37,11 @@ up:
 
 down:
 	@echo "Stopping the project"
+	@rm -rf .env
 	-docker compose -f ${COMPOSE_FILE} down -v
 
 stop:
 	@echo "Down the project"
-	@rm -rf .env
 	-docker compose -f ${COMPOSE_FILE} stop
 
 
