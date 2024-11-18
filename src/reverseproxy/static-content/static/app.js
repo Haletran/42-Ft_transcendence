@@ -13,7 +13,7 @@ const routes = {
   '/pong' : Pong,
 };
 
-fetch('/set-csrf-token/')
+fetch('/api/set-csrf-token/')
   .then(response => response.json())
   .then(data => {
     console.log('CSRF token set:', data);

@@ -10,6 +10,7 @@ def set_csrf_token(request):
     csrf_token = get_token(request)
     response = JsonResponse({'message': 'CSRF token set'})
     response['X-CSRFToken'] = csrf_token
+    print(response)
     return response
 
 # @csrf_protect

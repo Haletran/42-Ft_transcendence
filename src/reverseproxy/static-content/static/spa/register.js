@@ -98,7 +98,11 @@ export class RegisterPage extends Page {
 		  try {
 
 			// get CSRF token
+			console.log('CSRF Token:', getCSRFToken('csrftoken'));
 			const csrfToken = getCSRFToken('csrftoken');
+			if (!csrfToken) {
+				console.error('CSRF token is missing!');
+			}
 
 			// Send data to the backend
 			
@@ -108,6 +112,7 @@ export class RegisterPage extends Page {
 				'Content-Type': 'application/json',
 				'X-CSRFToken': csrfToken,
 			  },
+			  credentials: 'include',
 			  body: JSON.stringify(data),
 			});
 	
