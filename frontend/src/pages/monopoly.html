@@ -50,8 +50,8 @@
                     <h1 id="menu" class="display-1 montserrat-bold fw-bold mx-auto">MONOPOLY</h1>
                 </div>
                 <article class="d-flex flex-column gap-2">
-                    <div class="card" style="width: 25rem;">
-                        <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card w-100 ">
+                        <div class="card-header d-flex justify-content-between align-items-center gap-2">
                             How many players?
                             <div>
                                 <button id="add_player" class="btn btn-outline-light"><i
@@ -70,13 +70,13 @@
                         </ul>
                     </div>
                     <p id="error_msg" class="text-danger"></p>
-                    <button id="start_button" value="pvp" class="btn btn-light full-width btn-lg">Play</button>
+                    <button id="start_button_m" class="btn btn-light full-width btn-lg">Play</button>
                 </article>
             </div>
         </div>
     </div>
-    <div class="game">
-        <canvas id="pong" style="display: none;"></canvas>
+    <div class="game justify-content-center align-items-center">
+        <canvas id="monopoly_canvas" style="display: none;"></canvas>
     </div>
     <div class="footer">
         <footer class="footer">
@@ -91,6 +91,7 @@
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
 <script src="/frontend/src/js/list_interaction.js"></script>
-<script src="/frontend/src/js/event.js"></script>
+<script src="/frontend/src/js/monopoly.js"></script>
+<script type="module" src="/frontend/src/js/event.js"></script>
 
 </html>

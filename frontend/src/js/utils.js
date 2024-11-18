@@ -16,3 +16,12 @@ export function addClassToElementsByClass(targetClassName, classNameToAdd) {
         elements[i].classList.add(classNameToAdd);
     }
 }
+
+export function getNumberofUser() {
+    var items = document.querySelectorAll('.list-group-item');
+    var count = 0;
+    for (var i = 0; i < items.length; i++) {
+        count++;
+    }
+    return count;
+}

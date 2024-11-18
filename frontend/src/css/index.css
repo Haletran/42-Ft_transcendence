@@ -113,6 +113,12 @@ img.main-logo {
     background-color: rgb(40, 41, 49);
 }
 
+#monopoly_canvas {
+    border: 2px solid white;
+    border-radius: 10px;
+    background-color: rgb(40, 41, 49);
+}
+
 .center {
     min-height: 90vh;
 }
