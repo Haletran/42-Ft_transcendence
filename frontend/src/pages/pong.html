@@ -41,56 +41,48 @@
             </div>
         </nav>
     </div>
-    <div class="app">
-        <div id="game_carrousel" class="carousel slide">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div class="container-fluid d-flex justify-content-center align-items-center"
-                        style="min-height: 90vh">
+    <div class="menu">
+        <div class="container-fluid d-flex justify-content-center align-items-center center">
+            <div id="menu" class="d-flex flex-column align-items-center gap-2">
+                <button onclick="window.history.back()" class="btn btn-outline-light me-auto"><i
+                        class="bi bi-arrow-left"></i></button>
+                <div id="logo" style="display: flex; align-items: center">
 
-                        <div id="menu" class="d-flex flex-column align-items-center gap-2">
-                            <button onclick="window.history.back()" class="btn btn-outline-light me-auto"><i
-                                    class="bi bi-arrow-left"></i></button>
-                            <div id="logo" style="display: flex; align-items: center">
-
-                                <h1 id="menu" class="display-1 montserrat-bold fw-bold mx-auto">PONG</h1>
-                            </div>
-                            <article class="d-flex flex-column gap-2">
-                                <h2 id="menu" class="display-6 montserrat-bold">Choose your game mode</h2>
-                                <button id="start_button" value="pvp" class="btn btn-outline-light full-width btn-lg">1
-                                    vs 1</button>
-                                <button id="start_button2" value="vsa" class="btn btn-outline-light full-width btn-lg">1
-                                    vs AI</button>
-                                <button id="tournament_button"
-                                    class="btn btn-light full-width btn-lg">Tournament</button>
-                                <article id="dropdown-tour"
-                                    class="flex-column justify-content-center align-items-center gap-2">
-                                    <div class="card" style="width: 25rem;">
-                                        <div class="card-header d-flex justify-content-between align-items-center">
-                                            How many players?
-                                            <div>
-                                                <button id="add_player" class="btn btn-outline-light"><i
-                                                        class="bi bi-plus-circle"></i></button>
-                                                <button id="rm_player" class="btn btn-outline-light"><i
-                                                        class="bi bi-dash-circle"></i></button>
-                                            </div>
-                                        </div>
-                                        <ul class="list-group list-group-flush ">
-
-                                            <li class="list-group-item bg-grey">
-                                                <i class="bi bi-person"></i> bapasqui
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <p id="error_msg" class="text-danger"></p>
-                                </article>
-                            </article>
-                        </div>
-                    </div>
+                    <h1 id="menu" class="display-1 montserrat-bold fw-bold mx-auto">PONG</h1>
                 </div>
+                <article class="d-flex flex-column gap-2">
+                    <h2 id="menu" class="display-6 montserrat-bold">Choose your game mode</h2>
+                    <button id="start_button" value="pvp" class="btn btn-outline-light full-width btn-lg">1
+                        vs 1</button>
+                    <button id="start_button2" value="vsa" class="btn btn-outline-light full-width btn-lg">1
+                        vs AI</button>
+                    <button id="tournament_button" class="btn btn-light full-width btn-lg">Tournament</button>
+                    <article id="dropdown-tour" class="flex-column justify-content-center align-items-center gap-2">
+                        <div class="card" style="width: 25rem;">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                How many players?
+                                <div>
+                                    <button id="add_player" class="btn btn-outline-light"><i
+                                            class="bi bi-plus-circle"></i></button>
+                                    <button id="rm_player" class="btn btn-outline-light"><i
+                                            class="bi bi-dash-circle"></i></button>
+                                </div>
+                            </div>
+                            <ul class="list-group list-group-flush ">
+
+                                <li class="list-group-item bg-grey">
+                                    <i class="bi bi-person"></i> bapasqui
+                                </li>
+                            </ul>
+                        </div>
+                        <p id="error_msg" class="text-danger"></p>
+                    </article>
+                </article>
             </div>
         </div>
-        <canvas id="pong" style="display: none;"></canvas>
+    </div>
+    <div class="game justify-content-center align-items-center">
+        <canvas id="pong_canvas" style="display: none;"></canvas>
     </div>
     <div class="footer">
         <footer class="footer">
@@ -104,6 +96,8 @@
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
 <script src="/frontend/src/js/list_interaction.js"></script>
+<script src="/frontend/src/js/pong.js"></script>
+<script type="module" src="/frontend/src/js/event.js"></script>
 <script>
     document.getElementById('tournament_button').onclick = async function () {
         const dropdownTour = document.getElementById('dropdown-tour');

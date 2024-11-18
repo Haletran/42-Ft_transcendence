@@ -1,7 +1,8 @@
-const canvas = document.getElementById("pong");
+const canvas = document.getElementById("pong_canvas");
 const ctx = canvas.getContext("2d");
 let gameRunning = true;
 let animationFrameId;
+
 
 const KEY_CODES = {
     37: { player: 'player2', change: -10 },
@@ -10,6 +11,25 @@ const KEY_CODES = {
     68: { player: 'player1', change: 10 },
 };
 let keys = {};
+
+function hideElementsByClass(className) {
+    const elements = document.getElementsByClassName(className);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].style.display = 'none';
+    }
+}
+function showElementsByClass(className, display) {
+    const elements = document.getElementsByClassName(className);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].style.display = display;
+    }
+}
+function addClassToElementsByClass(targetClassName, classNameToAdd) {
+    const elements = document.getElementsByClassName(targetClassName);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.add(classNameToAdd);
+    }
+}
 
 // CLASS PART
 class Ball {
@@ -164,7 +184,7 @@ function draw_ball() {
     if (!gameRunning) return;
     clearCanvas();
     if (player1.score == 5 || player2.score == 5) {
-        if (document.getElementById("pong").style.display != "none") {
+        if (document.getElementById("pong_canvas").style.display != "none") {
             if (player1.score == 5)
                 alert(player1.name + " wins!");
             else
@@ -172,12 +192,9 @@ function draw_ball() {
             player1.score = 0;
             player2.score = 0;
             stopGame();
-            document.getElementById("pong").style.display = "none";
-            document.getElementById("menu").style.display = "flex";
-            document.getElementById("menu").style.setProperty("display", "flex", "important");
-            document.getElementById("bob").style.display = "block";
-            document.getElementById("test").style.display = "block";
-            document.getElementById("test2").style.display = "block";
+            document.getElementById("pong_canvas").style.display = "none";
+            hideElementsByClass('game');
+            showElementsByClass('menu', 'flex');
         }
     }
     ball.draw();
@@ -427,7 +444,7 @@ function AI_mov_p1() {
 
 
 function resizeCanvas() {
-    const canvas = document.getElementById('pong');
+    const canvas = document.getElementById('pong_canvas');
     canvas.width = window.innerWidth - 100;
     canvas.height = window.innerHeight - 200;
     updatePlayerLayout();
