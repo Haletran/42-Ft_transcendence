@@ -332,7 +332,9 @@ function checkKeyUp(e) {
 }
 function move_players() {
     if (!gameRunning) return;
-    const speedFactor = 0.7;
+    const speedFactor = 0.9;
+    // if (canvas.width >= 900)
+    //     speedFactor = 0.9;
 
     for (let key in keys) {
         let player = window[keys[key].player];
@@ -543,6 +545,7 @@ function game(value) {
                 move_players();
         }
     }, 500);
+    resizeCanvas(); // add this so that the canvas is resized when the game starts
 }
 
 // EVENTS

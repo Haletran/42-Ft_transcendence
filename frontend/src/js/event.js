@@ -26,3 +26,4 @@ if (startButtonM) {
         init_monopoly_game(getNumberofUser());
     });
 }
+

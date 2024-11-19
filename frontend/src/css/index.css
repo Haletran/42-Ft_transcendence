@@ -52,7 +52,6 @@ img.main-logo {
 
 
 #circle {
-    z-index: -10;
     animation: rotate 5s linear infinite;
 }
 
@@ -121,4 +120,57 @@ img.main-logo {
 
 .center {
     min-height: 90vh;
+}
+
+#player_box {
+    border: 2px solid white;
+    border-radius: 10px;
+    padding-top: 10px;
+    /* padding-left: 10px;
+    padding-right: 10px; */
+}
+
+.game {
+    display: none;
+}
+
+.block-light {
+    border: 2px solid white;
+    border-radius: 2px;
+}
+
+#yes {
+    background-color: #4FBC67;
+}
+
+#no {
+    background-color: #DD4343;
+}
+
+#yes:hover {
+    background-color: #44a158;
+}
+
+#no:hover {
+    background-color: #c73d3d;
+}
+
+#actual_pp {
+    border: 2px solid rgb(33, 218, 125);
+}
+
+#actual_pp:hover {
+    transform: scale(1.1);
+}
+
+
+#other_pp:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.pp {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
 }

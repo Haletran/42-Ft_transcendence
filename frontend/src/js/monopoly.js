@@ -18,6 +18,7 @@ class Player {
         this.inJail = 0;
         this.isActive = true;
         this.color = this.getPlayerColor(id);
+        this.png = this.getPlayerPng(this.color);
         this.alertTriggered = false;
     }
 
@@ -26,11 +27,24 @@ class Player {
         return colors[id % colors.length]; // Cycles through the color array
     }
 
+    getPlayerPng(color) {
+        if (color === '#2DCC4A')
+            return '../imgs/pion_vert.svg';
+        if (color === '#3357FF')
+            return '../imgs/pion_bleu.svg';
+        if (color === '#F1C40F')
+            return '../imgs/pion_violet.svg';
+        if (color === '#8E44AD')
+            return '../imgs/pion_rouge.svg';
+    }
+
     draw(ctx, board) {
 
         const tile = board[this.position];
         ctx.fillStyle = "#000";
-        ctx.fillText(`${this.id}`, tile.x + 20 * this.id, tile.y + tile.height - 20);
+        const image = new Image();
+        image.src = this.png;
+        ctx.drawImage(image, tile.x + 20 * this.id, tile.y + tile.height - 40, 12, 22);
     }
 
     hasLost() {
@@ -76,11 +90,13 @@ function drawPlayerInfo() {
     // Set up styling for text
     ctx.fillStyle = "#FFF";
     ctx.font = "16px Arial";
-    ctx.fillText("Player Info", sidebarX + 10, 30);
 
     // Loop through each player and display their information
+    ctx.fillStyle = "#212529";
+
     players.forEach((player, index) => {
         const infoY = 60 + index * 200; // Spacing for each player's info
+        //drawRoundedRect(sidebarX + 10, infoY - 20, 150, 150, 5, "#FFF", 2); // Draw a rounded rectangle for each player
 
         // Draw the background color behind the player's name
         ctx.fillStyle = player.color; // Use the player's color
@@ -254,10 +270,31 @@ const diceButton =
     height: 50,
 };
 
+function drawRoundedRect(x, y, width, height, radius, stroke, lineWidth) {
+    ctx.lineWidth = lineWidth; // Border width
+    ctx.strokeStyle = stroke;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+}
+
+
 // Function to draw the dice button
 function drawDiceButton() {
-    ctx.fillStyle = "#4CAF50"; // Button color
-    ctx.fillRect(diceButton.x, diceButton.y, diceButton.width, diceButton.height); // Draw button
+    const radius = 10; // Border radius
+    ctx.fillStyle = "#212529"; // Button color
+    drawRoundedRect(diceButton.x, diceButton.y, diceButton.width, diceButton.height, radius, "white", 2); // Draw button
+
     ctx.fillStyle = "#FFF"; // Text color
     ctx.font = "20px Arial"; // Font style
     ctx.fillText("Roll Dice", diceButton.x + 10, diceButton.y + 30); // Draw button text
@@ -439,9 +476,9 @@ function waitForBuildDecision(player, landedTile, callback) {
     canvas.addEventListener("click", function onClick(event) {
         const clickX = event.offsetX;
         const clickY = event.offsetY;
-        const yesX = 1050 - 60;
-        const yesY = 620 + 20;
-        const noX = 1050 + 20;
+        const yesX = 1050 - 80;
+        const yesY = 640 + 30;
+        const noX = 1050 + 40;
 
         let decision = null;
 
@@ -572,11 +609,11 @@ function drawPurchasePrompt(tile) {
     const windowWidth = 300;
     const windowHeight = 125;
     const posX = 1050;
-    const posY = 620;
+    const posY = 640;
 
     // Draw the pop-up background
-    ctx.fillStyle = "#333";
-    ctx.fillRect(posX - windowWidth / 2, posY - windowHeight / 2, windowWidth, windowHeight);
+    ctx.fillStyle = "#212529";
+    drawRoundedRect(posX - windowWidth / 2, posY - windowHeight / 2, windowWidth, windowHeight, 10, "white", 2);
 
     // Draw the prompt text
     ctx.fillStyle = "#FFF";
@@ -588,14 +625,14 @@ function drawPurchasePrompt(tile) {
 
     // Draw the "Yes" button
     ctx.fillStyle = "#4CAF50"; // Green for "Yes"
-    ctx.fillRect(posX - 60, posY + 20, 50, 30);
+    drawRoundedRect(posX - 60, posY + 20, 50, 30, 5, "#4CAF50", 2);
     ctx.fillStyle = "#FFF";
     ctx.font = "16px Arial";
     ctx.fillText("Yes", posX - 50, posY + 40);
 
     // Draw the "No" button
     ctx.fillStyle = "#F44336"; // Red for "No"
-    ctx.fillRect(posX + 20, posY + 20, 50, 30);
+    drawRoundedRect(posX + 20, posY + 20, 50, 30, 5, "#F44336", 2);
     ctx.fillStyle = "#FFF";
     ctx.fillText("No", posX + 30, posY + 40);
     ctx.font = "12px Arial";
@@ -749,8 +786,6 @@ function showTileInfo(tile) {
             drawImageOnCanvas(tile.image, posX - 245, posY + 2, 255, 250);
     }
 }
-
-
 
 
 // Function to draw the action display box and show messages
