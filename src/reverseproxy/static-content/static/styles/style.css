@@ -130,6 +130,16 @@ body {
 	box-shadow: inset 50px 50px 17px 0px #ff588b, inset 100px 100px 17px 0px #66319f;
 }
 
+.profile-pic-btn {
+	background-color: #4CAF50;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.profile-pic-btn.active {
+	background-color: rgba(136, 112, 209, 1) 50%,
+}
+
 @keyframes animate {
 	0% {
 		translate: 40% -25%;

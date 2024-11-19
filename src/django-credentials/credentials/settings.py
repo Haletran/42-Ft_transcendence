@@ -163,3 +163,6 @@ CORS_ALLOWED_ORIGINS = [
     'https://localhost',  # Your frontend origin.
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+
+AUTH_USER_MODEL = 'my_auth.MyUser'

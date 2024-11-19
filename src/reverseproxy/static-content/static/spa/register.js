@@ -55,6 +55,28 @@ export class RegisterPage extends Page {
 				Your password must be 8-20 characters long.
 			  </div>
 			</div>
+
+			<div class="mb-3">
+				<label for="profilePicture" class="form-label">Choose a profile picture</label>
+				<div id="profilePictures" class="d-flex justify-content-around gap-2">
+				  <button type="button" class="profile-pic-btn">
+					<img src="https://img.freepik.com/vecteurs-libre/homme-affaires-caractere-avatar-isole_24877-60111.jpg" alt="Profile Pic 1" class="profile-pic" data-pic="pic1.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  </button>
+				  <button type="button" class="profile-pic-btn">	
+					<img src="https://w7.pngwing.com/pngs/492/922/png-transparent-jedi-avatar-user-profile-user-account-royaltyfree.png" alt="Profile Pic 2" class="profile-pic" data-pic="pic2.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  </button>
+				  <button type="button" class="profile-pic-btn">
+					<img src="https://img.freepik.com/vecteurs-premium/avatar-icon0002_750950-43.jpg?semt=ais_hybrid" alt="Profile Pic 3" class="profile-pic" data-pic="pic3.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  </button>
+				  <button type="button" class="profile-pic-btn">
+					<img src="https://img.favpng.com/5/1/21/computer-icons-user-profile-avatar-female-png-favpng-cqykKc0Hpkh65ueWt6Nh2KFvS.jpg" alt="Profile Pic 4" class="profile-pic" data-pic="pic4.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  </button>
+				  <button type="button" class="profile-pic-btn">
+					<img src="https://img.freepik.com/premium-vector/beautiful-muslim-girl-hijab-line-art-vector-design-logo-icon-sign-illustration-template_678696-228.jpg" alt="Profile Pic 5" class="profile-pic" data-pic="pic5.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  </button>
+				</div>
+    		</div>
+
 			<div class="mb-3 form-check">
 			  <input type="checkbox" class="form-check-input" id="stayConnected" />
 			  <label class="form-check-label" for="stayConnected"
@@ -86,14 +108,36 @@ export class RegisterPage extends Page {
 	  
 	attachFormListener() {
 		const form = document.getElementById('register_form');
+		let imageURL = '';
+
+		const profilePics = document.getElementById('profilePictures');
+		profilePics.addEventListener('click', (event) => {
+			const clicked = event.target.closest('img');
+			if (clicked) {
+				imageURL = clicked.src;
+				console.log('Selected Image URL', imageURL);
+			}
+		});
+
 		form.addEventListener('submit', async (e) => {
 		  e.preventDefault(); // Prevent the default form submission
 		  
 		  const email = document.getElementById('registerEmail').value;
 		  const password = document.getElementById('registerPassword').value;
-	
+			console.log(imageURL);
+		  // add profile picture
+		 // console.log(profilePics);
+		  
+
+		  
 		  // Prepare the data to send
-		  const data = { email, password };
+		  const data = {
+		  	email: email,
+		  	password: password,
+			profile_picture: imageURL,
+		  };
+		  
+		  //{ email, password, pic };
 	
 		  try {
 
