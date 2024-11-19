@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'my_auth',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -148,3 +150,16 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_COOKIE_NAME = 'csrftoken'  # Cookie name (default)
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost',
+]
+CSRF_COOKIE_SECURE = False  # Only send cookies over HTTPS (ensure you're using HTTPS for both frontend and backend)
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to access the cookie
+CSRF_COOKIE_PATH = '/'  # Path for the CSRF cookie
+CSRF_COOKIE_SAMESITE = 'None'  # Configure the SameSite attribute (can be 'Strict', 'Lax', or 'None')
+CORS_ALLOWED_ORIGINS = [
+    'https://localhost',  # Your frontend origin.
+]
+CORS_ALLOW_CREDENTIALS = True

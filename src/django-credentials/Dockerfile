@@ -10,5 +10,6 @@ COPY . .
 
 RUN pip install gunicorn hvac
 RUN pip install psycopg2-binary
+RUN pip install django-cors-headers
 
 EXPOSE 9000

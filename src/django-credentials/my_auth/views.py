@@ -1,9 +1,19 @@
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import ensure_csrf_cookie
 import json
 from django.contrib.auth.models import User
 
-@csrf_exempt  # Temporarily disable CSRF for testing; in production, use proper CSRF tokens
+@ensure_csrf_cookie
+def set_csrf_token(request):
+    csrf_token = get_token(request)
+    response = JsonResponse({'message': 'CSRF token set'})
+    response['X-CSRFToken'] = csrf_token
+    print(response)
+    return response
+
+# @csrf_protect
 def register_view(request):
     if request.method == 'POST':
         try:

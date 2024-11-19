@@ -4,6 +4,7 @@ import { RegisterPage } from './spa/register.js';
 import { LoginPage } from './spa/login.js';
 import { Games } from './spa/games.js';
 import { Pong } from './spa/pong.js';
+import { initializeCSRFToken } from './src/csrf.js';
 
 const routes = {
   '/': HomePage,
@@ -14,6 +15,8 @@ const routes = {
 };
 
 const router = new Router(routes);
+
+document.addEventListener('DOMContentLoaded', initializeCSRFToken);
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('click', (e) => {

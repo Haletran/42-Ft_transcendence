@@ -1,4 +1,5 @@
 import { Page } from '../src/pages.js';
+import { getCSRFToken } from '../src/csrf.js';
 
 export class RegisterPage extends Page {
 	constructor() {
@@ -95,12 +96,23 @@ export class RegisterPage extends Page {
 		  const data = { email, password };
 	
 		  try {
+
+			// get CSRF token
+			console.log('CSRF Token:', getCSRFToken('csrftoken'));
+			const csrfToken = getCSRFToken('csrftoken');
+			if (!csrfToken) {
+				console.error('CSRF token is missing!');
+			}
+
 			// Send data to the backend
+			
 			const response = await fetch('/api/register/', {
 			  method: 'POST',
 			  headers: {
 				'Content-Type': 'application/json',
+				'X-CSRFToken': csrfToken,
 			  },
+			  credentials: 'include',
 			  body: JSON.stringify(data),
 			});
 	
