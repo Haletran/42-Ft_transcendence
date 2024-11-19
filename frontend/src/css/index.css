@@ -159,18 +159,13 @@ img.main-logo {
     border: 2px solid rgb(33, 218, 125);
 }
 
-#actual_pp:hover {
-    transform: scale(1.1);
-}
-
-
-#other_pp:hover {
-    transform: scale(1.1);
-    cursor: pointer;
-}
-
 .pp {
     width: 70px;
     height: 70px;
     object-fit: cover;
+    cursor: pointer;
+}
+
+.pp:not(#actual_pp):hover {
+    transform: scale(1.1);
 }
