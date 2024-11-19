@@ -571,7 +571,6 @@ function drawBoard() {
             new Tile("Special Tile", "special", startX + tileSize * 7, startY + boardSize - cornerSize - 3 * tileSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 26
             new Tile("Event", "event", startX + tileSize * 7, startY + boardSize - cornerSize - 2 * tileSize, cornerSize, tileSize, "#ffcc00", 0, 0), // Tile 14
             new Tile("42 Paris", 8, startX + tileSize * 7, startY + boardSize - cornerSize - tileSize, tileSize, cornerSize, "#fff", -400, -200, "/static/images_42.png"), // Tile 27
-
         );
     }
     // Draw all tiles

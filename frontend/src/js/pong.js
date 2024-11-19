@@ -552,4 +552,3 @@ function game(value) {
 window.addEventListener('resize', resizeCanvas, false);
 window.addEventListener('keydown', checkKeyDown, false);
 window.addEventListener('keyup', checkKeyUp, false);
-resizeCanvas();

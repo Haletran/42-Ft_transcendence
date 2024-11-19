@@ -169,3 +169,7 @@ img.main-logo {
 .pp:not(#actual_pp):hover {
     transform: scale(1.1);
 }
+
+#choice_pp {
+    gap: 20px;
+}
