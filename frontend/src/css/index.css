@@ -173,3 +173,7 @@ img.main-logo {
 #choice_pp {
     gap: 20px;
 }
+
+.overflow-hidden {
+    overflow: hidden;
+}

@@ -45,15 +45,22 @@
         <div class="row gap-3">
             <div class="col-md-4">
                 <div class="list-group">
-                    <a id="choose_param" href="/frontend/src/pages/profile.html" class="list-group-item list-group-item-action"
-                    >
+                    <a id="choose_param" href="/frontend/src/pages/profile.html"
+                        class="list-group-item list-group-item-action">
                         Profile
                     </a>
                     <a id="choose_param" href="/frontend/src/pages/settings.html"
                         class="list-group-item list-group-item-action">Settings</a>
-                    <a id="choose_param" href="/frontend/src/pages/message.html" class="list-group-item list-group-item-action active" aria-current="true">Messages</a>
+                    <a id="choose_param" href="/frontend/src/pages/message.html"
+                        class="list-group-item list-group-item-action active" aria-current="true">Messages</a>
                 </div>
             </div>
+            <!-- A FAIRE : 
+            Direct message
+            Main Channel
+            Invitation a jouer a un jeu
+            Pouvoir blocker les users
+            Acceder au autre profile -->
             <div class="col">
                 <div class="card">
                     <div class="card-body">
@@ -61,14 +68,16 @@
                         <p class="card-text">You can chat with other users in real time.</p>
                         <div class="input-group mb-3">
                             <p id="chat" class="input-group-text text-start" style="width: 100%; height: 200px;"></p>
-                            <input id="msg" type="text" class="form-control" placeholder="Type your message here" aria-label="Type your message here" aria-describedby="button-addon2">
-                            <button id="send" class="btn btn-outline-secondary" type="button" id="button-addon2">Send</button>
+                            <input id="msg" type="text" class="form-control " placeholder="Type your message here"
+                                aria-label="Type your message here" aria-describedby="button-addon2">
+                            <button id="send" class="btn btn-outline-secondary" type="button"
+                                id="button-addon2">Send</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
- 
+
 </body>
 <script>
 
@@ -76,6 +85,10 @@
     document.getElementById("send").addEventListener("click", function () {
         var msg = document.getElementById("msg").value;
         console.log(msg);
+        var chat = document.getElementById("chat");
+        if (chat.innerHTML.split("<br>").length > 8) {
+            chat.innerHTML = chat.innerHTML.split("<br>").slice(1).join("<br>");
+        }
         document.getElementById("chat").innerHTML += "USER 1: " + msg + "<br>";
         document.getElementById("msg").value = '';
     });
@@ -84,10 +97,15 @@
     document.getElementById("msg").addEventListener("keypress", function (e) {
         if (e.key === 'Enter') {
             var msg = document.getElementById("msg").value;
+            var chat = document.getElementById("chat");
+            if (chat.innerHTML.split("<br>").length > 8) {
+                chat.innerHTML = chat.innerHTML.split("<br>").slice(1).join("<br>");
+            }
             document.getElementById("chat").innerHTML += "USER 1: " + msg + "<br>";
             console.log(msg);
             document.getElementById("msg").value = '';
         }
     });
 </script>
+
 </html>
