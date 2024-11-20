@@ -26,6 +26,9 @@ backend:
 
 build:
 	@echo "Building the project"
+	@echo -n "Enter the decryption password: "
+	@stty -echo && read PASSWORD && stty echo
+	@echo $$PASSWORD | openssl enc -aes-256-cbc -d -pbkdf2 -in encrypt.env.enc -out .env || (echo "Decryption failed. Exiting."; exit 1)
 	@docker compose -f ${COMPOSE_FILE} up --build --remove-orphans
 
 up:
@@ -34,6 +37,7 @@ up:
 
 down:
 	@echo "Stopping the project"
+	@rm -rf .env
 	-docker compose -f ${COMPOSE_FILE} down -v
 
 stop:
@@ -42,7 +46,7 @@ stop:
 
 
 reset: down
-	-docker volume rm #need to add all volumes
+	-docker volume rm $(docker volume ls -q)
 	-docker container prune -f
 	-docker rmi $$(docker images -a -q)
 	-docker volume prune -f
