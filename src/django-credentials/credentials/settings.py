@@ -42,6 +42,28 @@ try:
 except Exception as e:
     raise RuntimeError(f"Unable to retrieve SECRET_KEY from Vault: {e}")
 
+# Fetch database credentials from Vault
+try:
+    # Attempt to fetch the secret stored at the given path in Vault
+    secret_db = client.secrets.kv.v2.read_secret_version(path='data/django/db_credentials')
+    
+    # Correct way to access the credentials from Vault response
+    db_credentials = secret_db['data']['data']
+    
+    POSTGRES_DB = db_credentials['db_name']
+    POSTGRES_USER = db_credentials['db_user']
+    POSTGRES_PASSWORD = db_credentials['db_password']
+    POSTGRES_HOST = db_credentials['db_host']
+    POSTGRES_PORT = db_credentials['db_port']
+    
+    # Print or use these values to configure your DB connection
+    print(f"Database Name: {POSTGRES_DB}")
+    print(f"Database User: {POSTGRES_USER}")
+    # Do not print DB_PASSWORD or other sensitive values in production
+
+except Exception as e:
+    raise RuntimeError(f"Unable to retrieve DB credentials from Vault: {e}")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -99,11 +121,11 @@ WSGI_APPLICATION = 'credentials.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'dboiredb'),
-        'USER': os.getenv('POSTGRES_USER', 'dboire'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', '1234'),
-        'HOST': os.getenv('POSTGRES_HOST', 'database'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
     }
 }
 
