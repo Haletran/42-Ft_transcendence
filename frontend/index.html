@@ -14,7 +14,6 @@
 
 <body data-bs-theme="dark">
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <canvas id="canvas" class="position-absolute" width="1000" height="1000" style="z-index: -1000" ;></canvas>
     <!-- <img id="circle" class="d-none position-absolute" src="src/imgs/circle2.svg" width="170px" /> -->
     <div class="app">
         <div class="d-flex flex-row justify-content-center align-items-center" style="min-height: 90vh">
@@ -22,16 +21,38 @@
                 <div class="d-flex flex-row align-items-center gap-1">
                     <p class="montserrat-bold fs-1 animate__animated">Ft_transcendence</p>
                 </div>
-                <button id="circle" class="btn mb-3 btn-outline-light d-flex align-items-center" type="submit"
-                    onclick="window.location.href='src/pages/home.html'">
-                    Login with
-                    <img class="logo" src="src/imgs/42.png" alt="google" width="40">
-                </button>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                    <label class="form-check-label" for="flexCheckDefault">
-                        Stay connected
-                    </label>
+                <div class="d-flex flex-column align-items-center gap-2">
+                    <div class=" mb-1">
+                        <label for="exampleFormControlInput1" class="form-label">Username</label>
+                        <input type="email" class="form-control" id="exampleFormControlInput1"
+                            placeholder="your username...">
+                    </div>
+                    <div class=" mb-1">
+                        <label for="exampleFormControlInput1" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="exampleFormControlInput1"
+                            placeholder="name@example.com">
+                    </div>
+                    <div class="mb-1">
+                        <label for="inputPassword5" class="form-label">Password</label>
+                        <input type="password" id="inputPassword5" class="form-control"
+                            aria-describedby="passwordHelpBlock">
+                    </div>
+                    <div class="mb-3">
+                        <button id="register_button" class="btn mb-3 btn-outline-light d-flex align-items-center"
+                            type="submit">
+                            Register
+                        </button>
+                    </div>
+                    <button id="login_42" class="btn mb-3 btn-outline-light d-flex align-items-center" type="submit">
+                        Login with
+                        <img class="logo" src="src/imgs/42.png" alt="google" width="40">
+                    </button>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Stay connected
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
