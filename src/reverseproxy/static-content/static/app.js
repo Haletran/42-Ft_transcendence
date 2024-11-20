@@ -5,6 +5,7 @@ import { LoginPage } from './spa/login.js';
 import { Games } from './spa/games.js';
 import { Pong } from './spa/pong.js';
 import { initializeCSRFToken } from './src/csrf.js';
+import { fetchUserInfo } from './src/fetchUser.js';
 
 const routes = {
   '/': HomePage,
@@ -16,9 +17,9 @@ const routes = {
 
 const router = new Router(routes);
 
-document.addEventListener('DOMContentLoaded', initializeCSRFToken);
-
 document.addEventListener('DOMContentLoaded', () => {
+  initializeCSRFToken();
+  fetchUserInfo();
   document.body.addEventListener('click', (e) => {
     if (e.target.matches('[data-link]')) {
       e.preventDefault();
