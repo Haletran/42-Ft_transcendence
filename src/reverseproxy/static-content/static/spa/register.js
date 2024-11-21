@@ -26,6 +26,7 @@ export class RegisterPage extends Page {
 			  id="back_button"
 			  type="button"
 			  class="btn btn-light fw-bold opacity"
+			  data-link="/login_base"
 			>
 			  Back
 			</button>
@@ -60,19 +61,19 @@ export class RegisterPage extends Page {
 				<label for="profilePicture" class="form-label">Choose a profile picture</label>
 				<div id="profilePictures" class="d-flex justify-content-around gap-2">
 				  <button type="button" class="profile-pic-btn">
-					<img src="https://img.freepik.com/vecteurs-libre/homme-affaires-caractere-avatar-isole_24877-60111.jpg" alt="Profile Pic 1" class="profile-pic" data-pic="pic1.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="https://cdn.intra.42.fr/users/65ca7a946948378f5cf99fb253ea4907/bapasqui.jpg" alt="Profile Pic 1" class="profile-pic" data-pic="pic1.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				  <button type="button" class="profile-pic-btn">	
-					<img src="https://w7.pngwing.com/pngs/492/922/png-transparent-jedi-avatar-user-profile-user-account-royaltyfree.png" alt="Profile Pic 2" class="profile-pic" data-pic="pic2.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.asterix.com%2Fillus%2Fasterix-de-a-a-z%2Fles-personnages%2Fperso%2Fg09b.gif&f=1&nofb=1&ipt=cfac469a6be48f3e2605046abda8e951dca4d7df0fe992f3671dbb2a8f138bef&ipo=images" alt="Profile Pic 2" class="profile-pic" data-pic="pic2.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				  <button type="button" class="profile-pic-btn">
-					<img src="https://img.freepik.com/vecteurs-premium/avatar-icon0002_750950-43.jpg?semt=ais_hybrid" alt="Profile Pic 3" class="profile-pic" data-pic="pic3.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fyt3.ggpht.com%2Fa%2FAGF-l7--byG5GmricLArCBG8Z22vUh_aBty7iBuE_g%3Ds900-c-k-c0xffffffff-no-rj-mo&f=1&nofb=1&ipt=1a23ae84ed1fc659ca24019a82eb57172bb67fd39011b10a447dd4267ce972f5&ipo=images" alt="Profile Pic 3" class="profile-pic" data-pic="pic3.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				  <button type="button" class="profile-pic-btn">
-					<img src="https://img.favpng.com/5/1/21/computer-icons-user-profile-avatar-female-png-favpng-cqykKc0Hpkh65ueWt6Nh2KFvS.jpg" alt="Profile Pic 4" class="profile-pic" data-pic="pic4.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.anniversaire-celebrite.com%2Fupload%2F250x333%2Fgaston-lagaffe-250.jpg&f=1&nofb=1&ipt=53a428ca710bb37ea8805c2cb05bb36d77f0f755da02d93de43d40fa78b0eeb2&ipo=images" alt="Profile Pic 4" class="profile-pic" data-pic="pic4.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				  <button type="button" class="profile-pic-btn">
-					<img src="https://img.freepik.com/premium-vector/beautiful-muslim-girl-hijab-line-art-vector-design-logo-icon-sign-illustration-template_678696-228.jpg" alt="Profile Pic 5" class="profile-pic" data-pic="pic5.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fa0%2F30%2F4f%2Fa0304f8b33cf2c7a891dcc970133d58a.jpg&f=1&nofb=1&ipt=0f6532af6f67a73c91a735320257aba21c7aed6e50a5c957d79e3da29ec1a188&ipo=images" alt="Profile Pic 5" class="profile-pic" data-pic="pic5.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				</div>
     		</div>
@@ -83,18 +84,11 @@ export class RegisterPage extends Page {
 				>Stay Connected</label
 			  >
 			</div>
-			<div class="d-flex justify-content-between flex-column gap-2">
-                <a href="#" data-link=login class="text-white">Login</a>
-            </div>
              <div class="d-flex justify-content-between flex-column gap-2">
                 <button id="register_button" 
                 type="submit" 
                 class="btn btn-outline-light full-width"
                 >Register</button>
-	            <button id="register_42"
-	            type="submit" 
-	            class="btn btn-outline-light full-width "
-	            >Login with 42</button>
              </div>
 		  </form>
 		</div>
