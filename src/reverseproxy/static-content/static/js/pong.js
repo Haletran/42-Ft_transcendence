@@ -515,6 +515,8 @@ function stopGame() {
 function game(value) {
     let count = 3;
     clearCanvas();
+    if(!value)
+        value = "pvp";
     gameRunning = false;
     choose_gamemode(value);
 
