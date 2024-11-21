@@ -1,10 +1,10 @@
 import { Page } from '../src/pages.js';
 
-export class HomePage extends Page {
-	constructor() {
-	  super();
-	  this.template = `
-      <div class="header">
+export class Settings extends Page {
+    constructor() {
+        super();
+        this.template = `
+            <div class="header">
         <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand " href="/" data-link="/">
@@ -31,24 +31,32 @@ export class HomePage extends Page {
             </div>
         </nav>
     </div>
-    <div class="app">
-        <div class="container d-flex flex-column justify-content-center align-items-center gap-3"
-            style="min-height: 90vh">
-            <div class="block flex-row gap-2 p-5 animate__animated animate__backInDown"
-                data-link="/pong">
-                <img class="invert" src="/static/imgs/logo.png" alt="pong_logo" width="30">
-                <h1 class="montserrat-bold fs-1">Pong</h1>
+            <div class="container mt-5">
+        <div class="row gap-3">
+            <div class="col-md-4">
+                <div class="list-group">
+                    <a id="choose_param"  href="/profile" data-link="/profile"
+                        class="list-group-item list-group-item-action" aria-current="true">
+                        Profile
+                    </a>
+                    <a id="choose_param" data-link="/settings" 
+                        class="list-group-item list-group-item-action active" aria-current="true">Settings</a>
+                    <a id="choose_param" href="/chat" data-link="/chat"
+                        class="list-group-item list-group-item-action">Messages</a>
+                </div>
             </div>
-            <div class="block gap-2 p-5 flex-row animate__animated animate__backInUp"
-                data-link="/monopoly">
-                <img class="invert" src="/static/imgs/dice.png" alt="dice_logo" width="40">
-                <h1 class="montserrat-bold fs-1">Monopoly</h1>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Settings</h5>
+                        <p class="card-text">idk what to put here</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-	  `;
-	}
-  render() {
-    super.render(); // Call the parent render method
+ `;
+    }
+    render() {
+        super.render(); // Call the parent render method
+    }
 }
-  }
