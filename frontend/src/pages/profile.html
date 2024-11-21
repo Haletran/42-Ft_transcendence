@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ft_transcendence</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body data-bs-theme="dark">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div class="header">
+        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a class="navbar-brand " href="/frontend/index.html">
+                    <img src="../imgs/logo.png" alt="" width="25" class="d-inline-block align-text-top invert">
+                    <p class="d-inline montserrat-bold">Ft_transcendence</p>
+                </a>
+                <a class="nav-link active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img alt="Logo" width="40" height="40" class="rounded-circle" style="
+                              object-fit: cover;
+                            " src="https://cdn.intra.42.fr/users/65ca7a946948378f5cf99fb253ea4907/bapasqui.jpg"
+                        alt="profile_picture" />
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="#">Profile</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">Settings</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item fw-bold text-danger" href="#">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container mt-5">
+        <div class="row gap-3">
+            <div class="col-md-4">
+                <div class="list-group">
+                    <a id="choose_param" href="/frontend/src/pages/message.html"
+                        class="list-group-item list-group-item-action active" aria-current="true">
+                        Profile
+                    </a>
+                    <a id="choose_param" href="/frontend/src/pages/settings.html"
+                        class="list-group-item list-group-item-action">Settings</a>
+                    <a id="choose_param" href="/frontend/src/pages/message.html"
+                        class="list-group-item list-group-item-action">Messages</a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Profile Information</h5>
+                        <p class="card-text">Here you can update your profile information.</p>
+                        <div class="form-floating mb-3">
+                            <input type="email" value="test@test.fr" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Email address</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="password" value="*************" class="form-control" id="floatingPassword"
+                                placeholder="Password">
+                            <label for="floatingPassword">Password</label>
+                        </div>
+                        <br>
+                        <h5 class="card-title">Profile Picture</h5>
+                        <p class="card-text">Here you can update your profile picture.</p>
+                        <div id="choice_pp" class="d-flex justify-content-center">
+                            <img id="actual_pp"
+                                src="https://cdn.intra.42.fr/users/65ca7a946948378f5cf99fb253ea4907/bapasqui.jpg"
+                                alt="profile_picture" class="rounded-circle pp">
+                            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.asterix.com%2Fillus%2Fasterix-de-a-a-z%2Fles-personnages%2Fperso%2Fg09b.gif&f=1&nofb=1&ipt=cfac469a6be48f3e2605046abda8e951dca4d7df0fe992f3671dbb2a8f138bef&ipo=images"
+                                alt="profile_picture" class="rounded-circle pp">
+                            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fyt3.ggpht.com%2Fa%2FAGF-l7--byG5GmricLArCBG8Z22vUh_aBty7iBuE_g%3Ds900-c-k-c0xffffffff-no-rj-mo&f=1&nofb=1&ipt=1a23ae84ed1fc659ca24019a82eb57172bb67fd39011b10a447dd4267ce972f5&ipo=images"
+                                alt="profile_picture" class="rounded-circle pp">
+                            <img src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.anniversaire-celebrite.com%2Fupload%2F250x333%2Fgaston-lagaffe-250.jpg&f=1&nofb=1&ipt=53a428ca710bb37ea8805c2cb05bb36d77f0f755da02d93de43d40fa78b0eeb2&ipo=images"
+                                alt="profile_picture" class="rounded-circle pp">
+                            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fa0%2F30%2F4f%2Fa0304f8b33cf2c7a891dcc970133d58a.jpg&f=1&nofb=1&ipt=0f6532af6f67a73c91a735320257aba21c7aed6e50a5c957d79e3da29ec1a188&ipo=images"
+                                alt="profile_picture" class="rounded-circle pp">
+                        </div>
+                        <button id="update_info" type="button" class="btn btn-primary mt-3">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="toast align-items-center position-fixed bottom-0 end-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Profile successfully updated!
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="footer">
+        <footer class="footer">
+            <div class="container d-flex align-items-center justify-content-center">
+                <span class="text-muted montserrat">© 2024. 42 Angouleme. All rights reserved.</span>
+            </div>
+        </footer>
+    </div> -->
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+<script type="module" src="/frontend/src/js/event.js"></script>
+<script>
+    document.getElementById("update_info").addEventListener("click", () => {
+        document.querySelector(".toast").classList.add("show");
+    });
+</script>
+
+</html>
