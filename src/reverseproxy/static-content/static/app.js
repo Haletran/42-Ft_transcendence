@@ -10,7 +10,8 @@ import { Chat } from './spa/chat.js';
 import { Settings } from './spa/settings.js';
 import { initializeCSRFToken } from './src/csrf.js';
 import { fetchUserInfo } from './src/fetchUser.js';
-
+import { loginBasePage } from './src/login_base.js';
+ 
 const routes = {
   '/': LoginPage,
   '/register': RegisterPage,
@@ -21,6 +22,7 @@ const routes = {
   '/settings' : Settings,
   '/chat' : Chat,
   '/monopoly' : Monopoly,
+  '/login_base' : loginBasePage,
 };
 
 const router = new Router(routes);

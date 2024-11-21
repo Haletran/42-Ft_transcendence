@@ -12,6 +12,10 @@ export class LoginPage extends Page {
                         <p class="montserrat-bold fs-1 animate__animated">Ft_transcendence</p>
                     </div>
                     <button class="btn mb-3 btn-outline-light d-flex align-items-center" type="submit"
+                        data-link="/login_base">
+                        Login
+                    </button>
+		            <button class="btn mb-3 btn-outline-light d-flex align-items-center" type="submit"
                         data-link="/home">
                         Login with
                         <img class="logo" src="/static/imgs/42.png" alt="google" width="40">
