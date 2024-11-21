@@ -164,7 +164,7 @@ export class RegisterPage extends Page {
 			  const result = await response.json();
 			  console.log('Registration successful:', result);
 			  // Optionally, redirect to login or home page
-			  // window.location.href = '/';
+			  window.location.href = '/';
 			} else {
 			  const error = await response.json();
 			  console.error('Registration failed:', error);

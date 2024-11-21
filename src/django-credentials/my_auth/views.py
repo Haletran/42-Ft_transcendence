@@ -1,3 +1,5 @@
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_protect
@@ -29,8 +31,9 @@ def register_view(request):
 
             # Create the user
             user = MyUser.objects.create_user(username=email, email=email, password=password, profile_picture=profile_picture)
-
-            return JsonResponse({'message': 'User registered successfully!'}, status=201)
+            login(request, user)
+            response = JsonResponse({'message': 'User registered successfully!'}, status=201)
+            return response
 
         except ValidationError as e:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
@@ -38,3 +41,17 @@ def register_view(request):
             return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
+
+@login_required
+def user_info(request):
+    user = request.user
+    return JsonResponse({
+        'email': user.email,
+        'profile_picture': user.profile_picture
+    })
+
+def unauthorized_user_info(request):
+    return JsonResponse({'error': 'Unauthorized'}, status=401)
+
+#@login_required
+#LOGOUT

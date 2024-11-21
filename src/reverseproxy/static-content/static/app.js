@@ -3,22 +3,31 @@ import { HomePage} from './spa/home.js';
 import { RegisterPage } from './spa/register.js';
 import { LoginPage } from './spa/login.js';
 import { Games } from './spa/games.js';
+import { Monopoly } from './spa/monopoly.js';
 import { Pong } from './spa/pong.js';
+import { Profile } from './spa/profile.js';
+import { Chat } from './spa/chat.js';
+import { Settings } from './spa/settings.js';
 import { initializeCSRFToken } from './src/csrf.js';
+import { fetchUserInfo } from './src/fetchUser.js';
 
 const routes = {
-  '/': HomePage,
+  '/': LoginPage,
   '/register': RegisterPage,
-  '/login' : LoginPage,
+  '/home' : HomePage,
   '/games' : Games,
   '/pong' : Pong,
+  '/profile' : Profile,
+  '/settings' : Settings,
+  '/chat' : Chat,
+  '/monopoly' : Monopoly,
 };
 
 const router = new Router(routes);
 
-document.addEventListener('DOMContentLoaded', initializeCSRFToken);
-
 document.addEventListener('DOMContentLoaded', () => {
+  initializeCSRFToken();
+  fetchUserInfo();
   document.body.addEventListener('click', (e) => {
     if (e.target.matches('[data-link]')) {
       e.preventDefault();
