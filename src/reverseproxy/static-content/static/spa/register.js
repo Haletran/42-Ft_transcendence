@@ -61,19 +61,19 @@ export class RegisterPage extends Page {
 				<label for="profilePicture" class="form-label">Choose a profile picture</label>
 				<div id="profilePictures" class="d-flex justify-content-around gap-2">
 				  <button type="button" class="profile-pic-btn">
-					<img src="https://cdn.intra.42.fr/users/65ca7a946948378f5cf99fb253ea4907/bapasqui.jpg" alt="Profile Pic 1" class="profile-pic" data-pic="pic1.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="/static/imgs/bapasqui.jpg" alt="Profile Pic 1" class="profile-pic" data-pic="pic1.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				  <button type="button" class="profile-pic-btn">	
-					<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.asterix.com%2Fillus%2Fasterix-de-a-a-z%2Fles-personnages%2Fperso%2Fg09b.gif&f=1&nofb=1&ipt=cfac469a6be48f3e2605046abda8e951dca4d7df0fe992f3671dbb2a8f138bef&ipo=images" alt="Profile Pic 2" class="profile-pic" data-pic="pic2.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="/static/imgs/asterix.gif" alt="Profile Pic 2" class="profile-pic" data-pic="pic2.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				  <button type="button" class="profile-pic-btn">
-					<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fyt3.ggpht.com%2Fa%2FAGF-l7--byG5GmricLArCBG8Z22vUh_aBty7iBuE_g%3Ds900-c-k-c0xffffffff-no-rj-mo&f=1&nofb=1&ipt=1a23ae84ed1fc659ca24019a82eb57172bb67fd39011b10a447dd4267ce972f5&ipo=images" alt="Profile Pic 3" class="profile-pic" data-pic="pic3.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="/static/imgs/spirou.jpeg" alt="Profile Pic 3" class="profile-pic" data-pic="pic3.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				  <button type="button" class="profile-pic-btn">
-					<img src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.anniversaire-celebrite.com%2Fupload%2F250x333%2Fgaston-lagaffe-250.jpg&f=1&nofb=1&ipt=53a428ca710bb37ea8805c2cb05bb36d77f0f755da02d93de43d40fa78b0eeb2&ipo=images" alt="Profile Pic 4" class="profile-pic" data-pic="pic4.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="/static/imgs/gaston.jpg" class="profile-pic" data-pic="pic4.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				  <button type="button" class="profile-pic-btn">
-					<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fa0%2F30%2F4f%2Fa0304f8b33cf2c7a891dcc970133d58a.jpg&f=1&nofb=1&ipt=0f6532af6f67a73c91a735320257aba21c7aed6e50a5c957d79e3da29ec1a188&ipo=images" alt="Profile Pic 5" class="profile-pic" data-pic="pic5.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+					<img src="/static/imgs/haddock.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				</div>
     		</div>
@@ -158,7 +158,7 @@ export class RegisterPage extends Page {
 			  const result = await response.json();
 			  console.log('Registration successful:', result);
 			  // Optionally, redirect to login or home page
-			  window.location.href = '/';
+			  window.location.href = '/home';
 			} else {
 			  const error = await response.json();
 			  console.error('Registration failed:', error);
