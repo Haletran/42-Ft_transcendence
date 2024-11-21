@@ -19,11 +19,8 @@ services:
   database:
     image: postgres:latest
     container_name: postgres-db
-    environment:
-      POSTGRES_USER: dboire
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: dboiredb
-      POSTGRES_HOST: database
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     volumes:
@@ -50,7 +47,7 @@ services:
       - IPC_LOCK
     networks:
       - transcendence
-    command: /bin/sh -c "vault server -config=/vault/config/vault.json & sleep 3 && ./vault/config/unseal.sh && tail -f /dev/null"
+    command: /bin/sh -c "vault server -config=/vault/config/vault.json & sleep 1 && ./vault/config/unseal.sh && tail -f /dev/null"
 
   django-credentials:
     build: src/django-credentials/.
@@ -70,7 +67,7 @@ services:
     networks:
       - transcendence
     command: >
-      sh -c "sleep 5 && python3 manage.py makemigrations && python manage.py makemigrations my_auth && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 credentials.wsgi:application"
+      sh -c "sleep 8 && python3 manage.py makemigrations && python manage.py makemigrations my_auth && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 credentials.wsgi:application"
   
 volumes:
   dblogins:
