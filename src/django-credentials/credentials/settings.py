@@ -21,18 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 VAULT_ADDR = os.getenv('VAULT_ADDR', 'http://localhost:8200')  # Vault service name in Docker Compose
 VAULT_TOKEN = os.getenv('VAULT_TOKEN', None)
 
-# Ensure that the Vault token is provided
-if VAULT_TOKEN is None:
-    raise ValueError("VAULT_TOKEN is not set in the environment. Please set it in your .env file.")
-
 # Create a client for Vault
 client = Client(url=VAULT_ADDR, token=VAULT_TOKEN)
 
-# Check if Vault authentication is successful
-if not client.is_authenticated():
-    raise Exception("Vault authentication failed")
-
-# SECURITY WARNING: keep the secret key used in production secret!
 try:
     # Attempt to fetch the secret stored at the given path in Vault
     secret = client.secrets.kv.v2.read_secret_version(path='data/django/secret_key')
@@ -55,11 +46,6 @@ try:
     POSTGRES_PASSWORD = db_credentials['db_password']
     POSTGRES_HOST = db_credentials['db_host']
     POSTGRES_PORT = db_credentials['db_port']
-    
-    # Print or use these values to configure your DB connection
-    print(f"Database Name: {POSTGRES_DB}")
-    print(f"Database User: {POSTGRES_USER}")
-    # Do not print DB_PASSWORD or other sensitive values in production
 
 except Exception as e:
     raise RuntimeError(f"Unable to retrieve DB credentials from Vault: {e}")
