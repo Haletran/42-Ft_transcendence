@@ -1,9 +1,9 @@
 import { Page } from '../src/pages.js';
 
 export class HomePage extends Page {
-	constructor() {
-	  super();
-	  this.template = `
+    constructor() {
+        super();
+        this.template = `
       <div class="header">
         <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
             <div class="container-fluid">
@@ -47,8 +47,8 @@ export class HomePage extends Page {
         </div>
     </div>
 	  `;
-	}
-  render() {
-    super.render(); // Call the parent render method
+    }
+    render() {
+        super.render(); // Call the parent render method
+    }
 }
-  }

@@ -110,6 +110,42 @@ function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+export function game(value) {
+    let count = 3;
+    clearCanvas();
+    gameRunning = false;
+    choose_gamemode(value);
+
+    const text = player1.name + " vs " + player2.name;
+    if (canvas.width < 900)
+        ctx.font = "20px Arial";
+    else
+        ctx.font = "40px Arial";
+    const textWidth = ctx.measureText(text).width;
+    ctx.fillStyle = "white";
+    ctx.fillText(text, (canvas.width - textWidth) / 2, 50);
+
+    let interval = setInterval(() => {
+        ctx.clearRect(canvas.width / 2 - 50, canvas.height / 2 - 100, 100, 150);
+        ctx.font = "50px Arial";
+        ctx.fillStyle = "white";
+        ctx.fillText(count, canvas.width / 2 - 20, canvas.height / 2);
+        count--;
+        if (count < 0) {
+            clearInterval(interval);
+            gameRunning = true;
+            draw_ball();
+            draw_table();
+            draw_paddle();
+            draw_table();
+            draw_paddle();
+            if (value != "ai")
+                move_players();
+        }
+    }, 500);
+    resizeCanvas(); // add this so that the canvas is resized when the game starts
+}
+
 // FUNCTIONS
 function debug_print() {
     if (!gameRunning) return;
@@ -336,9 +372,23 @@ function move_players() {
     const speedFactor = 0.9;
     // if (canvas.width >= 900)
     //     speedFactor = 0.9;
-
+    console.log("move_players");
     for (let key in keys) {
-        let player = window[keys[key].player];
+        let player;
+        switch (keys[key].player) {
+            case 'player1':
+                player = player1;
+                break;
+            case 'player2':
+                player = player2;
+                break;
+            case 'player3':
+                player = player3;
+                break;
+            case 'player4':
+                player = player4;
+                break;
+        }
         if (player.name != "AI") {
 
             let change = keys[key].change * speedFactor;
@@ -461,7 +511,7 @@ function resetBallPosition() {
     ball.vy = 1;
 }
 
-function choose_gamemode(value) {
+export function choose_gamemode(value) {
     // need to check size of the name
     if (value == "pvp") {
         player1 = new Paddle(canvas.width / 2 - 70 / 2, 30, "white", "bapasqui");
@@ -513,41 +563,7 @@ function stopGame() {
 }
 
 
-export function game(value) {
-    let count = 3;
-    clearCanvas();
-    gameRunning = false;
-    choose_gamemode(value);
 
-    const text = player1.name + " vs " + player2.name;
-    if (canvas.width < 900)
-        ctx.font = "20px Arial";
-    else
-        ctx.font = "40px Arial";
-    const textWidth = ctx.measureText(text).width;
-    ctx.fillStyle = "white";
-    ctx.fillText(text, (canvas.width - textWidth) / 2, 50);
-
-    let interval = setInterval(() => {
-        ctx.clearRect(canvas.width / 2 - 50, canvas.height / 2 - 100, 100, 150);
-        ctx.font = "50px Arial";
-        ctx.fillStyle = "white";
-        ctx.fillText(count, canvas.width / 2 - 20, canvas.height / 2);
-        count--;
-        if (count < 0) {
-            clearInterval(interval);
-            gameRunning = true;
-            draw_ball();
-            draw_table();
-            draw_paddle();
-            draw_table();
-            draw_paddle();
-            if (value != "ai")
-                move_players();
-        }
-    }, 500);
-    resizeCanvas(); // add this so that the canvas is resized when the game starts
-}
 
 // EVENTS
 window.addEventListener('resize', resizeCanvas, false);

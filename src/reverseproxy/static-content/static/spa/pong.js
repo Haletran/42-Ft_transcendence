@@ -1,4 +1,5 @@
 import { Page } from '../src/pages.js';
+import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
 
 export class Pong extends Page {
     constructor() {
@@ -86,7 +87,7 @@ export class Pong extends Page {
 
     render() {
         super.render();
-    
+
         const setupEventListeners = () => {
             const buttons = ['start_button', 'start_button2', 'tournament_button'];
             buttons.forEach(buttonId => {
@@ -96,14 +97,30 @@ export class Pong extends Page {
                     document.getElementById(buttonId).addEventListener('click', () => {
                         const canvas = document.getElementById('pong_canvas');
                         if (canvas && this.game) {
-                            canvas.style.display = 'block';
+                            showElementsByClass('game', 'flex');
+                            hideElementsByClass('menu');
+                            addClassToElementsByClass('game', 'center');
+                            document.getElementById('pong_canvas').style.display = 'block';
                             this.game(button.value);
                         }
                     });
                 }
             });
         };
-    
+
+        // ['start_button', 'start_button2'].forEach(buttonId => {
+        //     const button = document.getElementById(buttonId);
+        //     if (button) {
+        //         button.addEventListener('click', function () {
+        //             hideElementsByClass('menu');
+        //             showElementsByClass('game', 'flex');
+        //             addClassToElementsByClass('game', 'center');
+        //             document.getElementById('pong_canvas').style.display = 'block';
+        //             game(this.value);
+        //         });
+        //     }
+        // });
+
         if (!document.getElementById('pong_game_script')) {
             return new Promise((resolve) => {
                 import('/static/spa/pong_game.js')
