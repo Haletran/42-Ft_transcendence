@@ -1,4 +1,5 @@
 import { Page } from '../src/pages.js';
+import { getCSRFToken } from '../src/csrf.js';
 
 export class loginBasePage extends Page {
 	constructor() {
@@ -11,7 +12,7 @@ export class loginBasePage extends Page {
 		>
 		  <div class="blob"></div>
 		  <form
-			id="register_form"
+			id="login_form"
 			class="p-4"
 			style="
 			  width: 400px;
@@ -31,22 +32,22 @@ export class loginBasePage extends Page {
 			</button>
 			<h3 class="text-center text-light fw-bold">Login</h3>
 			<div class="mb-3">
-			  <label for="registerEmail" class="form-label"
+			  <label for="loginEmail" class="form-label"
 				>Email address</label
 			  >
 			  <input
 				type="email"
 				class="form-control text-bg-dark"
-				id="registerEmail"
+				id="loginEmail"
 				aria-describedby="emailHelp"
 			  />
 			</div>
 			<div class="mb-3">
-			  <label for="registerPassword" class="form-label">Password</label>
+			  <label for="loginPassword" class="form-label">Password</label>
 			  <input
 				type="password"
 				class="form-control text-bg-dark"
-				id="registerPassword"
+				id="loginPassword"
 			  />
 			</div>
 			<div class="mb-3 form-check">
@@ -69,7 +70,58 @@ export class loginBasePage extends Page {
 		</div>
 	  `;
     }
-    render() {
-      super.render(); // Call the parent render method
-  }
-    }
+	render()
+	{
+		super.render(); // Call the parent render method
+		this.attachFormLoginListener(); // Now attach the listener here
+	}
+	
+	attachFormLoginListener() {
+		const form = document.getElementById('login_form');
+
+		form.addEventListener('submit', async (e) => {
+		  e.preventDefault(); // Prevent the default form submission
+		  
+		  const email = document.getElementById('loginEmail').value;
+		  const password = document.getElementById('loginPassword').value;
+	
+		  // Prepare the data to send
+		  const data = { email, password };
+
+		  try {
+
+			// get CSRF token
+			console.log('CSRF Token:', getCSRFToken('csrftoken'));
+			const csrfToken = getCSRFToken('csrftoken');
+			if (!csrfToken) {
+				console.error('CSRF token is missing!');
+			}
+
+			// Send data to the backend
+			const response = await fetch('/api/login/', {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': csrfToken,
+			  },
+			  credentials: 'include',
+			  body: JSON.stringify(data),
+			});
+	
+			if (response.ok) {
+			  const result = await response.json();
+			  console.log('Login successful:', result);
+			  // Optionally, redirect to home page or another page
+			  window.location.href = '/home';
+			} else {
+			  const error = await response.json();
+			  console.error('Login failed:', error);
+			  alert('Login failed: ' + error.message);
+			}
+		  } catch (error) {
+			console.error('Error:', error);
+			alert('An error occurred: ' + error.message);
+		  }
+		});
+	  }
+}

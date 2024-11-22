@@ -26,7 +26,7 @@ export class Profile extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/chat" data-link="/chat" >Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
                     </li>
                 </ul>
             </div>

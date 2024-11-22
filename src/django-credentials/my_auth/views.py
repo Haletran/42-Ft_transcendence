@@ -1,10 +1,8 @@
-from django.contrib.auth import login
-from django.contrib.auth import logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 import json
 # from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -42,6 +40,23 @@ def register_view(request):
             return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
+
+def login_view(request):
+    if request.method == 'POST':
+
+        data = json.loads(request.body)
+        email = data.get('email')
+        password = data.get('password')
+        
+        user = authenticate(request, username=email, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"status": "success", "message": "Login successful"})
+        else:
+            return JsonResponse({"status": "error", "message": "Invalid email or password"})
+    
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
 
 @login_required
 def logout_view(request):
