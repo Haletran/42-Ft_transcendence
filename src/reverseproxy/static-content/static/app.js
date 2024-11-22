@@ -11,6 +11,7 @@ import { Settings } from './spa/settings.js';
 import { initializeCSRFToken } from './src/csrf.js';
 import { fetchUserInfo } from './src/fetchUser.js';
 import { loginBasePage } from './spa/login_base.js';
+import { logoutUser } from './src/logout.js';
  
 const routes = {
   '/': LoginPage,

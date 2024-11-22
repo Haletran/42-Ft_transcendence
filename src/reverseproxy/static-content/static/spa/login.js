@@ -1,5 +1,6 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
+import { logoutUser } from '../src/logout.js';
 
 export class LoginPage extends Page {
 	constructor() {
@@ -33,6 +34,7 @@ export class LoginPage extends Page {
 	}
 	
 	render() {
+		logoutUser();
 		super.render(); // Call the parent render method
 		//this.attachFormListener(); // Now attach the listener here
 	  }
@@ -78,4 +80,4 @@ export class LoginPage extends Page {
 	// 		alert('An error occurred: ' + error.message);
 	// 	  }
 	// 	});
-	  }
+}

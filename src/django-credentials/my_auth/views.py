@@ -1,4 +1,5 @@
 from django.contrib.auth import login
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
@@ -41,6 +42,15 @@ def register_view(request):
             return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
+
+@login_required
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        response = JsonResponse({'message': 'Successfully logged out'}, status=200)
+        response.delete_cookie('sessionid')
+        return response
+    return JsonResponse({'error': 'Invalid request method (logging out)'}, status=405)
 
 @login_required
 def user_info(request):
