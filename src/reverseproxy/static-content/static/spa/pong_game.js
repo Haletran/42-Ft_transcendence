@@ -2,6 +2,7 @@ const canvas = document.getElementById("pong_canvas");
 const ctx = canvas.getContext("2d");
 let gameRunning = true;
 let animationFrameId;
+let player1, player2, player3, player4;
 
 
 const KEY_CODES = {
@@ -103,7 +104,7 @@ class Tournament {
 
 
 // CREATE INSTANCE
-ball = new Ball(canvas.width / 2, canvas.height / 2, 10, "white");
+let ball = new Ball(canvas.width / 2, canvas.height / 2, 10, "white");
 
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -512,7 +513,7 @@ function stopGame() {
 }
 
 
-function game(value) {
+export function game(value) {
     let count = 3;
     clearCanvas();
     gameRunning = false;

@@ -85,14 +85,37 @@ export class Pong extends Page {
     }
 
     render() {
-        super.render(); // Call the parent render method
-      
-        const script = document.createElement('script');
-        script.src = '/static/spa/pong_game.js'; // Correct path to your game script
-        document.body.appendChild(script);
-      
-        script.onload = () => {
-            game(); // Call the game function after the script is loaded
+        super.render();
+    
+        const setupEventListeners = () => {
+            const buttons = ['start_button', 'start_button2', 'tournament_button'];
+            buttons.forEach(buttonId => {
+                const button = document.getElementById(buttonId);
+                if (button) {
+                    button.replaceWith(button.cloneNode(true));
+                    document.getElementById(buttonId).addEventListener('click', () => {
+                        const canvas = document.getElementById('pong_canvas');
+                        if (canvas && this.game) {
+                            canvas.style.display = 'block';
+                            this.game(button.value);
+                        }
+                    });
+                }
+            });
         };
+    
+        if (!document.getElementById('pong_game_script')) {
+            return new Promise((resolve) => {
+                import('/static/spa/pong_game.js')
+                    .then(module => {
+                        this.game = module.game;
+                        setupEventListeners();
+                        resolve();
+                    })
+                    .catch(err => console.error('Error loading game:', err));
+            });
+        } else {
+            setupEventListeners();
+        }
     }
 }
