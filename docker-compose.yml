@@ -8,8 +8,7 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ./src/reverseproxy/conf/core.conf:/etc/nginx/conf.d/core.conf
-        # location of static content:
+      - ./src/reverseproxy/conf/core.conf:/etc/nginx/conf.d/core.conf # location of static content:
       - ./src/reverseproxy/static-content:/var/www/html
       - ./src/reverseproxy/ssl/nginx.crt:/etc/nginx/ssl/nginx.crt
       - ./src/reverseproxy/ssl/nginx.key:/etc/nginx/ssl/nginx.key
@@ -27,6 +26,15 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - transcendence
+
+  hardhat:
+    build:
+      context: ./src/crypto/.
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./src/crypto/.:/usr/src/app
+    command: npx hardhat node
 
   vault:
     image: hashicorp/vault:latest
@@ -56,19 +64,18 @@ services:
       - "9000:9000"
     volumes:
       - ./src/django-credentials/ssl/django-credentials.key:/etc/ssl/private/django.key
-      - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt
-        # - src/django-credentials/credentials:/app
+      - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt # - src/django-credentials/credentials:/app
     env_file:
       - .env
     environment:
-      VAULT_ADDR: 'http://vault_container:8200'  # Vault service name here
+      VAULT_ADDR: 'http://vault_container:8200' # Vault service name here
     depends_on:
       - database
     networks:
       - transcendence
     command: >
       sh -c "sleep 8 && python3 manage.py makemigrations && python manage.py makemigrations my_auth && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 credentials.wsgi:application"
-  
+
 volumes:
   dblogins:
     driver: local
@@ -77,6 +84,7 @@ volumes:
       o: 'bind'
       device: './data/dblogins'
   postgres_data:
+
 
 networks:
   transcendence:
