@@ -1,5 +1,5 @@
 # Use an official Node.js image as a base
-FROM node:16
+FROM node:18
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -8,10 +8,13 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install project dependencies
-RUN npm install
+RUN npm install ethers axios dotenv --legacy-peer-deps
 
 # Copy the rest of the application code
 COPY . .
+
+# Create the Hardhat config directory and set permissions
+RUN mkdir -p /root/.config/hardhat-nodejs && chmod -R 777 /root/.config
 
 # Expose a port if your Hardhat project requires one
 EXPOSE 8545

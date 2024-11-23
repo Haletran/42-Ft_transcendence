@@ -30,6 +30,9 @@ services:
   hardhat:
     build:
       context: ./src/crypto/.
+    container_name: hardhat
+    env_file:
+      - .env
     ports:
       - "8545:8545"
     volumes:
