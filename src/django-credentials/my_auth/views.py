@@ -7,6 +7,7 @@ import json
 # from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
+from django.db import transaction
 from .models import MyUser
 
 @ensure_csrf_cookie
@@ -72,6 +73,7 @@ def logout_view(request):
 
 @login_required
 def user_info(request):
+    # print(user)
     user = request.user
     return JsonResponse({
         'email': user.email,
@@ -82,23 +84,24 @@ def unauthorized_user_info(request):
     return JsonResponse({'error': 'Unauthorized'}, status=401)
 
 @login_required
+@transaction.atomic
 def update_profile_view(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            email = data.get('email')
-            password = data.get('password')
-            profile_picture = data.get('profile_picture')
+            NewEmail = data.get('email')
+            NewPassword = data.get('password')
+            NewProfile_picture = data.get('profile_picture')
 
-            user = request.user
-            if email:
-                user.email = email
-            if password:
-                user.set_password(password)
-            if profile_picture:
-                user.profile_picture = profile_picture
+            user = MyUser.objects.get(username=request.user.username)
+            
+            if NewEmail:
+                user.email = NewEmail
+            if NewPassword:
+                user.set_password(NewPassword)
+            if NewProfile_picture:
+                user.profile_picture = NewProfile_picture
             user.save()
-
             update_session_auth_hash(request, user)
 
             return JsonResponse({'status': 'success', 'message': 'Profile successfully updated'})

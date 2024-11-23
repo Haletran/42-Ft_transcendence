@@ -135,9 +135,7 @@ export class Profile extends Page {
 		  	password: password,
 			profile_picture: imageURL,
 		  };
-		  
-		  //{ email, password, pic };
-	
+		  	
 		  try {
 
 			// get CSRF token
