@@ -24,13 +24,13 @@ const routes = {
   '/chat' : Chat,
   '/monopoly' : Monopoly,
   '/login_base' : loginBasePage,
+  '/logout' : logoutUser,
 };
 
 const router = new Router(routes);
 
 document.addEventListener('DOMContentLoaded', () => {
   initializeCSRFToken();
-  // fetchUserInfo();
   document.body.addEventListener('click', (e) => {
     if (e.target.matches('[data-link]')) {
       e.preventDefault();

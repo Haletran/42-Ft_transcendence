@@ -111,6 +111,7 @@ export class loginBasePage extends Page {
 			if (response.ok) {
 			  const result = await response.json();
 			  console.log('Login successful:', result);
+			  alert('YOU ARE LOGGED IN MWAH!');
 			  // Optionally, redirect to home page or another page
 			  window.location.href = '/home';
 			} else {

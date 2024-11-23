@@ -1,3 +1,4 @@
+import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 
 export class Pong extends Page {
@@ -85,6 +86,7 @@ export class Pong extends Page {
     }
 
     render() {
+        fetchSettingsInfo();
         super.render(); // Call the parent render method
       
         const script = document.createElement('script');

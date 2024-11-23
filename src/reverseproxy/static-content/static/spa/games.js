@@ -1,8 +1,10 @@
+import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 
 export class Games extends Page {
     constructor() {
         super();
+        fetchSettingsInfo();
         this.template = `
             <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 90vh">
                 <div id="menu" class="d-flex flex-column align-items-center gap-2">

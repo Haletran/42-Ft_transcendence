@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 import json
 # from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.contrib.auth import update_session_auth_hash
 from .models import MyUser
 
 @ensure_csrf_cookie
@@ -43,19 +44,21 @@ def register_view(request):
 
 def login_view(request):
     if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            password = data.get('password')
+        
+            user = authenticate(request, username=email, password=password)
+            print(user)
+            if user is not None:
+                login(request, user)
+                return JsonResponse({"status": "success", "message": "Login successful"})
+            else:
+                return JsonResponse({"status": "error", "message": "Invalid email or password"}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
-        data = json.loads(request.body)
-        email = data.get('email')
-        password = data.get('password')
-        
-        user = authenticate(request, username=email, password=password)
-        
-        if user is not None:
-            login(request, user)
-            return JsonResponse({"status": "success", "message": "Login successful"})
-        else:
-            return JsonResponse({"status": "error", "message": "Invalid email or password"})
-    
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
 
 @login_required
@@ -78,5 +81,28 @@ def user_info(request):
 def unauthorized_user_info(request):
     return JsonResponse({'error': 'Unauthorized'}, status=401)
 
-#@login_required
-#LOGOUT
+@login_required
+def update_profile_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            password = data.get('password')
+            profile_picture = data.get('profile_picture')
+
+            user = request.user
+            if email:
+                user.email = email
+            if password:
+                user.set_password(password)
+            if profile_picture:
+                user.profile_picture = profile_picture
+            user.save()
+
+            update_session_auth_hash(request, user)
+
+            return JsonResponse({'status': 'success', 'message': 'Profile successfully updated'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)

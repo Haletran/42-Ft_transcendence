@@ -1,3 +1,4 @@
+import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 
 export class Monopoly extends Page {
@@ -70,6 +71,7 @@ export class Monopoly extends Page {
         `;
     }
     render() {
+        fetchSettingsInfo();
         super.render(); // Call the parent render method
     }
 }

@@ -18,7 +18,8 @@ export async function fetchUserInfo() {
     //    console.error("Fail in user info:", response.status);
     }
     catch (error) {
-        console.error("Fail in user info scnd:", error);
+        console.error("User not logged in:", error);
+        window.location.href = '/';
     }
 }
 
@@ -54,11 +55,13 @@ export async function fetchSettingsInfo() {
     else /*if (response.status === 401)*/ {
         console.log(response.status);
         console.log('User not logged in');
+        window.location.href = '/';
     }
     //else
     //    console.error("Fail in user info:", response.status);
     }
     catch (error) {
-        console.error("Fail in user info scnd:", error);
+        console.error("User not logged in:", error);
+        window.location.href = '/';
     }
 }
