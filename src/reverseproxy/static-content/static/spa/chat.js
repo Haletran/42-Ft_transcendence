@@ -59,10 +59,15 @@ export class Chat extends Page {
                         <p class="card-text">You can chat with other users in real time.</p>
                         <div class="input-group mb-3">
                             <p id="chat" class="input-group-text text-start" style="width: 100%; height: 200px;"></p>
-                            <input id="msg" type="text" class="form-control " placeholder="Type your message here"
+                            <input id="msg" type="text" class="form-control" placeholder="Type your message here"
                                 aria-label="Type your message here" aria-describedby="button-addon2">
-                            <button id="send" class="btn btn-outline-secondary" type="button"
-                                id="button-addon2">Send</button>
+                            <button id="send" class="btn btn-outline-secondary" type="button">Send</button>
+                        </div>
+                        <h5 class="card-title">Add Friend</h5>
+                        <div class="input-group mb-3">
+                            <input id="friend-email" type="email" class="form-control" placeholder="Enter friend's email"
+                                aria-label="Enter friend's email" aria-describedby="button-addon3">
+                            <button id="add-friend" class="btn btn-outline-secondary" type="button">Add Friend</button>
                         </div>
                     </div>
                 </div>

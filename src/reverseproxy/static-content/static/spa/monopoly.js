@@ -35,7 +35,7 @@ export class Monopoly extends Page {
             <div class="menu">
         <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 90vh">
             <div id="menu" class="d-flex flex-column align-items-center gap-3">
-                <button onclick="window.history.back()" class="btn btn-outline-light me-auto"><i
+                <button data-link="/home" class="btn btn-outline-light me-auto"><i 
                         class="bi bi-arrow-left"></i></button>
                 <div id="logo" style="display: flex; align-items: center">
                     <h1 id="menu" class="display-1 montserrat-bold fw-bold mx-auto">MONOPOLY</h1>
@@ -71,7 +71,7 @@ export class Monopoly extends Page {
         `;
     }
     render() {
-        fetchSettingsInfo();
+        // fetchSettingsInfo();
         super.render(); // Call the parent render method
     }
 }
