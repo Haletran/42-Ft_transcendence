@@ -37,6 +37,8 @@ services:
       - "8545:8545"
     volumes:
       - ./src/crypto/.:/usr/src/app
+    networks:
+      - transcendence
     command: npx hardhat node
 
   vault:

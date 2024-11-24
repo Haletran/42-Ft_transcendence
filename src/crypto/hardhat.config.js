@@ -1,44 +1,47 @@
 require("@nomiclabs/hardhat-ethers");
-const axios = require('axios');
+const { ethers } = require('ethers');
+const request = require('sync-request');
 require('dotenv').config(); // Load environment variables from .env file
 
-async function getVaultSecrets() {
+function getVaultSecrets() {
   try {
-    const response = await axios.get('http://vault:8200/v1/secret/data/metamask', {
+    const res = request('GET', 'http://localhost:8200/v1/secret/data/metamask', { // change this to vault_container for Docker
       headers: {
-        'X-Vault-Token': process.env.VAULT_TOKEN // Ensure VAULT_TOKEN is set in your environment
+        // 'X-Vault-Token': '' // Ensure VAULT_TOKEN is set in your environment
       }
     });
-    const data = response.data.data.data;
+    const data = JSON.parse(res.getBody('utf8')).data.data;
+    console.log('Successfully connected with the secrets from Vault.');
     return {
-      url: data.url,
-      accounts: [data.account]
+      url: `https://sepolia.infura.io/v3/${data.infura}`,
+      accounts: [data.key]
     };
   } catch (error) {
     console.error('Error fetching secrets from Vault:', error);
     return {
-      url: 'l', // Provide a default URL or handle it as needed
+      url: '', // Provide a default URL or handle it as needed
       accounts: [''] // Provide a default account or handle it as needed
     };
   }
 }
 
-async function getConfig() {
-  const vaultSecrets = await getVaultSecrets();
+const vaultSecrets = getVaultSecrets();
+console.log('Vault Secrets:', vaultSecrets);
 
-  return {
-    solidity: "0.8.27",
-    defaultNetwork: "sepolia",
-    networks: {
-      hardhat: {},
-      sepolia: {
-        url: vaultSecrets.url,
-        accounts: vaultSecrets.accounts
-      }
+const config = {
+  solidity: "0.8.27",
+  defaultNetwork: "sepolia",
+  networks: {
+    hardhat: {},
+    sepolia: {
+      url: vaultSecrets.url,
+      accounts: vaultSecrets.accounts,
+      gasPrice: 1000000000, // 1 Gwei
+      gas: 3000000, // 3 million units of gas
     }
-  };
-}
+  }
+};
 
-module.exports = (async () => {
-  return await getConfig();
-})();
+console.log('Hardhat Config:', config);
+
+module.exports = config;

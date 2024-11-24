@@ -8,10 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install project dependencies
-RUN npm install ethers axios dotenv --legacy-peer-deps
-
-# Copy the rest of the application code
-COPY . .
+RUN npm install ethers axios sync-request dotenv --legacy-peer-deps
 
 # Create the Hardhat config directory and set permissions
 RUN mkdir -p /root/.config/hardhat-nodejs && chmod -R 777 /root/.config
