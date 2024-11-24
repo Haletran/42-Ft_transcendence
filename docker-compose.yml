@@ -51,6 +51,8 @@ services:
       - transcendence
     command: /bin/sh -c "vault server -config=/vault/config/vault.json & sleep 1 && ./vault/config/unseal.sh && tail -f /dev/null"
 
+#LOGIN/REGISTER
+
   django-credentials:
     build: src/django-credentials/.
     container_name: django-credentials
@@ -84,6 +86,9 @@ services:
       - transcendence
 
 
+
+# FRIENDS
+
   django-friends:
     build: src/django_friends/.
     container_name: django-friends
@@ -110,6 +115,36 @@ services:
     networks:
       - transcendence
 
+
+#CHAT
+
+  django-chat:
+    build: src/django_chat/.
+    container_name: django-chat
+    ports:
+      - "9002:9000"
+    depends_on:
+      - chat-database
+    networks:
+      - transcendence
+    command: >
+      sh -c "python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 django_chat.wsgi:application"
+
+  chat-database:
+    image: postgres:latest
+    container_name: chat-database
+    ports:
+      - "5434:5432"
+    volumes:
+      - chat_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: chat_db
+      POSTGRES_USER: chat_user
+      POSTGRES_PASSWORD: chat_password
+    networks:
+      - transcendence
+
+
 volumes:
   dblogins:
     driver: local
@@ -119,6 +154,7 @@ volumes:
       device: './data/dblogins'
   credentials_data:
   friends_data:
+  chat_data:
 
 
 
