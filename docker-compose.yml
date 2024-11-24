@@ -15,7 +15,6 @@ services:
     depends_on:
       - django-credentials
 
-
   # hardhat:
   #   build:
   #     context: ./src/crypto/.
@@ -51,7 +50,7 @@ services:
       - transcendence
     command: /bin/sh -c "vault server -config=/vault/config/vault.json & sleep 1 && ./vault/config/unseal.sh && tail -f /dev/null"
 
-#LOGIN/REGISTER
+  #LOGIN/REGISTER
 
   django-credentials:
     build: src/django-credentials/.
@@ -72,7 +71,6 @@ services:
     command: >
       sh -c "sleep 8 && python3 manage.py makemigrations && python manage.py makemigrations my_auth && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 credentials.wsgi:application"
 
-
   database:
     image: postgres:latest
     container_name: credentials-database
@@ -85,9 +83,7 @@ services:
     networks:
       - transcendence
 
-
-
-# FRIENDS
+  # FRIENDS
 
   django-friends:
     build: src/django_friends/.
@@ -115,8 +111,7 @@ services:
     networks:
       - transcendence
 
-
-#CHAT
+  #CHAT
 
   django-chat:
     build: src/django_chat/.
@@ -128,7 +123,7 @@ services:
     networks:
       - transcendence
     command: >
-      sh -c "python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 django_chat.wsgi:application"
+      sh -c "sleep 8 && python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 django_chat.wsgi:application"
 
   chat-database:
     image: postgres:latest
@@ -144,7 +139,6 @@ services:
     networks:
       - transcendence
 
-
 volumes:
   dblogins:
     driver: local
@@ -155,7 +149,6 @@ volumes:
   credentials_data:
   friends_data:
   chat_data:
-
 
 
 networks:
