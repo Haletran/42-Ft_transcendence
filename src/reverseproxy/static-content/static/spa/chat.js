@@ -1,4 +1,5 @@
 import { Page } from '../src/pages.js';
+import { fetchUserInfo } from '../src/fetchUser.js';
 
 export class Chat extends Page {
     constructor() {
@@ -12,9 +13,9 @@ export class Chat extends Page {
                     <p class="d-inline montserrat-bold">Ft_transcendence</p>
                 </a>
                 <a class="nav-link active" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img alt="Logo" width="40" height="40" class="rounded-circle" style="
+                    <img alt="logo_profile_picture" width="40" height="40" class="rounded-circle" style="
                               object-fit: cover;
-                            " src="https://cdn.intra.42.fr/users/65ca7a946948378f5cf99fb253ea4907/bapasqui.jpg"
+                            " src=""
                         alt="profile_picture" />
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -25,7 +26,7 @@ export class Chat extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/chat" data-link="/chat" >Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
                     </li>
                 </ul>
             </div>
@@ -98,6 +99,7 @@ export class Chat extends Page {
  `;
     }
     render() {
+        fetchUserInfo();
         super.render(); // Call the parent render method
     }
 }

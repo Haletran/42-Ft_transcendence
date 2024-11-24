@@ -1,12 +1,13 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 import json
 # from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.contrib.auth import update_session_auth_hash
+from django.db import transaction
 from .models import MyUser
 
 @ensure_csrf_cookie
@@ -42,8 +43,37 @@ def register_view(request):
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
+def login_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            password = data.get('password')
+        
+            user = authenticate(request, username=email, password=password)
+            print(user)
+            if user is not None:
+                login(request, user)
+                return JsonResponse({"status": "success", "message": "Login successful"})
+            else:
+                return JsonResponse({"status": "error", "message": "Invalid email or password"}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
+
+@login_required
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        response = JsonResponse({'message': 'Successfully logged out'}, status=200)
+        response.delete_cookie('sessionid')
+        return response
+    return JsonResponse({'error': 'Invalid request method (logging out)'}, status=405)
+
 @login_required
 def user_info(request):
+    # print(user)
     user = request.user
     return JsonResponse({
         'email': user.email,
@@ -53,5 +83,29 @@ def user_info(request):
 def unauthorized_user_info(request):
     return JsonResponse({'error': 'Unauthorized'}, status=401)
 
-#@login_required
-#LOGOUT
+@login_required
+@transaction.atomic
+def update_profile_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            NewEmail = data.get('email')
+            NewPassword = data.get('password')
+            NewProfile_picture = data.get('profile_picture')
+
+            user = MyUser.objects.get(username=request.user.username)
+            
+            if NewEmail:
+                user.email = NewEmail
+            if NewPassword:
+                user.set_password(NewPassword)
+            if NewProfile_picture:
+                user.profile_picture = NewProfile_picture
+            user.save()
+            update_session_auth_hash(request, user)
+
+            return JsonResponse({'status': 'success', 'message': 'Profile successfully updated'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)

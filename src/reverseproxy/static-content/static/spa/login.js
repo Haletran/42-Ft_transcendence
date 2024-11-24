@@ -1,5 +1,6 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
+import { logoutUser } from '../src/logout.js';
 
 export class LoginPage extends Page {
 	constructor() {
@@ -12,6 +13,10 @@ export class LoginPage extends Page {
                         <p class="montserrat-bold fs-1 animate__animated">Ft_transcendence</p>
                     </div>
                     <button class="btn mb-3 btn-outline-light d-flex align-items-center" type="submit"
+                        data-link="/login_base">
+                        Login
+                    </button>
+		            <button class="btn mb-3 btn-outline-light d-flex align-items-center" type="submit"
                         data-link="/home">
                         Login with
                         <img class="logo" src="/static/imgs/42.png" alt="google" width="40">
@@ -29,6 +34,7 @@ export class LoginPage extends Page {
 	}
 	
 	render() {
+		logoutUser();
 		super.render(); // Call the parent render method
 		//this.attachFormListener(); // Now attach the listener here
 	  }
@@ -74,4 +80,4 @@ export class LoginPage extends Page {
 	// 		alert('An error occurred: ' + error.message);
 	// 	  }
 	// 	});
-	  }
+}

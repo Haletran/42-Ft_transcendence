@@ -10,7 +10,9 @@ import { Chat } from './spa/chat.js';
 import { Settings } from './spa/settings.js';
 import { initializeCSRFToken } from './src/csrf.js';
 import { fetchUserInfo } from './src/fetchUser.js';
-
+import { loginBasePage } from './spa/login_base.js';
+import { logoutUser } from './src/logout.js';
+ 
 const routes = {
   '/': LoginPage,
   '/register': RegisterPage,
@@ -21,13 +23,14 @@ const routes = {
   '/settings' : Settings,
   '/chat' : Chat,
   '/monopoly' : Monopoly,
+  '/login_base' : loginBasePage,
+  '/logout' : logoutUser,
 };
 
 const router = new Router(routes);
 
 document.addEventListener('DOMContentLoaded', () => {
   initializeCSRFToken();
-  fetchUserInfo();
   document.body.addEventListener('click', (e) => {
     if (e.target.matches('[data-link]')) {
       e.preventDefault();

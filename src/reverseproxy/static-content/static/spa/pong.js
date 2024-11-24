@@ -1,3 +1,4 @@
+import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
 
@@ -86,6 +87,7 @@ export class Pong extends Page {
     }
 
     render() {
+        fetchSettingsInfo();
         super.render();
 
         const setupEventListeners = () => {
