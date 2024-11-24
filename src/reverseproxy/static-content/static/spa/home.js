@@ -8,7 +8,7 @@ export class HomePage extends Page {
       <div class="header">
         <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
             <div class="container-fluid">
-                <a class="navbar-brand " href="/" data-link="/">
+                <a class="navbar-brand " href="/home" data-link="/home">
                     <img src="/static/imgs/logo.png" alt="" width="25" class="d-inline-block align-text-top invert">
                     <p class="d-inline montserrat-bold">Ft_transcendence</p>
                 </a>
