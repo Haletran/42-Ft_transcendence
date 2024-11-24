@@ -27,19 +27,19 @@ services:
     networks:
       - transcendence
 
-  hardhat:
-    build:
-      context: ./src/crypto/.
-    container_name: hardhat
-    env_file:
-      - .env
-    ports:
-      - "8545:8545"
-    volumes:
-      - ./src/crypto/.:/usr/src/app
-    networks:
-      - transcendence
-    command: npx hardhat node
+  # hardhat:
+  #   build:
+  #     context: ./src/crypto/.
+  #   container_name: hardhat
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "8545:8545"
+  #   volumes:
+  #     - ./src/crypto/.:/usr/src/app
+  #   networks:
+  #     - transcendence
+  #   command: npx hardhat node
 
   vault:
     image: hashicorp/vault:latest
