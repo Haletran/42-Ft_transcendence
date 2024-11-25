@@ -65,33 +65,40 @@ export class Friends extends Page {
 
         document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
             event.preventDefault();
-          
+        
             const friendUsername = document.getElementById('friend-username').value;
             const messageDiv = document.getElementById('add-friend-message');
-          
+        
+            console.log('Form submitted with username:', friendUsername);
+        
             try {
-              // Make sure the URL is correct
-              const response = await fetch('http://django-friends:9001/api/friends/add/', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ friend_username: friendUsername })
-              });
-          
-              const data = await response.json();
-          
-              if (response.ok) {
-                messageDiv.textContent = `Friend ${friendUsername} added successfully!`;
-                messageDiv.style.color = 'green';
-              } else {
-                messageDiv.textContent = data.error || 'Failed to add friend.';
-                messageDiv.style.color = 'red';
-              }
+                console.log('Starting fetch request...');
+                const response = await fetch('http://localhost:9001/api/friends/add/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ friend_username: friendUsername })
+                });
+        
+                console.log('Fetch request completed.');
+                console.log('Response status:', response.status);
+        
+                const data = await response.json();
+                console.log('Response data:', data);
+        
+                if (response.ok) {
+                    messageDiv.textContent = `Friend ${friendUsername} added successfully!`;
+                    messageDiv.style.color = 'green';
+                } else {
+                    messageDiv.textContent = data.error || 'Failed to add friend.';
+                    messageDiv.style.color = 'red';
+                }
             } catch (error) {
-              messageDiv.textContent = 'An error occurred. Please try again.';
-              messageDiv.style.color = 'red';
+                console.error('Error occurred during fetch request:', error);
+                messageDiv.textContent = 'An error occurred. Please try again.';
+                messageDiv.style.color = 'red';
             }
-          });
+        });
     }
 }

@@ -22,3 +22,4 @@ class AddFriendView(generics.CreateAPIView):
         friend_instance = Friend.objects.create(user=user, friend=friend)
         serializer = self.get_serializer(friend_instance)
         return Response(serializer.data, status=201)
+
