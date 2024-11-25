@@ -8,6 +8,7 @@ import { Pong } from './spa/pong.js';
 import { Profile } from './spa/profile.js';
 import { Chat } from './spa/chat.js';
 import { Settings } from './spa/settings.js';
+import { Friends } from './spa/friends.js';
 import { initializeCSRFToken } from './src/csrf.js';
 import { fetchUserInfo } from './src/fetchUser.js';
 import { loginBasePage } from './spa/login_base.js';
@@ -24,6 +25,7 @@ const routes = {
   '/chat' : Chat,
   '/monopoly' : Monopoly,
   '/login_base' : loginBasePage,
+  '/friends' : Friends,
   '/logout' : logoutUser,
 };
 

@@ -118,7 +118,7 @@ export class RegisterPage extends Page {
 		  
 		  const email = document.getElementById('registerEmail').value;
 		  const password = document.getElementById('registerPassword').value;
-			console.log(imageURL);
+		  console.log(imageURL);
 		  // add profile picture
 		 // console.log(profilePics);
 		  

@@ -59,7 +59,7 @@ services:
       - "9000:9000"
     volumes:
       - ./src/django-credentials/ssl/django-credentials.key:/etc/ssl/private/django.key
-      - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt # - src/django-credentials/credentials:/app
+      - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt
     env_file:
       - .env
     environment:

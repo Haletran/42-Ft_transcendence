@@ -3,3 +3,5 @@ gunicorn
 hvac
 psycopg2-binary
 django-cors-headers
+djangorestframework
+djangorestframework-simplejwt

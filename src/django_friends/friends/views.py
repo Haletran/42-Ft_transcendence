@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 
 class AddFriendView(generics.CreateAPIView):
     serializer_class = FriendSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         user = request.user
