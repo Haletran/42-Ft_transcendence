@@ -62,14 +62,14 @@ export class Friends extends Page {
     render() {
         fetchUserInfo();
         super.render(); // Call the parent render method
-
+    
         document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
             event.preventDefault();
         
-            const friendUsername = document.getElementById('friend-username').value;
+            const Username = document.getElementById('friend-username').value;
             const messageDiv = document.getElementById('add-friend-message');
         
-            console.log('Form submitted with username:', friendUsername);
+            console.log('Form submitted with username:', Username);
         
             try {
                 console.log('Starting fetch request...');
@@ -78,7 +78,7 @@ export class Friends extends Page {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ friend_username: friendUsername })
+                    body: JSON.stringify({ username: Username })
                 });
         
                 console.log('Fetch request completed.');
@@ -88,11 +88,13 @@ export class Friends extends Page {
                 console.log('Response data:', data);
         
                 if (response.ok) {
-                    messageDiv.textContent = `Friend ${friendUsername} added successfully!`;
+                    messageDiv.textContent = `Friend ${Username} added successfully!`;
                     messageDiv.style.color = 'green';
+                    console.log('Friend added successfully');
                 } else {
                     messageDiv.textContent = data.error || 'Failed to add friend.';
                     messageDiv.style.color = 'red';
+                    console.log('Failed to add friend:', data.error);
                 }
             } catch (error) {
                 console.error('Error occurred during fetch request:', error);

@@ -2,13 +2,20 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
-from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_exempt
 import json
 # from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from .models import MyUser
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from rest_framework.decorators import api_view #To delete after tests
+import json
+from django.contrib.auth import get_user_model
 
 @ensure_csrf_cookie
 def set_csrf_token(request):
@@ -109,3 +116,37 @@ def update_profile_view(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+
+@csrf_exempt
+def check_user_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            print(f"Received username: {username}")  # Log the username
+            User = get_user_model()
+            if User.objects.filter(username=username).exists():
+                print(f"User {username} exists in the database")  # Log if user exists
+                return JsonResponse({"status": "success", "message": "User exists"})
+            else:
+                print(f"User {username} not found in the database")  # Log if user not found
+                return JsonResponse({"status": "error", "message": "User not found"}, status=404)
+        except Exception as e:
+            print(f"Error occurred: {str(e)}")  # Log any exceptions
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
+
+
+
+@api_view(['GET'])
+@csrf_exempt
+def print_all_emails(request):
+    emails = MyUser.objects.values_list('email', flat=True)
+    usernames = MyUser.objects.values_list('username', flat=True)
+    print("Emails in the database:")
+    for email in emails:
+        print(email)
+    print("Usernames in the database:")
+    for username in usernames:
+        print(username)
+    return Response({"emails": list(emails), "usernames": list(usernames)})
