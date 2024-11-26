@@ -1,5 +1,5 @@
 import { Router } from './src/router.js';
-import { HomePage} from './spa/home.js';
+import { HomePage } from './spa/home.js';
 import { RegisterPage } from './spa/register.js';
 import { LoginPage } from './spa/login.js';
 import { Games } from './spa/games.js';
@@ -13,20 +13,20 @@ import { initializeCSRFToken } from './src/csrf.js';
 import { fetchUserInfo } from './src/fetchUser.js';
 import { loginBasePage } from './spa/login_base.js';
 import { logoutUser } from './src/logout.js';
- 
+
 const routes = {
   '/': LoginPage,
   '/register': RegisterPage,
-  '/home' : HomePage,
-  '/games' : Games,
-  '/pong' : Pong,
-  '/profile' : Profile,
-  '/settings' : Settings,
-  '/chat' : Chat,
-  '/monopoly' : Monopoly,
-  '/login_base' : loginBasePage,
-  '/friends' : Friends,
-  '/logout' : logoutUser,
+  '/home': HomePage,
+  '/games': Games,
+  '/pong': Pong,
+  '/profile': Profile,
+  '/settings': Settings,
+  '/chat': Chat,
+  '/monopoly': Monopoly,
+  '/login_base': loginBasePage,
+  '/friends': Friends,
+  '/logout': logoutUser,
 };
 
 const router = new Router(routes);
@@ -40,16 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
       router.navigate();
     }
   });
-  
-	    // Add a specific event listener for the logo
-	const logo = document.querySelector('.navbar-brand[data-link]');
-	if (logo) {
-	  logo.addEventListener('click', (e) => {
-		e.preventDefault();
-		history.pushState(null, null, logo.getAttribute('data-link'));
-		router.navigate();
-	  });
-	}
+
+  // Add a specific event listener for the logo
+  const logo = document.querySelector('.navbar-brand[data-link]');
+  if (logo) {
+    logo.addEventListener('click', (e) => {
+      e.preventDefault();
+      history.pushState(null, null, logo.getAttribute('data-link'));
+      router.navigate();
+    });
+  }
 
   window.addEventListener('popstate', router.navigate.bind(router));
   router.navigate();

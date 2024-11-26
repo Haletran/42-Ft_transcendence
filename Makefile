@@ -36,7 +36,7 @@ reset: down
 	-docker volume prune -f
 	-docker image prune -f -a
 	-docker network prune -f
-	-docker builder prune --all
+	-docker builder prune --all -f
 
 hard-reset: reset
 	-docker system prune --all --volumes -f

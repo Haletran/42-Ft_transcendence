@@ -11,3 +11,21 @@
 [Nginx (Reverse Proxy)](https://docs.nginx.com/nginx/admin-guide/web-server/)
 
 [Django (backend)](https://docs.djangoproject.com/en/5.1/)
+
+
+## How to make the website work outside the VM
+
+Change the `Network` in bridged mode in VirtualBox
+- Add your IP to django-credentials/credentials here :
+```
+CORS_ALLOWED_ORIGINS = [ 
+    ## add your IP here
+    'https://localhost',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    ## add your IP here
+    'https://localhost',
+]
+```
+

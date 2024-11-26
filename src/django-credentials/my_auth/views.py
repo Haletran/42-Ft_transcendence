@@ -109,3 +109,7 @@ def update_profile_view(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+
+
+def login_42(request):
+    return JsonResponse({'message': 'Login with 42'})
