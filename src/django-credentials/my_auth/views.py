@@ -141,6 +141,7 @@ def check_user_view(request):
 @api_view(['GET'])
 @csrf_exempt
 def print_all_emails(request):
+    User = get_user_model()
     emails = MyUser.objects.values_list('email', flat=True)
     usernames = MyUser.objects.values_list('username', flat=True)
     print("Emails in the database:")
