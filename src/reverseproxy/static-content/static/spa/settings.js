@@ -32,7 +32,7 @@ export class Settings extends Page {
             </div>
         </nav>
     </div>
-            <div class="container mt-5">
+    <div class="container mt-5">
         <div class="row gap-3">
             <div class="col-md-4">
                 <div class="list-group">
@@ -57,6 +57,7 @@ export class Settings extends Page {
                 </div>
             </div>
         </div>
+    </div>
  `;
     }
     render() {

@@ -2,6 +2,7 @@ import { Page } from '../src/pages.js';
 import { Router } from '../src/router.js';
 import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { getCSRFToken } from '../src/csrf.js';
+import {setupProfilePictureSelection} from '../js/event.js';
 
 export class Profile extends Page {
     constructor() {
@@ -71,8 +72,8 @@ export class Profile extends Page {
                         <p class="card-text">Here you can update your profile picture.</p>
                         <div id="choice_pp" class="d-flex justify-content-center">
                             <img id="actual_pp"
-                                src="/static/imgs/bapasqui.jpg"
-                                alt="profile_picture" class="rounded-circle pp">
+                                src=""
+                                alt="profile_picture_main" class="rounded-circle pp">
                             <img src="/static/imgs/asterix.gif"
                                 alt="profile_picture" class="rounded-circle pp">
                             <img src="/static/imgs/spirou.jpeg"
@@ -104,8 +105,15 @@ export class Profile extends Page {
     render() {
         fetchSettingsInfo();
         super.render(); // Call the parent render method
+        setupProfilePictureSelection();
         this.attachFormListener();
     }
+
+    // getProfileInfo() {
+    //     const profilePicture = document.querySelector('img[alt="logo_profile_picture"]');
+    //     const actualProfilePicture = document.getElementById('actual_pp').src;
+    //     profilePicture.src = actualProfilePicture;
+    // }
 
     attachFormListener() {
         const form = document.getElementById('profile_form');

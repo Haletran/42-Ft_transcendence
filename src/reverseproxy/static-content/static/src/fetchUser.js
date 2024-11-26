@@ -28,6 +28,8 @@ function updateProfilePicture(profilePictureUrl) {
     const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
     console.log(profilePictureUrl);
     profilePic.src = profilePictureUrl;
+    if (document.querySelector('img[alt="profile_picture_main"]'))
+        document.querySelector('img[alt="profile_picture_main"]').src = profilePictureUrl;
 }
 
 function hideProfilePicture() {
@@ -39,6 +41,27 @@ function updateProfileMail(Mail) {
     console.log(Mail);
     const profileMail = document.querySelector('input[type="email"]');
     profileMail.value = Mail;
+}
+
+export async function getProfileName() {
+    try {
+        const response = await fetch('/api/user-info/', {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            return userData.email;
+        } else {
+            console.log(response.status);
+            console.log('User not logged in');
+            return null;
+        }
+    } catch (error) {
+        console.error("User not logged in:", error);
+        return null;
+    }
 }
 
 export async function fetchSettingsInfo() {

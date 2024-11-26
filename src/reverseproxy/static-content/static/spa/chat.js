@@ -1,5 +1,6 @@
 import { Page } from '../src/pages.js';
 import { fetchUserInfo } from '../src/fetchUser.js';
+import { getProfileName } from '../src/fetchUser.js';
 
 export class Chat extends Page {
     constructor() {
@@ -54,59 +55,64 @@ export class Chat extends Page {
             Invitation a jouer a un jeu
             Pouvoir blocker les users
             Acceder au autre profile -->
-            <div class="col">
+             <div class="col">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Live-Chat</h5>
                         <p class="card-text">You can chat with other users in real time.</p>
-                        <div class="input-group mb-3">
-                            <p id="chat" class="input-group-text text-start" style="width: 100%; height: 200px;"></p>
-                            <input id="msg" type="text" class="form-control" placeholder="Type your message here"
-                                aria-label="Type your message here" aria-describedby="button-addon2">
-                            <button id="send" class="btn btn-outline-secondary" type="button">Send</button>
-                        </div>
-                        <h5 class="card-title">Add Friend</h5>
-                        <div class="input-group mb-3">
-                            <input id="friend-email" type="email" class="form-control" placeholder="Enter friend's email"
-                                aria-label="Enter friend's email" aria-describedby="button-addon3">
-                            <button id="add-friend" class="btn btn-outline-secondary" type="button">Add Friend</button>
+                        <div class="input-group mb-3 gap-2">
+                             <div class="input-group-text text-start" style="width: 100%; height: 200px;">
+                                <div id="chat" style="overflow-y: scroll; height: 100%; width: 100%;"></div>
+                             </div>
+                            <div class="input-group mt-2">
+                                <input id="msg" type="text" class="form-control" placeholder="Type your message here"
+                                    aria-label="Type your message here" aria-describedby="button-addon2">
+                                <button id="send" class="btn btn-outline-secondary" type="button">Send</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <script>
-
-    // when clicking button
-    document.getElementById("send").addEventListener("click", function () {
-        var msg = document.getElementById("msg").value;
-        console.log(msg);
-        var chat = document.getElementById("chat");
-        if (chat.innerHTML.split("<br>").length > 8) {
-            chat.innerHTML = chat.innerHTML.split("<br>").slice(1).join("<br>");
-        }
-        document.getElementById("chat").innerHTML += "USER 1: " + msg + "<br>";
-        document.getElementById("msg").value = '';
-    });
-
-    // when pressing enter
-    document.getElementById("msg").addEventListener("keypress", function (e) {
-        if (e.key === 'Enter') {
-            var msg = document.getElementById("msg").value;
-            var chat = document.getElementById("chat");
-            if (chat.innerHTML.split("<br>").length > 8) {
-                chat.innerHTML = chat.innerHTML.split("<br>").slice(1).join("<br>");
-            }
-            document.getElementById("chat").innerHTML += "USER 1: " + msg + "<br>";
-            console.log(msg);
-            document.getElementById("msg").value = '';
-        }
-    });
-    </script>
  `;
     }
-    render() {
+    async render() {
         fetchUserInfo();
-        super.render(); // Call the parent render method
+        const email = await getProfileName();
+        const username = email.split('@')[0];
+        super.render();
+        this.chatEvent(username);
+    }
+
+    scrollToBottom() {
+        const chat = document.getElementById("chat");
+        chat.scrollTop = chat.scrollHeight;
+    }
+    
+    chatEvent(username) {
+        document.getElementById("send").addEventListener("click", () => {
+            var msg = document.getElementById("msg").value;
+            var chat = document.getElementById("chat");
+            var p = document.createElement("p");
+            p.textContent = username + " : " + msg;
+            p.style.margin = '0';
+            chat.appendChild(p);
+            document.getElementById("msg").value = '';
+            this.scrollToBottom();
+        });
+    
+        // when pressing enter
+        document.getElementById("msg").addEventListener("keypress", (e) => {
+            if (e.key === 'Enter') {
+                var msg = document.getElementById("msg").value;
+                var chat = document.getElementById("chat");
+                var p = document.createElement("p");
+                p.textContent = username + " : " + msg;
+                p.style.margin = '0';
+                chat.appendChild(p);
+                document.getElementById("msg").value = '';
+                this.scrollToBottom();
+            }
+        });
     }
 }

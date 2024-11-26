@@ -161,6 +161,7 @@ CSRF_COOKIE_NAME = 'csrftoken'  # Cookie name (default)
 CSRF_TRUSTED_ORIGINS = [
     "https://10.11.249.22",
     "https://10.12.249.15",
+    'https://'
     'https://localhost',
 ]
 CSRF_COOKIE_SECURE = True  # Only send cookies over HTTPS (ensure you're using HTTPS for both frontend and backend)
