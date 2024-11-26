@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from .models import MyUser
+import requests
+from django.shortcuts import redirect
 
 @ensure_csrf_cookie
 def set_csrf_token(request):
@@ -111,5 +113,31 @@ def update_profile_view(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
 
 
+
 def login_42(request):
-    return JsonResponse({'message': 'Login with 42'})
+    code = request.GET.get('code')
+    if not code:
+        return JsonResponse({'error': 'No code'}, status=400)
+    try:
+        response = requests.post("https://api.intra.42.fr/oauth/token", data={
+            'grant_type': 'authorization_code',
+            'client_id': 'u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c',
+            'client_secret': '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',
+            'redirect_uri': 'http://10.12.249.15:9000/api/callback',
+            'code': code,
+        })
+        response_data = response.json()
+        access_token = response_data.get('access_token')
+        if not access_token:
+            raise Exception("No access token")
+        me_response = requests.get("https://api.intra.42.fr/v2/me", headers={
+            'Authorization': f'Bearer {access_token}'
+        })
+        if me_response.status_code != 200:
+            raise Exception("Invalid token")
+        me_data = me_response.json()
+        register_view(request)
+        # Assuming you want to redirect to a specific URL after successful login
+        return redirect('https://10.12.249.15/home')
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
