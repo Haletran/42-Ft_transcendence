@@ -22,7 +22,6 @@ def set_csrf_token(request):
 
 def register_view(request):
     if request.method == 'POST':
-
         try:
             data = json.loads(request.body)
             email = data.get('email')
@@ -31,7 +30,6 @@ def register_view(request):
 
             #if MyUser.objects.filter(email=email).exists():
             #    return JsonRespons({'error': 'Email already registered'}, status=400)
-
             # Create the user
             user = MyUser.objects.create_user(username=email, email=email, password=password, profile_picture=profile_picture)
             login(request, user)
@@ -113,7 +111,6 @@ def update_profile_view(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
 
 
-
 def login_42(request):
     code = request.GET.get('code')
     if not code:
@@ -136,8 +133,26 @@ def login_42(request):
         if me_response.status_code != 200:
             raise Exception("Invalid token")
         me_data = me_response.json()
-        register_view(request)
-        # Assuming you want to redirect to a specific URL after successful login
+
+        NewEmail = me_data.get('email')
+        NewPassword = "NULL"
+        NewProfile_picture = me_data.get('image', {}).get('versions', {}).get('medium', "NULL")
+
+        user, created = MyUser.objects.get_or_create(username=NewEmail, defaults={
+            'email': NewEmail,
+            'profile_picture': NewProfile_picture,
+        })
+
+        #return JsonResponse(me_data)
+        if not created:
+            if NewEmail:
+                user.email = NewEmail
+            if NewPassword:
+                user.set_password(NewPassword)
+            if NewProfile_picture:
+                user.profile_picture = NewProfile_picture
+            user.save()
+        login(request, user)
         return redirect('https://10.12.249.15/home')
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
