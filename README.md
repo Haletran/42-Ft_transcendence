@@ -29,3 +29,10 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 ```
 
+
+## Update gitignore
+
+```bash
+git rm -r --cached .
+```
+Then commit/push and it should work properly :)
