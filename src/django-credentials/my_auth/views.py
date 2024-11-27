@@ -83,6 +83,7 @@ def user_info(request):
     # print(user)
     user = request.user
     return JsonResponse({
+        'id' : user.id,
         'email': user.email,
         'profile_picture': user.profile_picture
     })
@@ -144,10 +145,20 @@ def print_all_emails(request):
     User = get_user_model()
     emails = MyUser.objects.values_list('email', flat=True)
     usernames = MyUser.objects.values_list('username', flat=True)
+    user_ids = MyUser.objects.values_list('id', flat=True)
+    
     print("Emails in the database:")
     for email in emails:
         print(email)
     print("Usernames in the database:")
     for username in usernames:
         print(username)
-    return Response({"emails": list(emails), "usernames": list(usernames)})
+    print("IDs:")
+    for user_id in user_ids:
+        print(user_id)
+        
+    return Response({
+        "emails": list(emails), 
+        "usernames": list(usernames), 
+        "id": list(user_ids)  # Ensure 'id' key is present
+    })

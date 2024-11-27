@@ -86,6 +86,8 @@ export class Friends extends Page {
             const currentUserData = await currentUserResponse.json();
             const currentUserEmail = currentUserData.email;
             const currentUserName = currentUserData.username;
+            const currentUserId = currentUserData.id;
+            console.log('id : ', currentUserId);
         
             // Check if the user is trying to add themselves
             if (usernameOrEmail === currentUserEmail || usernameOrEmail === currentUserName) {
@@ -119,32 +121,35 @@ export class Friends extends Page {
                 }
         
                 // Step 2: Check if the email exists in the fetched list
-                const emailExists = emailsData.emails.includes(usernameOrEmail);
-                const userExists = emailsData.usernames.includes(usernameOrEmail);
+                const emailExists = emailsData.emails?.includes(usernameOrEmail);
+                const userExists = emailsData.usernames?.includes(usernameOrEmail);
                 let userEmail = null;
                 let userName = null;
-        
+                let userId = null;
+
                 if (emailExists) {
-                    console.log(`Email ${usernameOrEmail} found in credentials service.`);
+                    const index = emailsData.emails.indexOf(usernameOrEmail);
                     userEmail = usernameOrEmail;
-                    userName = emailsData.usernames[emailsData.emails.indexOf(usernameOrEmail)];
-                    messageDiv.textContent = `Email ${usernameOrEmail} found in credentials service. Username: ${userName}`;
+                    userName = emailsData.usernames[index];
+                    userId = emailsData.id[index];  // Get the user ID using the same index
+                    messageDiv.textContent = `Email ${usernameOrEmail} found. Username: ${userName}, ID: ${userId}`;
                     messageDiv.style.color = 'green';
-                    console.log(`Corresponding username: ${userName}`);
+                    console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
                 } else if (userExists) {
-                    console.log(`Username ${usernameOrEmail} found in credentials service.`);
+                    const index = emailsData.usernames.indexOf(usernameOrEmail);
                     userName = usernameOrEmail;
-                    userEmail = emailsData.emails[emailsData.usernames.indexOf(usernameOrEmail)];
-                    messageDiv.textContent = `Username ${usernameOrEmail} found in credentials service. Email: ${userEmail}`;
+                    userEmail = emailsData.emails[index];
+                    userId = emailsData.id[index];  // Get the user ID using the same index
+                    messageDiv.textContent = `Username ${usernameOrEmail} found. Email: ${userEmail}, ID: ${userId}`;
                     messageDiv.style.color = 'green';
-                    console.log(`Corresponding email: ${userEmail}`);
+                    console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
                 } else {
                     messageDiv.textContent = `Email or Username ${usernameOrEmail} not found in credentials service.`;
                     messageDiv.style.color = 'red';
                     console.log(`Email or Username ${usernameOrEmail} not found in credentials service.`);
                     return;
                 }
-        
+
                 // Step 3: Send POST request to add the friend
                 console.log('Starting fetch request to add friend...');
                 const addFriendResponse = await fetch('http://localhost:9001/api/friends/add/', {
@@ -153,9 +158,9 @@ export class Friends extends Page {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
                     },
-                    body: JSON.stringify({ username: userName, email: userEmail })
+                    body: JSON.stringify({ username: userName, email: userEmail, id: currentUserId })
                 });
-        
+
                 console.log('Fetch request to add friend completed.');
                 console.log('Response status:', addFriendResponse.status);
         

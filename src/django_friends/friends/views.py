@@ -11,16 +11,18 @@ from django.views.decorators.csrf import csrf_exempt
 def add_friend(request):
     user_name = request.data.get('username')
     user_email = request.data.get('email')
+    user_id = request.data.get('id')
     
-    if not user_name or not user_email:
+    if not user_name or not user_email or not user_id:
         return Response({
-            "error": "Username and email are required"
+            "error": "Username, email, and user ID are required"
         }, status=400)
         
-    print(f"Processing friend request for username: {user_name}, email: {user_email}")
+    print(f"Processing friend request for username: {user_name}, email: {user_email}, id: {user_id}")
     
     # Create friend relationship
     friend_instance = Friend.objects.create(
+        user_id=user_id,
         name=user_name,
         email=user_email
     )
@@ -40,6 +42,9 @@ def fetch_emails_from_credentials(request):
         print("Usernames in the credentials database:")
         for username in emails_data['usernames']:
             print(username)
+        print("Id in the credentials database:")
+        for id in emails_data['id']:
+            print(id)
         return Response(emails_data)
     else:
         print(f"Failed to fetch emails from credentials service: {emails_response.status_code}")

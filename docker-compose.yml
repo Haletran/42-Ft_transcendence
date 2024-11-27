@@ -95,7 +95,7 @@ services:
     networks:
       - transcendence
     command: >
-      sh -c "sleep 8 && python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 django_friends.wsgi:application"
+      sh -c "sleep 8 && python3 manage.py makemigrations && python manage.py makemigrations friends && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 django_friends.wsgi:application"
 
   friends-database:
     image: postgres:latest
