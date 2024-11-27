@@ -27,27 +27,24 @@ if (startButtonM) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
+export function setupProfilePictureSelection() {
     let actual_pp = document.getElementById('actual_pp'); // Current active profile picture
     const other_pp = document.querySelectorAll('.pp'); // All profile pictures
-
     if (actual_pp && other_pp.length > 0) {
         other_pp.forEach((pp) => {
             pp.addEventListener('click', () => {
                 // Remove the 'actual' ID from the current picture
                 actual_pp.removeAttribute('id');
                 actual_pp.classList.remove('animate__animated', 'animate__bounce');
-
                 // Assign the 'actual' ID to the newly clicked picture
                 pp.id = 'actual_pp';
                 actual_pp = pp;
-
                 // Add bounce animation
-                actual_pp.classList.add('animate__animated', 'animate__bounce');
+                //actual_pp.classList.add('animate__animated', 'animate__bounce');
                 actual_pp.addEventListener('animationend', () => {
                     actual_pp.classList.remove('animate__animated', 'animate__bounce');
                 });
             });
         });
     }
-});
+}

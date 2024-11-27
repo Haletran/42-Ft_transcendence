@@ -6,10 +6,11 @@ all: banner build
 build:
 	@echo "Building the project"
 	@if [ ! -f .env ]; then \
-        echo -n "Enter the decryption password: "; \
-        stty -echo && read PASSWORD && stty echo; \
-        echo $$PASSWORD | openssl enc -aes-256-cbc -d -pbkdf2 -in encrypt.env.enc -out .env || (echo "Decryption failed. Exiting."; exit 1); \
-    fi
+		echo -n "Enter the decryption password: "; \
+		stty -echo && read PASSWORD && stty echo; \
+		echo $$PASSWORD | openssl enc -aes-256-cbc -d -pbkdf2 -in encrypt.env.enc -out .env || (echo "Decryption failed. Exiting."; exit 1); \
+		echo GLOBAL_IP=$$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $$2}' | cut -d/ -f1 | head -n 1) >> .env; \
+	fi
 	@docker compose -f ${COMPOSE_FILE} up --build --remove-orphans
 
 up:
@@ -29,6 +30,14 @@ stop:
 	-docker compose -f ${COMPOSE_FILE} stop
 
 
+reload:
+	@echo "Reloading a specific container"
+	@docker ps --format "table {{.Names}}\t{{.Status}}"
+	@echo -n "Enter the container name to reload: "; \
+	read CONTAINER_NAME; \
+	docker restart $$CONTAINER_NAME
+
+
 reset: down
 	-docker volume rm $(docker volume ls -q)
 	-docker container prune -f
@@ -36,7 +45,7 @@ reset: down
 	-docker volume prune -f
 	-docker image prune -f -a
 	-docker network prune -f
-	-docker builder prune --all
+	-docker builder prune --all -f
 
 hard-reset: reset
 	-docker system prune --all --volumes -f

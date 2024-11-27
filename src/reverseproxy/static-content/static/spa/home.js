@@ -48,9 +48,9 @@ export class HomePage extends Page {
         </div>
     </div>
 	  `;
-	}
-  render() {
-    fetchUserInfo();
-    super.render(); // Call the parent render method
+    }
+    render() {
+        fetchUserInfo();
+        super.render(); // Call the parent render method
+    }
 }
-  }

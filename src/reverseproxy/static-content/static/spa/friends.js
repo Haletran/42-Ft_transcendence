@@ -1,10 +1,10 @@
-import { fetchUserInfo } from '../src/fetchUser.js';
-import { Page } from '../src/pages.js';
+import { fetchUserInfo } from "../src/fetchUser.js";
+import { Page } from "../src/pages.js";
 
 export class Friends extends Page {
-    constructor() {
-        super();
-        this.template = `
+  constructor() {
+    super();
+    this.template = `
             <div class="header">
         <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
             <div class="container-fluid">
@@ -32,6 +32,7 @@ export class Friends extends Page {
             </div>
         </nav>
     </div>
+
     <div class="container mt-5">
         <div class="row gap-3">
             <div class="col-md-4">
@@ -48,13 +49,19 @@ export class Friends extends Page {
                         class="list-group-item list-group-item-action">Messages</a>
                 </div>
             </div>
-            <div>
-                <h2>Add a Friend</h2>
-                <form id="add-friend-form">
-                    <input type="text" id="friend-username" placeholder="Enter friend's username" required />
-                    <button type="submit">Add Friend</button>
-                </form>
-            <div id="add-friend-message"></div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Friends</h5>
+                        <p class="card-text">Add some friends here...</p>
+                        <div id="add-friend-form" class="input-group mb-3">
+                            <input id="friend-username" type="text" class="form-control" placeholder="Enter friend's username" aria-describedby="button-addon2" required>
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Add friend</button>
+                        </div>
+                        <div id="add-friend-message"></div>
+                    </div>
+                </div>
+            </div>
             <div>
                 <h2>Your Friends</h2>
             <div id="friends-list"></div>

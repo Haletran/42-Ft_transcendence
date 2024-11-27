@@ -40,7 +40,6 @@ try:
     
     # Correct way to access the credentials from Vault response
     db_credentials = secret_db['data']['data']
-    
     POSTGRES_DB = db_credentials['db_name']
     POSTGRES_USER = db_credentials['db_user']
     POSTGRES_PASSWORD = db_credentials['db_password']
@@ -53,7 +52,7 @@ except Exception as e:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'django-credentials', 'auth']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'django-credentials', 'auth', '*']
 
 
 # Application definition
@@ -148,7 +147,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -161,6 +159,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_COOKIE_NAME = 'csrftoken'  # Cookie name (default)
 CSRF_TRUSTED_ORIGINS = [
+    "https://10.12.249.15",
     'https://localhost',
 ]
 CSRF_COOKIE_SECURE = True  # Only send cookies over HTTPS (ensure you're using HTTPS for both frontend and backend)
@@ -168,7 +167,8 @@ CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to access the cookie
 CSRF_COOKIE_PATH = '/'  # Path for the CSRF cookie
 CSRF_COOKIE_SAMESITE = 'None'  # Configure the SameSite attribute (can be 'Strict', 'Lax', or 'None')
 CORS_ALLOWED_ORIGINS = [
-    'https://localhost',  # Your frontend origin.
+    "https://10.12.249.15",
+    'https://localhost',
 ]
 CORS_ALLOW_CREDENTIALS = True
 

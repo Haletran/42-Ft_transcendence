@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from .models import MyUser
+import requests
+from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -27,7 +29,6 @@ def set_csrf_token(request):
 
 def register_view(request):
     if request.method == 'POST':
-
         try:
             data = json.loads(request.body)
             email = data.get('email')
@@ -36,7 +37,6 @@ def register_view(request):
 
             #if MyUser.objects.filter(email=email).exists():
             #    return JsonRespons({'error': 'Email already registered'}, status=400)
-
             # Create the user
             user = MyUser.objects.create_user(username=email, email=email, password=password, profile_picture=profile_picture)
             login(request, user)
@@ -162,3 +162,48 @@ def print_all_emails(request):
         "usernames": list(usernames), 
         "id": list(user_ids)  # Ensure 'id' key is present
     })
+
+def login_42(request):
+    code = request.GET.get('code')
+    if not code:
+        return JsonResponse({'error': 'No code'}, status=400)
+    try:
+        response = requests.post("https://api.intra.42.fr/oauth/token", data={
+            'grant_type': 'authorization_code',
+            'client_id': 'u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c',
+            'client_secret': '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',
+            'redirect_uri': 'http://10.12.249.15:9000/api/callback',
+            'code': code,
+        })
+        response_data = response.json()
+        access_token = response_data.get('access_token')
+        if not access_token:
+            raise Exception("No access token")
+        me_response = requests.get("https://api.intra.42.fr/v2/me", headers={
+            'Authorization': f'Bearer {access_token}'
+        })
+        if me_response.status_code != 200:
+            raise Exception("Invalid token")
+        me_data = me_response.json()
+
+        NewEmail = me_data.get('email')
+        NewPassword = "NULL"
+        NewProfile_picture = me_data.get('image', {}).get('versions', {}).get('medium', "NULL")
+
+        user, created = MyUser.objects.get_or_create(username=NewEmail, defaults={
+            'email': NewEmail,
+            'profile_picture': NewProfile_picture,
+        })
+
+        if not created:
+            if NewEmail:
+                user.email = NewEmail
+            if NewPassword:
+                user.set_password(NewPassword)
+            if NewProfile_picture:
+                user.profile_picture = NewProfile_picture
+            user.save()
+        login(request, user)
+        return redirect('https://10.12.249.15/home')
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

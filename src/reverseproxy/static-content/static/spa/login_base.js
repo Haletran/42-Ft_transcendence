@@ -3,8 +3,8 @@ import { getCSRFToken } from '../src/csrf.js';
 
 export class loginBasePage extends Page {
 	constructor() {
-	  super();
-	  this.template = `
+		super();
+		this.template = `
       <div
 		  id="register_container"
 		  class="d-flex justify-content-center align-items-center"
@@ -69,60 +69,59 @@ export class loginBasePage extends Page {
 		  </form>
 		</div>
 	  `;
-    }
-	render()
-	{
+	}
+	render() {
 		super.render(); // Call the parent render method
 		this.attachFormLoginListener(); // Now attach the listener here
 	}
-	
+
 	attachFormLoginListener() {
 		const form = document.getElementById('login_form');
 
 		form.addEventListener('submit', async (e) => {
-		  e.preventDefault(); // Prevent the default form submission
-		  
-		  const email = document.getElementById('loginEmail').value;
-		  const password = document.getElementById('loginPassword').value;
-	
-		  // Prepare the data to send
-		  const data = { email, password };
+			e.preventDefault(); // Prevent the default form submission
 
-		  try {
+			const email = document.getElementById('loginEmail').value;
+			const password = document.getElementById('loginPassword').value;
 
-			// get CSRF token
-			console.log('CSRF Token:', getCSRFToken('csrftoken'));
-			const csrfToken = getCSRFToken('csrftoken');
-			if (!csrfToken) {
-				console.error('CSRF token is missing!');
+			// Prepare the data to send
+			const data = { email, password };
+
+			try {
+
+				// get CSRF token
+				console.log('CSRF Token:', getCSRFToken('csrftoken'));
+				const csrfToken = getCSRFToken('csrftoken');
+				if (!csrfToken) {
+					console.error('CSRF token is missing!');
+				}
+
+				// Send data to the backend
+				const response = await fetch('/api/login/', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRFToken': csrfToken,
+					},
+					credentials: 'include',
+					body: JSON.stringify(data),
+				});
+
+				if (response.ok) {
+					const result = await response.json();
+					console.log('Login successful:', result);
+					alert('YOU ARE LOGGED IN MWAH!');
+					// Optionally, redirect to home page or another page
+					window.location.href = '/home';
+				} else {
+					const error = await response.json();
+					console.error('Login failed:', error);
+					alert('Login failed: ' + error.message);
+				}
+			} catch (error) {
+				console.error('Error:', error);
+				alert('An error occurred: ' + error.message);
 			}
-
-			// Send data to the backend
-			const response = await fetch('/api/login/', {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'application/json',
-				'X-CSRFToken': csrfToken,
-			  },
-			  credentials: 'include',
-			  body: JSON.stringify(data),
-			});
-	
-			if (response.ok) {
-			  const result = await response.json();
-			  console.log('Login successful:', result);
-			  alert('YOU ARE LOGGED IN MWAH!');
-			  // Optionally, redirect to home page or another page
-			  window.location.href = '/home';
-			} else {
-			  const error = await response.json();
-			  console.error('Login failed:', error);
-			  alert('Login failed: ' + error.message);
-			}
-		  } catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred: ' + error.message);
-		  }
 		});
-	  }
+	}
 }

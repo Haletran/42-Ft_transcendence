@@ -3,11 +3,11 @@ import { getCSRFToken } from './csrf.js';
 export function logoutUser() {
 
     // get CSRF token
-	console.log('CSRF Token:', getCSRFToken('csrftoken'));
-	const csrfToken = getCSRFToken('csrftoken');
-	if (!csrfToken) {
-		console.error('CSRF token is missing!');
-	}
+    console.log('CSRF Token:', getCSRFToken('csrftoken'));
+    const csrfToken = getCSRFToken('csrftoken');
+    if (!csrfToken) {
+        console.error('CSRF token is missing!');
+    }
 
     fetch('/api/logout/', {
         method: 'POST',
@@ -17,14 +17,14 @@ export function logoutUser() {
         },
         credentials: 'include',
     })
-    .then((response) => {
-        if (response.ok) {
-            console.log('Successfully logged out');
-        } else {
-            console.error('Logout failed');
-        }
-    })
-    .catch((error) => {
-        console.error('Error during logout:', error);
-    });
+        .then((response) => {
+            if (response.ok) {
+                console.log('Successfully logged out');
+            } else {
+                console.error('Logout failed');
+            }
+        })
+        .catch((error) => {
+            console.error('Error during logout:', error);
+        });
 }

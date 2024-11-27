@@ -1,24 +1,25 @@
 export async function fetchUserInfo() {
     try {
-        const response = await fetch ('/api/user-info/', {
+        const response = await fetch('/api/user-info/', {
             method: 'GET',
             credentials: 'include',
         });
 
-    if (response.ok) {
-        const userData = await response.json();
-        updateProfilePicture(userData.profile_picture);
-    }
-    else /*if (response.status === 401)*/ {
-        console.log(response.status);
-        console.log('User not logged in');
-        hideProfilePicture();
-    }
-    //else
-    //    console.error("Fail in user info:", response.status);
+        if (response.ok) {
+            const userData = await response.json();
+            updateProfilePicture(userData.profile_picture);
+        }
+        else /*if (response.status === 401)*/ {
+            console.log(response.status);
+            console.log('User not logged in');
+            hideProfilePicture();
+        }
+        //else
+        //    console.error("Fail in user info:", response.status);
     }
     catch (error) {
         console.error("User not logged in:", error);
+        // here to check 42 login
         window.location.href = '/';
     }
 }
@@ -27,6 +28,8 @@ function updateProfilePicture(profilePictureUrl) {
     const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
     console.log(profilePictureUrl);
     profilePic.src = profilePictureUrl;
+    if (document.querySelector('img[alt="profile_picture_main"]'))
+        document.querySelector('img[alt="profile_picture_main"]').src = profilePictureUrl;
 }
 
 function hideProfilePicture() {
@@ -40,25 +43,46 @@ function updateProfileMail(Mail) {
     profileMail.value = Mail;
 }
 
-export async function fetchSettingsInfo() {
+export async function getProfileName() {
     try {
-        const response = await fetch ('/api/user-info/', {
+        const response = await fetch('/api/user-info/', {
             method: 'GET',
             credentials: 'include',
         });
 
-    if (response.ok) {
-        const userData = await response.json();
-        updateProfilePicture(userData.profile_picture);
-        updateProfileMail(userData.email);
+        if (response.ok) {
+            const userData = await response.json();
+            return userData.email;
+        } else {
+            console.log(response.status);
+            console.log('User not logged in');
+            return null;
+        }
+    } catch (error) {
+        console.error("User not logged in:", error);
+        return null;
     }
-    else /*if (response.status === 401)*/ {
-        console.log(response.status);
-        console.log('User not logged in');
-        window.location.href = '/';
-    }
-    //else
-    //    console.error("Fail in user info:", response.status);
+}
+
+export async function fetchSettingsInfo() {
+    try {
+        const response = await fetch('/api/user-info/', {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            updateProfilePicture(userData.profile_picture);
+            updateProfileMail(userData.email);
+        }
+        else /*if (response.status === 401)*/ {
+            console.log(response.status);
+            console.log('User not logged in');
+            window.location.href = '/';
+        }
+        //else
+        //    console.error("Fail in user info:", response.status);
     }
     catch (error) {
         console.error("User not logged in:", error);
