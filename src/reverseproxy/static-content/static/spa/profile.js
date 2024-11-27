@@ -1,8 +1,5 @@
+import { fetchUserInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
-import { Router } from '../src/router.js';
-import { fetchSettingsInfo } from '../src/fetchUser.js';
-import { getCSRFToken } from '../src/csrf.js';
-import {setupProfilePictureSelection} from '../js/event.js';
 
 export class Profile extends Page {
     constructor() {
@@ -54,134 +51,107 @@ export class Profile extends Page {
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Profile Information</h5>
-                        <p class="card-text">Here you can update your profile information.</p>
-                        <form id="profile_form">
-                        <div class="form-floating mb-3">
-                            <input type="email" value="" class="form-control" id="floatingInput"
-                                placeholder="name@example.com">
-                            <label for="floatingInput">Email address</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="password" value="" class="form-control" id="floatingPassword"
-                                placeholder="Password">
-                            <label for="floatingPassword">Password</label>
+                        <div class="d-flex flex-row gap-3">
+                            <img src="/static/imgs/bapasqui.jpg" class="rounded-circle cover-fit" alt="profile_picture" width="100" height="100">
+                            <div class="d-flex flex-column mt-3">
+                                <h2 class="card-title montserrat-bold-500-2">bapasqui</h2>
+                                <p class="card-text">Rank: <strong>1</strong></p>
+                            </div>
                         </div>
                         <br>
-                        <h5 class="card-title">Profile Picture</h5>
-                        <p class="card-text">Here you can update your profile picture.</p>
-                        <div id="choice_pp" class="d-flex justify-content-center">
-                            <img id="actual_pp"
-                                src=""
-                                alt="profile_picture_main" class="rounded-circle pp">
-                            <img src="/static/imgs/asterix.gif"
-                                alt="profile_picture" class="rounded-circle pp">
-                            <img src="/static/imgs/spirou.jpeg"
-                                alt="profile_picture" class="rounded-circle pp">
-                            <img src="/static/imgs/gaston.jpg"
-                                alt="profile_picture" class="rounded-circle pp">
-                            <img src="/static/imgs/haddock.jpg"
-                                alt="profile_picture" class="rounded-circle pp">
+                        <div class="d-flex flex-column gap-2">
+                            <div class="d-flex flex-row gap-3">
+                                <div class="card text-bg-success mb-3">
+                                    <div class="card-body">
+                                        <p class="card-text">WINS : <strong>7</strong></p>
+                                    </div>
+                                </div>
+                                <div class="card text-bg-danger mb-3">
+                                    <div class="card-body">
+                                        <p class="card-text">LOSE : <strong>6</strong></p>
+                                    </div>
+                                </div>
+                                <div class="card border-light mb-3">
+                                    <div class="card-body">
+                                        <p class="card-text"><strong>53%</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <canvas id="myChart"></canvas>
                         </div>
-                        <button id="update_info" type="submit" class="btn btn-primary mt-3">Update</button>
-                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="toast align-items-center position-fixed bottom-0 end-0" role="alert" aria-live="assertive"
-            aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    Profile successfully updated!
-                </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
     </div>
-    `
-    ;
+ `;
     }
     render() {
-        fetchSettingsInfo();
+        fetchUserInfo();
         super.render(); // Call the parent render method
-        setupProfilePictureSelection();
-        this.attachFormListener();
+        this.render_chart();
     }
 
-    // getProfileInfo() {
-    //     const profilePicture = document.querySelector('img[alt="logo_profile_picture"]');
-    //     const actualProfilePicture = document.getElementById('actual_pp').src;
-    //     profilePicture.src = actualProfilePicture;
-    // }
+    render_chart() {
+        const ctx = document.getElementById('myChart');
 
-    attachFormListener() {
-        const form = document.getElementById('profile_form');
-		let imageURL = null;
+        const DATA_COUNT = 7;
+        const NUMBER_CFG = { count: DATA_COUNT, min: -100, max: 100 };
 
-		const profilePics = document.getElementById('choice_pp');
-		profilePics.addEventListener('click', (event) => {
-			const clicked = event.target.closest('img');
-			if (clicked) {
-				imageURL = clicked.src;
-				console.log('Selected Image URL', imageURL);
-			}
-		});
+        const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Win',
+                    data: [10, 20, 30, 10, 50, -60, 70],
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    yAxisID: 'y',
+                },
+                {
+                    label: 'Lose',
+                    data: [100, 20, -30, 10, 50, 20],
+                    borderColor: 'rgb(54, 162, 235)',
+                    backgroundColor: 'rgb(54, 162, 235)',
+                    yAxisID: 'y1',
+                }
+            ]
+        };
 
-		form.addEventListener('submit', async (e) => {
-		  e.preventDefault(); // Prevent the default form submission
-		  
-		  const email = document.getElementById('floatingInput').value;
-		  const password = document.getElementById('floatingPassword').value;
-		  console.log(imageURL);
-		  // add profile picture
-		 // console.log(profilePics);
-		  
+        new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                stacked: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom', // Move the label to the bottom
+                    },
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
 
-		  
-		  // Prepare the data to send
-		  const data = {
-		  	email: email,
-		  	password: password,
-			profile_picture: imageURL,
-		  };
-		  	
-		  try {
-
-			// get CSRF token
-			console.log('CSRF Token:', getCSRFToken('csrftoken'));
-			const csrfToken = getCSRFToken('csrftoken');
-			if (!csrfToken) {
-				console.error('CSRF token is missing!');
-			}
-
-			// Send data to the backend
-			
-			const response = await fetch('/api/update_profile/', {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'application/json',
-				'X-CSRFToken': csrfToken,
-			  },
-			  credentials: 'include',
-			  body: JSON.stringify(data),
-			});
-	
-			if (response.ok) {
-			  const result = await response.json();
-			  console.log('Edit successful:', result);
-              alert('Informations successfully edited MWAH');
-			  this.render();
-			} else {
-			  const error = await response.json();
-			  console.error('Edit failed:', error);
-			  alert('Edit failed: ' + error.message);
-			}
-		  } catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred: ' + error.message);
-		  }
-		});
-        
+                        // grid line settings
+                        grid: {
+                            drawOnChartArea: false, // only want the grid lines for one axis to show up
+                        },
+                    },
+                }
+            },
+        });
     }
 }
