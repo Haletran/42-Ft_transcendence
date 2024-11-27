@@ -56,9 +56,9 @@ export class Friends extends Page {
                 </form>
             <div id="add-friend-message"></div>
             <div>
-                <button id="fetch-emails-button">Fetch Emails</button>
-                <div id="emails-list"></div>
-            </div>
+                <h2>Your Friends</h2>
+            <div id="friends-list"></div>
+        </div>
         </div>
     </div>
  `;
@@ -87,7 +87,6 @@ export class Friends extends Page {
             const currentUserEmail = currentUserData.email;
             const currentUserName = currentUserData.username;
             const currentUserId = currentUserData.id;
-            console.log('id : ', currentUserId);
         
             // Check if the user is trying to add themselves
             if (usernameOrEmail === currentUserEmail || usernameOrEmail === currentUserName) {
@@ -156,7 +155,7 @@ export class Friends extends Page {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                        // 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
                     },
                     body: JSON.stringify({ username: userName, email: userEmail, id: currentUserId })
                 });
@@ -181,39 +180,49 @@ export class Friends extends Page {
                 messageDiv.textContent = 'An error occurred. Please try again.';
                 messageDiv.style.color = 'red';
             }
+            fetchFriends(currentUserId);
         });
 
-    document.getElementById('fetch-emails-button').addEventListener('click', async () => {
+        fetchUserInfo().then(currentUserData => {
+            const currentUserId = currentUserData.id;
+            fetchFriends(currentUserId); // Fetch friends when the page loads
+        });
+    }
+    
+}
+
+async function fetchFriends(currentUserId) {
+    const friendsListDiv = document.getElementById('friends-list');
+    friendsListDiv.innerHTML = 'Loading...';
+
     try {
-        console.log('Starting fetch request for emails...');
-        const response = await fetch('http://localhost:9001/api/friends/fetch_emails/', {
+        const response = await fetch(`http://localhost:9001/api/friends/get_friends/?user_id=${currentUserId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         });
 
-        console.log('Fetch request completed.');
-        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error('Failed to fetch friends');
+        }
 
-        const data = await response.json();
-        console.log('Response data:', data);
+        const friendsData = await response.json();
+        friendsListDiv.innerHTML = '';
 
-        if (response.ok) {
-            const emailsDiv = document.getElementById('emails-list');
-            emailsDiv.innerHTML = '<h3>Emails in the credentials database:</h3>';
-            data.emails.forEach(email => {
-                const emailElement = document.createElement('p');
-                emailElement.textContent = email;
-                emailsDiv.appendChild(emailElement);
-            });
-            console.log('Emails fetched successfully');
+        if (friendsData.friends_usernames.length === 0) {
+            friendsListDiv.innerHTML = 'You have no friends yet.';
         } else {
-            console.log('Failed to fetch emails:', data.error);
+            const ul = document.createElement('ul');
+            friendsData.friends_usernames.forEach(friend => {
+                const li = document.createElement('li');
+                li.textContent = friend;
+                ul.appendChild(li);
+            });
+            friendsListDiv.appendChild(ul);
         }
     } catch (error) {
-        console.error('Error occurred during fetch request:', error);
-    }
-});
+        friendsListDiv.innerHTML = 'Error loading friends.';
+        console.error('Error fetching friends:', error);
     }
 }

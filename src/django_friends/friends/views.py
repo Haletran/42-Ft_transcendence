@@ -49,3 +49,26 @@ def fetch_emails_from_credentials(request):
     else:
         print(f"Failed to fetch emails from credentials service: {emails_response.status_code}")
         return Response({"error": "Failed to fetch emails from credentials service"}, status=emails_response.status_code)
+    
+@api_view(['GET'])
+@csrf_exempt
+def get_friends_usernames(request):
+    user_id = request.query_params.get('user_id')
+    
+    if not user_id:
+        return Response({
+            "error": "User ID is required"
+        }, status=400)
+    
+    try:
+        friends = Friend.objects.filter(user_id=user_id)
+        friends_usernames = [friend.name for friend in friends]
+        
+        return Response({
+            "user_id": user_id,
+            "friends_usernames": friends_usernames
+        }, status=200)
+    except Friend.DoesNotExist:
+        return Response({
+            "error": "No friends found for the given user ID"
+        }, status=404)
