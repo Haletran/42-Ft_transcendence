@@ -14,6 +14,11 @@ services:
       - ./src/reverseproxy/ssl/nginx.key:/etc/nginx/ssl/nginx.key
     depends_on:
       - django-credentials
+    env_file:
+      - .env
+    environment:
+      CLIENT_ID: "u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c"
+      CLIENT_SECRET: "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"
 
   # hardhat:
   #   build:
@@ -64,6 +69,8 @@ services:
       - .env
     environment:
       VAULT_ADDR: 'http://vault_container:8200' # Vault service name here
+      CLIENT_ID: "u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c"
+      CLIENT_SECRET: "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"
     depends_on:
       - database
     networks:

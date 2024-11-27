@@ -2,6 +2,7 @@ import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { logoutUser } from '../src/logout.js';
 
+
 export class LoginPage extends Page {
     constructor() {
         super();
@@ -37,8 +38,7 @@ export class LoginPage extends Page {
         logoutUser();
         super.render();
         document.getElementById('42_oauth').addEventListener('click', () => {
-            window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c&redirect_uri=http%3A%2F%2F192.168.122.131%3A9000%2Fapi%2Fcallback&response_type=code';
+            window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c&redirect_uri=http%3A%2F%2F10.12.249.15%3A9000%2Fapi%2Fcallback&response_type=code';
         });
-
     }
 }
