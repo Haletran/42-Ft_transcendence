@@ -25,3 +25,17 @@ class Friend(models.Model):
     def get_friends(self):
         """Return QuerySet of all friends"""
         return self.friends.all()
+    
+class FriendRequest(models.Model):
+    sender = models.IntegerField()
+    receiver = models.IntegerField()
+    status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')], default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['sender', 'receiver'], name='unique_friend_request')
+        ]
+
+    def __str__(self):
+        return f"Friend request from {self.sender.name} to {self.receiver.name}"

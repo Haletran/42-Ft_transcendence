@@ -65,6 +65,10 @@ export class Friends extends Page {
                 <h2>Your Friends</h2>
             <div id="friends-list"></div>
         </div>
+          <div>
+              <h2>Pending Invitations</h2>
+              <div id="pending-invitations-list"></div>
+          </div>
         </div>
     </div>
  `;
@@ -171,7 +175,7 @@ export class Friends extends Page {
     
               const addFriendData = await addFriendResponse.json();
               console.log('Add friend response data:', addFriendData);
-    
+              
               if (addFriendResponse.ok) {
                 messageDiv.textContent = `Friend ${userName} added successfully!`;
                 messageDiv.style.color = 'green';
@@ -180,6 +184,37 @@ export class Friends extends Page {
                 messageDiv.textContent = addFriendData.error || 'Failed to add friend.';
                 messageDiv.style.color = 'red';
                 console.log('Failed to add friend:', addFriendData.error);
+              }
+
+
+
+              // Step 3: Send POST request to create a friend request
+              console.log('Starting fetch request to create friend request...');
+              console.log('currentUserId : ', currentUserId);
+              console.log('userId : ', userId);
+              const addFriendRequestResponse = await fetch('http://localhost:9001/api/friends/add_request/', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      // 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                  },
+                  body: JSON.stringify({ sender_id: currentUserId, receiver_id: userId })
+              });
+
+              console.log('Fetch request to create friend request completed.');
+              console.log('Response status:', addFriendRequestResponse.status);
+
+              const addFriendRequestData = await addFriendRequestResponse.json();
+              console.log('Add friend request response data:', addFriendRequestData);
+
+              if (addFriendRequestResponse.ok) {
+                  messageDiv.textContent = `Friend request sent to ${userName} successfully!`;
+                  messageDiv.style.color = 'green';
+                  console.log('Friend request sent successfully');
+              } else {
+                  messageDiv.textContent = addFriendRequestData.error || 'Failed to send friend request.';
+                  messageDiv.style.color = 'red';
+                  console.log('Failed to send friend request:', addFriendRequestData.error);
               }
             } catch (error) {
               console.error('Error occurred during fetch request:', error);
@@ -192,6 +227,7 @@ export class Friends extends Page {
           if (currentUserData) {
             const currentUserId = currentUserData.id;
             fetchFriends(currentUserId); // Fetch friends when the page loads
+            fetchPendingInvitations(currentUserId);
           }
         } catch (error) {
           console.error('Error fetching user info:', error);
@@ -248,4 +284,40 @@ export class Friends extends Page {
         friendsListDiv.innerHTML = 'Error loading friends.';
         console.error('Error fetching friends:', error);
       }
-    }
+}
+
+async function fetchPendingInvitations(currentUserId) {
+  const pendingInvitationsListDiv = document.getElementById('pending-invitations-list');
+  pendingInvitationsListDiv.innerHTML = 'Loading...';
+
+  try {
+      const response = await fetch(`http://localhost:9001/api/friends/get_pending_invitations/?user_id=${currentUserId}`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error('Failed to fetch pending invitations');
+      }
+
+      const pendingInvitationsData = await response.json();
+      pendingInvitationsListDiv.innerHTML = '';
+
+      if (pendingInvitationsData.pending_invitations.length === 0) {
+          pendingInvitationsListDiv.innerHTML = 'You have no pending invitations.';
+      } else {
+          const ul = document.createElement('ul');
+          pendingInvitationsData.pending_invitations.forEach(invitation => {
+              const li = document.createElement('li');
+              li.textContent = `Invitation from: ${invitation}`;
+              ul.appendChild(li);
+          });
+          pendingInvitationsListDiv.appendChild(ul);
+      }
+  } catch (error) {
+      pendingInvitationsListDiv.innerHTML = 'Error loading pending invitations.';
+      console.error('Error fetching pending invitations:', error);
+  }
+}

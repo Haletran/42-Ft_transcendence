@@ -1,7 +1,7 @@
 import requests
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from .models import Friend
+from .models import Friend, FriendRequest
 from .serializers import FriendSerializer
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
@@ -72,3 +72,64 @@ def get_friends_usernames(request):
         return Response({
             "error": "No friends found for the given user ID"
         }, status=404)
+    
+@api_view(['GET'])
+@csrf_exempt
+def get_pending_invitations(request):
+    user_id = request.query_params.get('user_id')
+    
+    if not user_id:
+        return Response({
+            "error": "User ID is required"
+        }, status=400)
+    
+    try:
+        # Get the Friend instance for the given user_id
+        user = Friend.objects.get(user_id=user_id)
+        
+        # Get pending friend requests where the receiver is the current user
+        pending_requests = FriendRequest.objects.filter(receiver=user, status='pending')
+        pending_invitations = [{'sender_name': req.sender.name, 'sender_email': req.sender.email} for req in pending_requests]
+        
+        return Response({
+            "user_id": user_id,
+            "pending_invitations": pending_invitations
+        }, status=200)
+    except Friend.DoesNotExist:
+        return Response({
+            "error": "User not found"
+        }, status=404)
+
+@api_view(['POST'])
+@csrf_exempt
+def add_friend_request(request):
+    sender_id = request.data.get('sender_id')
+    receiver_id = request.data.get('receiver_id')
+
+    if not sender_id or not receiver_id:
+        return Response({
+            "error": "Sender ID and Receiver ID are required"
+        }, status=400)
+
+    try:
+
+        # Check if a friend request already exists
+        if FriendRequest.objects.filter(sender=sender_id, receiver=receiver_id).exists():
+            return Response({
+                "error": "Friend request already exists"
+            }, status=400)
+
+        # Create a new friend request
+        friend_request = FriendRequest.objects.create(sender=sender_id, receiver=receiver_id)
+        return Response({
+            "message": "Friend request sent successfully",
+            "friend_request_id": friend_request.id
+        }, status=201)
+    except Friend.DoesNotExist:
+        return Response({
+            "error": "Sender or Receiver not found"
+        }, status=404)
+    except Exception as e:
+        return Response({
+            "error": str(e)
+        }, status=500)
