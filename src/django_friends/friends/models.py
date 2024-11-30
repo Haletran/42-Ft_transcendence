@@ -29,6 +29,7 @@ class Friend(models.Model):
 class FriendRequest(models.Model):
     sender = models.IntegerField()
     receiver = models.IntegerField()
+    sender_mail = models.EmailField()
     status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')], default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 

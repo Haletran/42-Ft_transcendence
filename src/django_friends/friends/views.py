@@ -84,27 +84,25 @@ def get_pending_invitations(request):
         }, status=400)
     
     try:
-        # Get the Friend instance for the given user_id
-        user = Friend.objects.get(user_id=user_id)
-        
         # Get pending friend requests where the receiver is the current user
-        pending_requests = FriendRequest.objects.filter(receiver=user, status='pending')
-        pending_invitations = [{'sender_name': req.sender.name, 'sender_email': req.sender.email} for req in pending_requests]
+        pending_requests = FriendRequest.objects.filter(receiver=user_id, status='pending')
+        pending_invitations = [{'sender_email': req.sender_mail} for req in pending_requests]
         
         return Response({
-            "user_id": user_id,
+            "receiver": user_id,
             "pending_invitations": pending_invitations
         }, status=200)
-    except Friend.DoesNotExist:
+    except Exception as e:
         return Response({
-            "error": "User not found"
-        }, status=404)
+            "error": str(e)
+        }, status=500)
 
 @api_view(['POST'])
 @csrf_exempt
 def add_friend_request(request):
     sender_id = request.data.get('sender_id')
     receiver_id = request.data.get('receiver_id')
+    currentUserEmail = request.data.get('sender_mail')
 
     if not sender_id or not receiver_id:
         return Response({
@@ -114,13 +112,13 @@ def add_friend_request(request):
     try:
 
         # Check if a friend request already exists
-        if FriendRequest.objects.filter(sender=sender_id, receiver=receiver_id).exists():
+        if FriendRequest.objects.filter(sender=sender_id, receiver=receiver_id, sender_mail = currentUserEmail).exists():
             return Response({
                 "error": "Friend request already exists"
             }, status=400)
 
         # Create a new friend request
-        friend_request = FriendRequest.objects.create(sender=sender_id, receiver=receiver_id)
+        friend_request = FriendRequest.objects.create(sender=sender_id, receiver=receiver_id, sender_mail = currentUserEmail)
         return Response({
             "message": "Friend request sent successfully",
             "friend_request_id": friend_request.id

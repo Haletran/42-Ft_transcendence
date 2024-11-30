@@ -188,17 +188,18 @@ export class Friends extends Page {
 
 
 
-              // Step 3: Send POST request to create a friend request
+              // Step 4: Send POST request to create a friend request
               console.log('Starting fetch request to create friend request...');
               console.log('currentUserId : ', currentUserId);
               console.log('userId : ', userId);
+              console.log('currentUserEmail : ', currentUserEmail);
               const addFriendRequestResponse = await fetch('http://localhost:9001/api/friends/add_request/', {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
                       // 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
                   },
-                  body: JSON.stringify({ sender_id: currentUserId, receiver_id: userId })
+                  body: JSON.stringify({ sender_id: currentUserId, receiver_id: userId, sender_mail : currentUserEmail })
               });
 
               console.log('Fetch request to create friend request completed.');
@@ -303,7 +304,12 @@ async function fetchPendingInvitations(currentUserId) {
       }
 
       const pendingInvitationsData = await response.json();
+      console.log('Pending Invitations Data:', pendingInvitationsData); // Log the response data
       pendingInvitationsListDiv.innerHTML = '';
+
+      // Extract sender_email array
+      const senderEmails = pendingInvitationsData.pending_invitations.map(invitation => invitation.sender_email);
+      console.log('Sender Emails:', senderEmails); // Print the sender_email array
 
       if (pendingInvitationsData.pending_invitations.length === 0) {
           pendingInvitationsListDiv.innerHTML = 'You have no pending invitations.';
@@ -311,7 +317,7 @@ async function fetchPendingInvitations(currentUserId) {
           const ul = document.createElement('ul');
           pendingInvitationsData.pending_invitations.forEach(invitation => {
               const li = document.createElement('li');
-              li.textContent = `Invitation from: ${invitation}`;
+              li.textContent = `Invitation from: ${invitation.sender_email}`;
               ul.appendChild(li);
           });
           pendingInvitationsListDiv.appendChild(ul);
