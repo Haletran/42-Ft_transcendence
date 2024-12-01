@@ -16,8 +16,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from rest_framework.decorators import api_view #To delete after tests
-import json
-from django.contrib.auth import get_user_model
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 @ensure_csrf_cookie
 def set_csrf_token(request):
@@ -30,15 +30,26 @@ def set_csrf_token(request):
 def register_view(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)
-            email = data.get('email')
-            password = data.get('password')
-            profile_picture = data.get('profile_picture')
+            # data = json.loads(request.body)
+            # email = data.get('email')
+            # password = data.get('password')
+            # profile_picture = data.get('profile_picture')
 
-            #if MyUser.objects.filter(email=email).exists():
-            #    return JsonRespons({'error': 'Email already registered'}, status=400)
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            # profile_picture = request.POST.get('profile_picture')
+            uploaded_file = request.FILES.get('profile_picture')
+
+
+        
             # Create the user
-            user = MyUser.objects.create_user(username=email, email=email, password=password, profile_picture=profile_picture)
+            user = MyUser.objects.create_user(email=email, username=username, password=password)
+            if uploaded_file:
+                print(f"Received file: {uploaded_file.name}")
+                user.profile_picture = uploaded_file
+                user.save()
+                print(f"File saved: {user.profile_picture.url}")
             login(request, user)
             response = JsonResponse({'message': 'User registered successfully!'}, status=201)
             return response
@@ -56,6 +67,7 @@ def login_view(request):
             data = json.loads(request.body)
             email = data.get('email')
             password = data.get('password')
+
         
             user = authenticate(request, username=email, password=password)
             print(user)
@@ -82,11 +94,12 @@ def logout_view(request):
 def user_info(request):
     # print(user)
     user = request.user
+    profile_picture_url = user.profile_picture.url if user.profile_picture else None
     return JsonResponse({
         'id' : user.id,
         'email': user.email,
         'username': user.username,
-        'profile_picture': user.profile_picture
+        'profile_picture': profile_picture_url
     })
 
 def unauthorized_user_info(request):

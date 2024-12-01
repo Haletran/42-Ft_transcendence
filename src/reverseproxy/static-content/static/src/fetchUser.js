@@ -43,6 +43,12 @@ function updateProfileMail(Mail) {
     profileMail.value = Mail;
 }
 
+function updateProfileUsername(Username) {
+    console.log(Username);
+    const profileUsername = document.querySelector('input[type="username"]');
+    profileUsername.value = Username;
+}
+
 export async function getProfileName() {
     try {
         const response = await fetch('/api/user-info/', {
@@ -73,6 +79,7 @@ export async function fetchSettingsInfo() {
 
         if (response.ok) {
             const userData = await response.json();
+            updateProfileUsername(userData.username);
             updateProfilePicture(userData.profile_picture);
             updateProfileMail(userData.email);
         }

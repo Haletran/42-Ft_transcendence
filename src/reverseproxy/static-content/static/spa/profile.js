@@ -58,6 +58,11 @@ export class Profile extends Page {
                         <p class="card-text">Here you can update your profile information.</p>
                         <form id="profile_form">
                         <div class="form-floating mb-3">
+                            <input type="username" value="" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
                             <input type="email" value="" class="form-control" id="floatingInput"
                                 placeholder="name@example.com">
                             <label for="floatingInput">Email address</label>
@@ -83,6 +88,8 @@ export class Profile extends Page {
                             <img src="/static/imgs/haddock.jpg"
                                 alt="profile_picture" class="rounded-circle pp">
                         </div>
+                        <br>
+    			        <input type="file" id="customProfilePicture" name="customProfilePicture" accept="image/*" class="form-control">
                         <button id="update_info" type="submit" class="btn btn-primary mt-3">Update</button>
                         </form>
                     </div>

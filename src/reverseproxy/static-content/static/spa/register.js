@@ -32,9 +32,15 @@ export class RegisterPage extends Page {
 			</button>
 			<h3 class="text-center text-light fw-bold">Register</h3>
 			<div class="mb-3">
-			  <label for="registerEmail" class="form-label"
-				>Email address</label
-			  >
+			  <label for="registerUsername" class="form-label">Username</label>
+			  <input
+			  	type="username"
+				class="form-control text-bg-dark"
+				id="registerUsername"
+			  />
+			</div>
+			<div class="mb-3">
+			  <label for="registerEmail" class="form-label">Email address</label>
 			  <input
 				type="email"
 				class="form-control text-bg-dark"
@@ -58,11 +64,8 @@ export class RegisterPage extends Page {
 			</div>
 
 			<div class="mb-3">
-				<label for="profilePicture" class="form-label">Choose a profile picture</label>
+				<label for="profilePicture" class="form-label">Choose a profile picture...</label>
 				<div id="profilePictures" class="d-flex justify-content-around gap-2">
-				  <button type="button" class="profile-pic-btn">
-					<img src="/static/imgs/bapasqui.jpg" alt="Profile Pic 1" class="profile-pic" data-pic="pic1.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
-				  </button>
 				  <button type="button" class="profile-pic-btn">	
 					<img src="/static/imgs/asterix.gif" alt="Profile Pic 2" class="profile-pic" data-pic="pic2.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
@@ -76,6 +79,9 @@ export class RegisterPage extends Page {
 					<img src="/static/imgs/haddock.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
 				  </button>
 				</div>
+				<br>
+    			<label for="customProfilePicture" class="form-label">or upload your own</label>
+    			<input type="file" id="customProfilePicture" name="customProfilePicture" accept="image/*" class="form-control">
     		</div>
 
 			<div class="mb-3 form-check">
@@ -113,23 +119,53 @@ export class RegisterPage extends Page {
 			}
 		});
 
+		const profileInput = document.getElementById('customProfilePicture');
+		profileInput.addEventListener('change', () => {
+			imageURL = null;
+			console.log("Uploaded file:", profileInput.files[0]);
+		});
+
 		form.addEventListener('submit', async (e) => {
 		  e.preventDefault(); // Prevent the default form submission
 		  
+		  const username = document.getElementById('registerUsername').value;
+		  console.log(username);
 		  const email = document.getElementById('registerEmail').value;
 		  const password = document.getElementById('registerPassword').value;
-		  console.log(imageURL);
-		  // add profile picture
-		 // console.log(profilePics);
 		  
 
 		  
 		  // Prepare the data to send
-		  const data = {
-		  	email: email,
-		  	password: password,
-			profile_picture: imageURL,
-		  };
+		  const formData = new FormData();
+		  formData.append('username', username);
+		  formData.append('email', email);
+		  formData.append('password', password);
+
+		  if (imageURL) {
+			formData.append('profile_picture', imageURL);
+			console.log(imageURL);
+		  }
+		  else if (profileInput.files[0]) {
+			formData.append('profile_picture', profileInput.files[0]);
+			console.log('UPLOADDDDDD');
+			console.log(profileInput.files[0]);
+		  }
+		//   if (imageURL) {
+		//   	data = {
+		// 		username: username,
+		//   		email: email,
+		//   		password: password,
+		// 		profile_picture: imageURL,
+		//   	};
+		//   }
+		//   else if (profileInput.files[0]) {
+		//   	data = {
+		// 		username: username,
+		//   		email: email,
+		//   		password: password,
+		// 		profile_picture: profileInput.files[0],
+		//   	};
+		//   }
 		  
 		  //{ email, password, pic };
 	
@@ -147,11 +183,12 @@ export class RegisterPage extends Page {
 			const response = await fetch('/api/register/', {
 			  method: 'POST',
 			  headers: {
-				'Content-Type': 'application/json',
+				//'Content-Type': 'application/json',
 				'X-CSRFToken': csrfToken,
 			  },
 			  credentials: 'include',
-			  body: JSON.stringify(data),
+			  //body: JSON.stringify(data),
+			  body: formData,
 			});
 	
 			if (response.ok) {
