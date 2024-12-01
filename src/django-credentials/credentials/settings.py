@@ -159,7 +159,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_COOKIE_NAME = 'csrftoken'  # Cookie name (default)
 CSRF_TRUSTED_ORIGINS = [
-    "https://10.12.249.15",
+    "https://localhost",
     'https://localhost',
 ]
 CSRF_COOKIE_SECURE = True  # Only send cookies over HTTPS (ensure you're using HTTPS for both frontend and backend)
@@ -167,7 +167,7 @@ CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to access the cookie
 CSRF_COOKIE_PATH = '/'  # Path for the CSRF cookie
 CSRF_COOKIE_SAMESITE = 'None'  # Configure the SameSite attribute (can be 'Strict', 'Lax', or 'None')
 CORS_ALLOWED_ORIGINS = [
-    "https://10.12.249.15",
+    "https://localhost",
     'https://localhost',
 ]
 CORS_ALLOW_CREDENTIALS = True
