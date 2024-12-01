@@ -22,15 +22,17 @@ export class RegisterPage extends Page {
 			  border: 2px solid #393c49;
 			"
 		  >
-			<button
-			  id="back_button"
-			  type="button"
-			  class="btn btn-light fw-bold opacity"
-			  data-link="/login_base"
-			>
-			  Back
-			</button>
-			<h3 class="text-center text-light fw-bold">Register</h3>
+			<div class="d-flex justify-content-between align-items-center mb-3">
+			  <h3 class="text-center text-light fw-bold mb-0">Register</h3>
+			  <button
+				id="back_button"
+				type="button"
+				class="btn btn-light fw-bold opacity"
+				data-link="/login_base"
+			  >
+			  <i class="bi bi-x" data-link="/login_base"></i>
+			  </button>
+			</div>
 			<div class="mb-3">
 			  <label for="registerEmail" class="form-label"
 				>Email address</label
@@ -58,25 +60,24 @@ export class RegisterPage extends Page {
 			</div>
 
 			<div class="mb-3">
-				<label for="profilePicture" class="form-label">Choose a profile picture</label>
 				<div id="profilePictures" class="d-flex justify-content-around gap-2">
-				  <button type="button" class="profile-pic-btn">
-					<img src="/static/imgs/bapasqui.jpg" alt="Profile Pic 1" class="profile-pic" data-pic="pic1.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  <button type="button" class="profile-pic-btn cover-fit">
+					<img src="/static/imgs/bapasqui.jpg" alt="Profile Pic 1" class="profile-pic" data-pic="pic1.jpg" style="width: 60px; cursor: pointer;" />
 				  </button>
-				  <button type="button" class="profile-pic-btn">	
-					<img src="/static/imgs/asterix.gif" alt="Profile Pic 2" class="profile-pic" data-pic="pic2.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  <button type="button" class="profile-pic-btn cover-fit">	
+					<img src="/static/imgs/asterix.gif" alt="Profile Pic 2" class="profile-pic" data-pic="pic2.jpg" style="width: 60px; cursor: pointer;" />
 				  </button>
-				  <button type="button" class="profile-pic-btn">
-					<img src="/static/imgs/spirou.jpeg" alt="Profile Pic 3" class="profile-pic" data-pic="pic3.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  <button type="button" class="profile-pic-btn cover-fit">
+					<img src="/static/imgs/spirou.jpeg" alt="Profile Pic 3" class="profile-pic" data-pic="pic3.jpg" style="width: 60px; cursor: pointer;" />
 				  </button>
-				  <button type="button" class="profile-pic-btn">
-					<img src="/static/imgs/gaston.jpg" class="profile-pic" data-pic="pic4.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  <button type="button" class="profile-pic-btn cover-fit">
+					<img src="/static/imgs/gaston.jpg" class="profile-pic" data-pic="pic4.jpg" style="width: 60px; cursor: pointer;" />
 				  </button>
-				  <button type="button" class="profile-pic-btn">
-					<img src="/static/imgs/haddock.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
+				  <button type="button" class="profile-pic-btn cover-fit">
+					<img src="/static/imgs/haddock.jpg" style="width: 60px; cursor: pointer;" />
 				  </button>
 				</div>
-    		</div>
+			</div>
 
 			<div class="mb-3 form-check">
 			  <input type="checkbox" class="form-check-input" id="stayConnected" />
@@ -84,16 +85,16 @@ export class RegisterPage extends Page {
 				>Stay Connected</label
 			  >
 			</div>
-             <div class="d-flex justify-content-between flex-column gap-2">
-                <button id="register_button" 
-                type="submit" 
-                class="btn btn-outline-light full-width"
-                >Register</button>
-             </div>
+			 <div class="d-flex justify-content-between flex-column gap-2">
+				<button id="register_button" 
+				type="submit" 
+				class="btn btn-outline-light full-width"
+				>Register</button>
+			 </div>
 		  </form>
 		</div>
 	  `;
-	}
+	  }
 	
 	render() {
 		super.render(); // Call the parent render method
