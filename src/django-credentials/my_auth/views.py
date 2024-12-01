@@ -101,11 +101,14 @@ def update_profile_view(request):
             NewEmail = data.get('email')
             NewPassword = data.get('password')
             NewProfile_picture = data.get('profile_picture')
+            NewUsername = data.get('username')
 
             user = MyUser.objects.get(username=request.user.username)
             
             if NewEmail:
                 user.email = NewEmail
+            if NewUsername:
+                user.username = NewUsername
             if NewPassword:
                 user.set_password(NewPassword)
             if NewProfile_picture:

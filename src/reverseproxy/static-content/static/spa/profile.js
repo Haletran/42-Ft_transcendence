@@ -142,6 +142,7 @@ export class Profile extends Page {
 		  // Prepare the data to send
 		  const data = {
 		  	email: email,
+            username: email,
 		  	password: password,
 			profile_picture: imageURL,
 		  };
