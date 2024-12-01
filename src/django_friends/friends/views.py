@@ -120,13 +120,51 @@ def get_incoming_invitations(request):
         }, status=400)
 
     try:
-        # Get pending friend requests where the sender is the current user
+        # Get pending friend requests where the receiver is the current user
         pending_requests = Friend.objects.filter(receiver=user_id, status='pending')
-        pending_confirmations = [{'receiver_username': req.name_friend2} for req in pending_requests]
+        pending_confirmations = [{'id': req.id, 'receiver_username': req.name_friend2} for req in pending_requests]
 
         return Response({
             "sender": user_id,
             "pending_confirmations": pending_confirmations
+        }, status=200)
+    except Exception as e:
+        return Response({
+            "error": str(e)
+        }, status=500)
+    
+@api_view(['POST'])
+@csrf_exempt
+def handle_invitation_response(request):
+    invitation_id = request.query_params.get('id')
+    choice = request.data.get('choice')
+
+    if not invitation_id:
+        return Response({
+            "error": "Invitation ID is required"
+        }, status=400)
+
+    if choice not in ['accepted', 'rejected']:
+        return Response({
+            "error": "Choice must be either 'accepted' or 'rejected'"
+        }, status=400)
+
+    try:
+        # Assuming the current user ID is available in the request (e.g., from a session or token)
+        current_user_id = request.user.id
+
+        # Get the friendship object
+        friendship = Friend.objects.filter(id=invitation_id, status='pending').first()
+        if not friendship:
+            return Response({
+                "error": "Pending invitation not found"
+            }, status=404)
+
+        # Change the status of the friendship
+        friendship.change_status(friendship.id_friend2, choice)
+
+        return Response({
+            "message": f"Invitation {choice} successfully"
         }, status=200)
     except Exception as e:
         return Response({

@@ -261,27 +261,76 @@ async function getIncomingInvitations(currentUserId) {
                 'Content-Type': 'application/json',
             }
         });
-  
+
         if (!response.ok) {
             throw new Error('Failed to fetch incoming invitations');
         }
-  
+
         const data = await response.json();
         console.log('incoming invitations data:', data);
-  
+
         const confirmationList = document.getElementById('incoming-invitations-list');
         confirmationList.innerHTML = '';
-  
+
         if (data.pending_confirmations.length === 0) {
             confirmationList.textContent = 'No incoming invitations.';
         } else {
             data.pending_confirmations.forEach(confirmation => {
+                console.log('Confirmation object:', confirmation); // Log the confirmation object
+                console.log('Confirmation ID:', confirmation.id); // Log the confirmation ID
+
                 const listItem = document.createElement('div');
                 listItem.textContent = `Pending confirmation for: ${confirmation.receiver_username}`;
+
+                const acceptButton = document.createElement('button');
+                acceptButton.textContent = 'Accept';
+                acceptButton.onclick = () => handleInvitationResponse(confirmation.id, true, currentUserId);
+
+                const denyButton = document.createElement('button');
+                denyButton.textContent = 'Deny';
+                denyButton.onclick = () => handleInvitationResponse(confirmation.id, false, currentUserId);
+
+                listItem.appendChild(acceptButton);
+                listItem.appendChild(denyButton);
+
                 confirmationList.appendChild(listItem);
             });
         }
     } catch (error) {
         console.error('Error fetching incoming invitations:', error);
     }
-  }
+}
+
+async function handleInvitationResponse(invitationId, accept, currentUserId) {
+    try {
+        const url = `http://localhost:9001/api/friends/respond_invitation/?id=${invitationId}`;
+        console.log(`Making request to: ${url}`);
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                choice: accept,
+            }),
+        });
+
+        // Log response status for debugging
+        console.log(`Response status: ${response.status}`);
+
+        if (!response.ok) {
+            const errorMessage = `Failed to respond to invitation: ${response.statusText} (Status: ${response.status})`;
+            console.error(errorMessage);
+            throw new Error(errorMessage);
+        }
+
+        const data = await response.json();
+        console.log('Invitation response data:', data);
+
+        // Refresh the incoming invitations list
+        getIncomingInvitations(currentUserId);
+    } catch (error) {
+        console.error('Error responding to invitation:', error);
+    }
+}

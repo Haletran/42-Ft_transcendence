@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import add_friend, fetch_emails_from_credentials, get_friends_usernames, get_pending_confirmations, get_incoming_invitations
+from .views import add_friend, fetch_emails_from_credentials, get_friends_usernames, get_pending_confirmations, get_incoming_invitations, handle_invitation_response
 
 urlpatterns = [
     path('add/', add_friend, name='add_friend'),
@@ -7,4 +7,6 @@ urlpatterns = [
     path('fetch_emails/', fetch_emails_from_credentials, name='fetch_emails_from_credentials'),
     path('get_pending_confirmations/', get_pending_confirmations, name='get_pending_confirmations'),
     path('get_incoming_invitations/', get_incoming_invitations, name='get_incoming_invitations'),
+    path('respond_invitation/', handle_invitation_response, name='handleInvitationResponse'),
+
 ]
