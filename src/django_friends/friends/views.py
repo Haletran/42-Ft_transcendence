@@ -108,3 +108,27 @@ def get_pending_confirmations(request):
         return Response({
             "error": str(e)
         }, status=500)
+    
+@api_view(['GET'])
+@csrf_exempt
+def get_incoming_invitations(request):
+    user_id = request.query_params.get('user_id')
+
+    if not user_id:
+        return Response({
+            "error": "User ID is required"
+        }, status=400)
+
+    try:
+        # Get pending friend requests where the sender is the current user
+        pending_requests = Friend.objects.filter(receiver=user_id, status='pending')
+        pending_confirmations = [{'receiver_username': req.name_friend2} for req in pending_requests]
+
+        return Response({
+            "sender": user_id,
+            "pending_confirmations": pending_confirmations
+        }, status=200)
+    except Exception as e:
+        return Response({
+            "error": str(e)
+        }, status=500)
