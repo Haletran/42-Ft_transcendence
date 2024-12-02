@@ -63,18 +63,44 @@ export class Friends extends Page {
                     </div>
                 </div>
             </div>
-            <div>
-                <h2>Your Friends</h2>
-            <div id="friends-list"></div>
-        </div>
-          <div>
-              <h2>Your Pending Invitations</h2>
-              <div id="pending-invitations-list"></div>
-          </div>
-          <div>
-              <h2>Invitations pending confirmation</h2>
-              <div id="incoming-invitations-list"></div>
-          </div>
+            <div class="col mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h2 class="title" >Friends</h2>
+                            <div id="friends-list"></div>
+                        </div>
+                        <hr>
+                        <div class="card-title">
+                            <h2 class="title" >Friends request</h2>
+                            <p class="text-muted">Manage your incoming and outgoing friend requests</p>
+                                <ul class="nav nav-tabs" id="requestTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link active" id="incoming-tab" data-bs-toggle="tab" href="#incoming" role="tab" aria-controls="incoming" aria-selected="true">Incoming Requests</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link" id="outgoing-tab" data-bs-toggle="tab" href="#outgoing" role="tab" aria-controls="outgoing" aria-selected="false">Outgoing Requests</a>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab content -->
+                                <div class="tab-content" id="requestTabsContent">
+                                    <!-- Incoming Requests Tab -->
+                                    <div class="tab-pane fade show active" id="incoming" role="tabpanel" aria-labelledby="incoming-tab">
+                                        <ul id="incoming-invitations-list" class="list-group mt-3">
+                                        </ul>
+                                    </div>
+                                    <!-- Outgoing Requests Tab -->
+                                    <div class="tab-pane fade" id="outgoing" role="tabpanel" aria-labelledby="outgoing-tab">
+                                        <ul id="pending-invitations-list" class="list-group mt-3">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
  `;
@@ -94,75 +120,75 @@ export class Friends extends Page {
           //updateProfilePicture(currentPic);
           super.render(); // Call the parent render method
 
-          document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
-              event.preventDefault();
+            document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
+                event.preventDefault();
 
-              const usernameOrEmail = document.getElementById('friend-username').value;
-              const messageDiv = document.getElementById('add-friend-message');
+                const usernameOrEmail = document.getElementById('friend-username').value;
+                const messageDiv = document.getElementById('add-friend-message');
 
-              console.log('Form submitted with username or email:', usernameOrEmail);
+                console.log('Form submitted with username or email:', usernameOrEmail);
 
-              // Check if the user is trying to add themselves
-              if (usernameOrEmail === currentUserEmail || usernameOrEmail === currentUserName) {
-                  messageDiv.textContent = "You cannot add yourself as a friend.";
-                  messageDiv.style.color = 'red';
-                  console.log("Attempt to add self as friend prevented.");
-                  return;
-              }
+                // Check if the user is trying to add themselves
+                if (usernameOrEmail === currentUserEmail || usernameOrEmail === currentUserName) {
+                    messageDiv.textContent = "You cannot add yourself as a friend.";
+                    messageDiv.style.color = 'red';
+                    console.log("Attempt to add self as friend prevented.");
+                    return;
+                }
 
-              try {
-                  // Step 1: Fetch emails from credentials service
-                  console.log('Starting fetch request for emails...');
-                  const emailsResponse = await fetch('http://localhost:9001/api/friends/fetch_emails/', {
-                      method: 'GET',
-                      headers: {
-                          'Content-Type': 'application/json',
-                      }
-                  });
+                try {
+                    // Step 1: Fetch emails from credentials service
+                    console.log('Starting fetch request for emails...');
+                    const emailsResponse = await fetch('http://localhost:9001/api/friends/fetch_emails/', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
 
-                  console.log('Fetch request for emails completed.');
-                  console.log('Response status:', emailsResponse.status);
+                    console.log('Fetch request for emails completed.');
+                    console.log('Response status:', emailsResponse.status);
 
-                  const emailsData = await emailsResponse.json();
-                  console.log('Emails response data:', emailsData);
+                    const emailsData = await emailsResponse.json();
+                    console.log('Emails response data:', emailsData);
 
-                  if (emailsResponse.ok) {
-                      // Step 2: Check if the email exists in the fetched list
-                      const emailExists = emailsData.emails?.includes(usernameOrEmail);
-                      const userExists = emailsData.usernames?.includes(usernameOrEmail);
-                      let userEmail = null;
-                      let userName = null;
-                      let userId = null;
+                    if (emailsResponse.ok) {
+                        // Step 2: Check if the email exists in the fetched list
+                        const emailExists = emailsData.emails?.includes(usernameOrEmail);
+                        const userExists = emailsData.usernames?.includes(usernameOrEmail);
+                        let userEmail = null;
+                        let userName = null;
+                        let userId = null;
 
-                      if (emailExists) {
-                          const index = emailsData.emails.indexOf(usernameOrEmail);
-                          userEmail = usernameOrEmail;
-                          userName = emailsData.usernames[index];
-                          userId = emailsData.id[index];  // Get the user ID using the same index
-                          messageDiv.textContent = `Email ${usernameOrEmail} found. Username: ${userName}, ID: ${userId}`;
-                          messageDiv.style.color = 'green';
-                          console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
-                      } else if (userExists) {
-                          const index = emailsData.usernames.indexOf(usernameOrEmail);
-                          userName = usernameOrEmail;
-                          userEmail = emailsData.emails[index];
-                          userId = emailsData.id[index];  // Get the user ID using the same index
-                          messageDiv.textContent = `Username ${usernameOrEmail} found. Email: ${userEmail}, ID: ${userId}`;
-                          messageDiv.style.color = 'green';
-                          console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
-                      } else {
-                          messageDiv.textContent = `Email or Username ${usernameOrEmail} not found in credentials service.`;
-                          messageDiv.style.color = 'red';
-                          console.log(`Email or Username ${usernameOrEmail} not found in credentials service.`);
-                          return;
-                      }
+                        if (emailExists) {
+                            const index = emailsData.emails.indexOf(usernameOrEmail);
+                            userEmail = usernameOrEmail;
+                            userName = emailsData.usernames[index];
+                            userId = emailsData.id[index];  // Get the user ID using the same index
+                            messageDiv.textContent = `Email ${usernameOrEmail} found. Username: ${userName}, ID: ${userId}`;
+                            messageDiv.style.color = 'green';
+                            console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
+                        } else if (userExists) {
+                            const index = emailsData.usernames.indexOf(usernameOrEmail);
+                            userName = usernameOrEmail;
+                            userEmail = emailsData.emails[index];
+                            userId = emailsData.id[index];  // Get the user ID using the same index
+                            messageDiv.textContent = `Username ${usernameOrEmail} found. Email: ${userEmail}, ID: ${userId}`;
+                            messageDiv.style.color = 'green';
+                            console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
+                        } else {
+                            messageDiv.textContent = `Email or Username ${usernameOrEmail} not found in credentials service.`;
+                            messageDiv.style.color = 'red';
+                            console.log(`Email or Username ${usernameOrEmail} not found in credentials service.`);
+                            return;
+                        }
 
-                      console.log('Current User ID:', currentUserId);
-                      console.log('Current User Email:', currentUserEmail);
-                      console.log('Current User Name:', currentUserName);
-                      console.log('User ID:', userId);
-                      console.log('User Email:', userEmail);
-                      console.log('User Name:', userName);
+                        console.log('Current User ID:', currentUserId);
+                        console.log('Current User Email:', currentUserEmail);
+                        console.log('Current User Name:', currentUserName);
+                        console.log('User ID:', userId);
+                        console.log('User Email:', userEmail);
+                        console.log('User Name:', userName);
 
                       // Step 3: Send POST request to add the friend
                       console.log('Starting fetch request to add friend...');
@@ -179,87 +205,99 @@ export class Friends extends Page {
                           body: JSON.stringify({ id_friend1: currentUserId, email_friend1: currentUserEmail, name_friend1: currentUserName, id_friend2: userId, email_friend2: userEmail, name_friend2: userName, sender: currentUserId, receiver: userId, status: "pending" })
                       });
 
-                      console.log('Fetch request to add friend completed.');
-                      console.log('Response status:', addFriendResponse.status);
+                        console.log('Fetch request to add friend completed.');
+                        console.log('Response status:', addFriendResponse.status);
 
-                      const addFriendData = await addFriendResponse.json();
-                      console.log('Add friend response data:', addFriendData);
+                        const addFriendData = await addFriendResponse.json();
+                        console.log('Add friend response data:', addFriendData);
 
-                      if (addFriendResponse.ok) {
-                          messageDiv.textContent = `Invitation to Friend ${userName} sent successfully!`;
-                          messageDiv.style.color = 'green';
-                          console.log('Friend invitation sent successfully');
-                      } else {
-                          messageDiv.textContent = addFriendData.error || 'Failed to add friend.';
-                          messageDiv.style.color = 'red';
-                          console.log('Failed to add friend:', addFriendData.error);
-                      }
-                  } else {
-                      messageDiv.textContent = emailsData.error || 'Failed to fetch emails.';
-                      messageDiv.style.color = 'red';
-                      console.log('Failed to fetch emails:', emailsData.error);
-                  }
-              } catch (error) {
-                  console.error('Error occurred during fetch request:', error);
-                  messageDiv.textContent = 'An error occurred. Please try again.';
-                  messageDiv.style.color = 'red';
-              }
-          });
-          fetchPendingConfirmations(currentUserId);
-          getIncomingInvitations(currentUserId);
-          fetchAcceptedFriendships(currentUserId);
-      } catch (error) {
-          console.error('Error fetching user info:', error);
-      }
-  }
-}
-    
-async function getCurrentUserInfo() {
-  const response = await fetch('/api/user-info/', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
+                        if (addFriendResponse.ok) {
+                            messageDiv.textContent = `Invitation to Friend ${userName} sent successfully!`;
+                            messageDiv.style.color = 'green';
+                            console.log('Friend invitation sent successfully');
+                        } else {
+                            messageDiv.textContent = addFriendData.error || 'Failed to add friend.';
+                            messageDiv.style.color = 'red';
+                            console.log('Failed to add friend:', addFriendData.error);
+                        }
+                    } else {
+                        messageDiv.textContent = emailsData.error || 'Failed to fetch emails.';
+                        messageDiv.style.color = 'red';
+                        console.log('Failed to fetch emails:', emailsData.error);
+                    }
+                } catch (error) {
+                    console.error('Error occurred during fetch request:', error);
+                    messageDiv.textContent = 'An error occurred. Please try again.';
+                    messageDiv.style.color = 'red';
+                }
+            });
+            fetchPendingConfirmations(currentUserId);
+            getIncomingInvitations(currentUserId);
+            fetchAcceptedFriendships(currentUserId);
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+        }
     }
-  });
+}
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch user info');
-  }
+async function getCurrentUserInfo() {
+    const response = await fetch('/api/user-info/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
 
-  return await response.json();
+    if (!response.ok) {
+        throw new Error('Failed to fetch user info');
+    }
+
+    return await response.json();
 }
 
 async function fetchPendingConfirmations(currentUserId) {
-  try {
-      const response = await fetch(`http://localhost:9001/api/friends/get_pending_confirmations/?user_id=${currentUserId}`, {
-          method: 'GET',
-          headers: {
-              'Content-Type': 'application/json',
-          }
-      });
+    try {
+        const response = await fetch(`http://localhost:9001/api/friends/get_pending_confirmations/?user_id=${currentUserId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
 
-      if (!response.ok) {
-          throw new Error('Failed to fetch pending confirmations');
-      }
+        if (!response.ok) {
+            throw new Error('Failed to fetch pending confirmations');
+        }
 
-      const data = await response.json();
-      console.log('Pending confirmations data:', data);
+        const data = await response.json();
+        console.log('Pending confirmations data:', data);
 
-      const confirmationList = document.getElementById('pending-invitations-list');
-      confirmationList.innerHTML = '';
+        const confirmationList = document.getElementById('pending-invitations-list');
+        confirmationList.innerHTML = '';
 
-      if (data.pending_confirmations.length === 0) {
-          confirmationList.textContent = 'No pending confirmations.';
-      } else {
-          data.pending_confirmations.forEach(confirmation => {
-              const listItem = document.createElement('div');
-              listItem.textContent = `Pending confirmation for: ${confirmation.receiver_username}`;
-              confirmationList.appendChild(listItem);
-          });
-      }
-  } catch (error) {
-      console.error('Error fetching pending confirmations:', error);
-  }
+        if (data.pending_confirmations.length === 0) {
+            confirmationList.textContent = 'No pending confirmations.';
+        } else {
+            data.pending_confirmations.forEach(confirmation => {
+
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                listItem.textContent = `Pending confirmation for: ${confirmation.receiver_username}`;
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'btn-container';
+
+                const cancelButton = document.createElement('button');
+                cancelButton.className = 'btn btn-outline-light';
+                cancelButton.innerHTML = '<i class="bi bi-x"></i>';
+                cancelButton.onclick = () => handleInvitationResponse(confirmation.id, 'cancelled', currentUserId);
+
+                btnContainer.appendChild(cancelButton);
+                listItem.appendChild(btnContainer);
+                confirmationList.appendChild(listItem);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching pending confirmations:', error);
+    }
 }
 
 async function getIncomingInvitations(currentUserId) {
@@ -285,22 +323,26 @@ async function getIncomingInvitations(currentUserId) {
             confirmationList.textContent = 'No incoming invitations.';
         } else {
             data.pending_confirmations.forEach(confirmation => {
-                console.log('Confirmation object:', confirmation); // Log the confirmation object
-                console.log('Confirmation ID:', confirmation.id); // Log the confirmation ID
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                listItem.textContent = `Friend request from ${confirmation.sender_username}`;
 
-                const listItem = document.createElement('div');
-                listItem.textContent = `Pending confirmation for: ${confirmation.receiver_username}`;
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'btn-container';
 
                 const acceptButton = document.createElement('button');
-                acceptButton.textContent = 'Accept';
+                acceptButton.className = 'btn btn-outline-light';
+                acceptButton.innerHTML = '<i class="bi bi-check2"></i> Accept';
                 acceptButton.onclick = () => handleInvitationResponse(confirmation.id, 'accepted', currentUserId);
 
                 const denyButton = document.createElement('button');
-                denyButton.textContent = 'Deny';
+                denyButton.className = 'btn btn-outline-light';
+                denyButton.innerHTML = '<i class="bi bi-x"></i> Reject';
                 denyButton.onclick = () => handleInvitationResponse(confirmation.id, 'rejected', currentUserId);
 
-                listItem.appendChild(acceptButton);
-                listItem.appendChild(denyButton);
+                btnContainer.appendChild(acceptButton);
+                btnContainer.appendChild(denyButton);
+                listItem.appendChild(btnContainer);
 
                 confirmationList.appendChild(listItem);
             });
@@ -368,6 +410,7 @@ async function fetchAcceptedFriendships(currentUserId) {
         friendshipList.innerHTML = '';
 
         if (data.accepted_friendships.length === 0) {
+            friendshipList.className = 'text-muted';
             friendshipList.textContent = 'No accepted friendships.';
         } else {
             data.accepted_friendships.forEach(friendship => {

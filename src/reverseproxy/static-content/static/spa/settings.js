@@ -101,7 +101,7 @@ export class Settings extends Page {
     `
             ;
     }
-        render() {
+    render() {
         fetchSettingsInfo();
         super.render(); // Call the parent render method
         setupProfilePictureSelection();
@@ -143,12 +143,12 @@ export class Settings extends Page {
 		  	
 		  try {
 
-			// get CSRF token
-			console.log('CSRF Token:', getCSRFToken('csrftoken'));
-			const csrfToken = getCSRFToken('csrftoken');
-			if (!csrfToken) {
-				console.error('CSRF token is missing!');
-			}
+                // get CSRF token
+                console.log('CSRF Token:', getCSRFToken('csrftoken'));
+                const csrfToken = getCSRFToken('csrftoken');
+                if (!csrfToken) {
+                    console.error('CSRF token is missing!');
+                }
 
 			// Send data to the backend
 			
