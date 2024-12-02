@@ -56,7 +56,7 @@ export class Profile extends Page {
                         <form id="profile_form">
                         <div class="form-floating mb-3">
                             <input type="username" value="" class="form-control" id="floatingUsername"
-                                placeholder="exusername">
+                                placeholder="username">
                             <label for="floatingUsername">Username</label>
                         </div>
                         <div class="form-floating mb-3">

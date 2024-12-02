@@ -35,14 +35,14 @@ export class loginBasePage extends Page {
 			</div>
 
 			<div class="mb-4 mt-3">
-			  <label for="loginEmail" class="form-label">Email Address</label>
+			  <label for="loginUsername" class="form-label">Username</label>
 			  <input
 				type="username"
 				class="form-control text-bg-dark"
-				id="loginEmail"
-				aria-describedby="emailHelp"
+				id="loginUsername"
+				aria-describedby="usernameHelp"
 				required
-				placeholder="Enter your email"
+				placeholder="Enter your username"
 			  />
 			</div>
 
@@ -95,7 +95,7 @@ export class loginBasePage extends Page {
 			document.querySelector('.loader').style.display = 'flex';
 			document.getElementById('app').style.display = 'none';
 			await new Promise(r => setTimeout(r, 200));
-			window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c&redirect_uri=http%3A%2F%2F10.11.249.22%3A9000%2Fapi%2Fcallback&response_type=code';
+			window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c&redirect_uri=http%3A%2F%2Flocalhost%3A9000%2Fapi%2Fcallback&response_type=code';
 		};
 	}
 
