@@ -1,4 +1,4 @@
-export async function fetchUserInfo() {
+export async function fetchProfileInfo() {
     try {
         const response = await fetch('/api/user-info/', {
             method: 'GET',
@@ -7,9 +7,11 @@ export async function fetchUserInfo() {
 
         if (response.ok) {
             const userData = await response.json();
+            document.getElementById('username').innerText = userData.username;
+            document.getElementById('email').innerText = userData.email;
             updateProfilePicture(userData.profile_picture);
         }
-        else /*if (response.status === 401)*/ {
+        else {
             console.log(response.status);
             console.log('User not logged in');
             hideProfilePicture();
