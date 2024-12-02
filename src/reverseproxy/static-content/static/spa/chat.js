@@ -143,11 +143,6 @@ export class Chat extends Page {
         document.getElementById("id_message_send_button").addEventListener("click", () => {
             var msg = document.getElementById("id_message_send_input").value;
             chatSocket.send(JSON.stringify({ message: msg, username: username }));
-            var chat = document.getElementById("id_chat_item_container");
-            var p = document.createElement("p");
-            p.textContent = username + " : " + msg;
-            p.style.margin = '0';
-            chat.appendChild(p);
             document.getElementById("id_message_send_input").value = '';
             this.scrollToBottom();
         });
@@ -156,11 +151,6 @@ export class Chat extends Page {
             if (e.key === 'Enter') {
                 var msg = document.getElementById("id_message_send_input").value;
                 chatSocket.send(JSON.stringify({ message: msg, username: username }));
-                var chat = document.getElementById("id_chat_item_container");
-                var p = document.createElement("p");
-                p.textContent = username + " : " + msg;
-                p.style.margin = '0';
-                chat.appendChild(p);
                 document.getElementById("id_message_send_input").value = '';
                 this.scrollToBottom();
             }
