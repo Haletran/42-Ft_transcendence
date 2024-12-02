@@ -64,23 +64,8 @@ export class RegisterPage extends Page {
 			</div>
 
 			<div class="mb-3">
-				<label for="profilePicture" class="form-label">Choose a profile picture...</label>
-				<div id="profilePictures" class="d-flex justify-content-around gap-2">
-				  <button type="button" class="profile-pic-btn">	
-					<img src="/static/imgs/asterix.gif" alt="Profile Pic 2" class="profile-pic" data-pic="pic2.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
-				  </button>
-				  <button type="button" class="profile-pic-btn">
-					<img src="/static/imgs/spirou.jpeg" alt="Profile Pic 3" class="profile-pic" data-pic="pic3.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
-				  </button>
-				  <button type="button" class="profile-pic-btn">
-					<img src="/static/imgs/gaston.jpg" class="profile-pic" data-pic="pic4.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
-				  </button>
-				  <button type="button" class="profile-pic-btn">
-					<img src="/static/imgs/haddock.jpg" style="width: 60px; cursor: pointer; border-radius: 50%;" />
-				  </button>
-				</div>
 				<br>
-    			<label for="customProfilePicture" class="form-label">or upload your own</label>
+    			<label for="customProfilePicture" class="form-label">Upload your profile picture</label>
     			<input type="file" id="customProfilePicture" name="customProfilePicture" accept="image/*" class="form-control">
     		</div>
 
@@ -108,16 +93,16 @@ export class RegisterPage extends Page {
 	  
 	attachFormListener() {
 		const form = document.getElementById('register_form');
-		let imageURL = '';
+		
+		const defaultPic = '/static/imgs/gaston.jpg';
+		let defaultFileBlob = null;
 
-		const profilePics = document.getElementById('profilePictures');
-		profilePics.addEventListener('click', (event) => {
-			const clicked = event.target.closest('img');
-			if (clicked) {
-				imageURL = clicked.src;
-				console.log('Selected Image URL', imageURL);
-			}
-		});
+		fetch(defaultPic)
+			.then(response => response.blob())
+			.then(blob => {
+				defaultFileBlob = new File([blob], 'default-profile.jpg', { type: blob.type });
+			})
+			.catch(error => console.error('Error fetching default file:', error));
 
 		const profileInput = document.getElementById('customProfilePicture');
 		profileInput.addEventListener('change', () => {
@@ -141,33 +126,16 @@ export class RegisterPage extends Page {
 		  formData.append('email', email);
 		  formData.append('password', password);
 
-		  if (imageURL) {
-			formData.append('profile_picture', imageURL);
-			console.log(imageURL);
-		  }
-		  else if (profileInput.files[0]) {
+		  if (profileInput.files[0]) {
 			formData.append('profile_picture', profileInput.files[0]);
-			console.log('UPLOADDDDDD');
 			console.log(profileInput.files[0]);
-		  }
-		//   if (imageURL) {
-		//   	data = {
-		// 		username: username,
-		//   		email: email,
-		//   		password: password,
-		// 		profile_picture: imageURL,
-		//   	};
-		//   }
-		//   else if (profileInput.files[0]) {
-		//   	data = {
-		// 		username: username,
-		//   		email: email,
-		//   		password: password,
-		// 		profile_picture: profileInput.files[0],
-		//   	};
-		//   }
-		  
-		  //{ email, password, pic };
+		  } else if (defaultFileBlob) {
+			formData.append('profile_picture', defaultFileBlob)
+		  } else {
+            console.error('Default file is not ready yet!');
+            alert('Default file is not ready yet! Please try again.');
+            return;
+        }
 	
 		  try {
 

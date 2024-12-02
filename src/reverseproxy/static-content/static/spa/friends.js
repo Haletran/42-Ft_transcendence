@@ -1,4 +1,5 @@
-import { fetchProfileInfo } from '../src/fetchUser.js';
+import { fetchMinInfo } from '../src/fetchUser.js';
+import { updateProfilePicture } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 
 export class Friends extends Page {
@@ -77,7 +78,6 @@ export class Friends extends Page {
     </div>
  `;
     }
-
       async render() {
         try {
           const currentUserData = await getCurrentUserInfo();
@@ -87,7 +87,10 @@ export class Friends extends Page {
           const currentUserId = currentUserData.id;
           const currentUserEmail = currentUserData.email;
           const currentUserName = currentUserData.username;
-
+          //const currentPic = currentUserData.profile_picture;
+          fetchMinInfo();
+          //console.log('HELLO', currentPic);
+          //updateProfilePicture(currentPic);
           super.render(); // Call the parent render method
 
           document.getElementById('add-friend-form').addEventListener('submit', async (event) => {

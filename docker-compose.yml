@@ -12,6 +12,7 @@ services:
       - ./src/reverseproxy/static-content:/var/www/html
       - ./src/reverseproxy/ssl/nginx.crt:/etc/nginx/ssl/nginx.crt
       - ./src/reverseproxy/ssl/nginx.key:/etc/nginx/ssl/nginx.key
+      - profile_pictures:/usr/share/nginx/media/
     depends_on:
       - django-credentials
     env_file:
@@ -65,6 +66,7 @@ services:
     volumes:
       - ./src/django-credentials/ssl/django-credentials.key:/etc/ssl/private/django.key
       - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt
+      - profile_pictures:/app/media/
     env_file:
       - .env
     environment:
@@ -120,33 +122,31 @@ services:
 
   #CHAT
 
-  django-chat:
-    build: src/django_chat/.
-    container_name: django-chat
-    ports:
-      - "9002:9002"
-    depends_on:
-      - chat-database
-    networks:
-      - transcendence
-    command: >
-      sh -c "sleep 8 && python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9002 django_chat.asgi:application"
+  # django-chat:
+  #   build: src/django_chat/.
+  #   container_name: django-chat
+  #   ports:
+  #     - "9002:9000"
+  #   depends_on:
+  #     - chat-database
+  #   networks:
+  #     - transcendence
+  #   command: >
+  #     sh -c "sleep 8 && python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 django_chat.wsgi:application"
 
-
-
-  chat-database:
-    image: postgres:latest
-    container_name: chat-database
-    ports:
-      - "5434:5432"
-    volumes:
-      - chat_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: chat_db
-      POSTGRES_USER: chat_user
-      POSTGRES_PASSWORD: chat_password
-    networks:
-      - transcendence
+  # chat-database:
+  #   image: postgres:latest
+  #   container_name: chat-database
+  #   ports:
+  #     - "5434:5432"
+  #   volumes:
+  #     - chat_data:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_DB: chat_db
+  #     POSTGRES_USER: chat_user
+  #     POSTGRES_PASSWORD: chat_password
+  #   networks:
+  #     - transcendence
 
 volumes:
   dblogins:
@@ -158,6 +158,7 @@ volumes:
   credentials_data:
   friends_data:
   chat_data:
+  profile_pictures:
 
 
 networks:
