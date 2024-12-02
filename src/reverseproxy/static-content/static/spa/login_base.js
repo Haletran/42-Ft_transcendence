@@ -66,7 +66,6 @@ export class loginBasePage extends Page {
 				Login
 			  </button>
 			  <button id="42_oauth"
-				type="submit"
 				class="btn btn-custom btn-42 d-flex align-items-center justify-content-center gap-1"
 			  >
 				Login with
@@ -85,33 +84,40 @@ export class loginBasePage extends Page {
 	render() {
 		super.render(); // Call the parent render method
 		this.attachFormLoginListener(); // Now attach the listener here
-		document.getElementById('42_oauth').addEventListener('click', () => {
-            window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c&redirect_uri=http%3A%2F%2F10.12.249.15%3A9000%2Fapi%2Fcallback&response_type=code';
-        });
+		// document.getElementById('42_oauth').addEventListener('click', () => {
+		// 	window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c&redirect_uri=http%3A%2F%2F10.11.249.22%3A9000%2Fapi%2Fcallback&response_type=code';
+		// });
+		this.loading_42();
+	}
+
+	loading_42() {
+		document.getElementById('42_oauth').onclick = async function () {
+			document.querySelector('.loader').style.display = 'flex';
+			document.getElementById('app').style.display = 'none';
+			await new Promise(r => setTimeout(r, 200));
+			window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c&redirect_uri=http%3A%2F%2F10.11.249.22%3A9000%2Fapi%2Fcallback&response_type=code';
+		};
 	}
 
 	attachFormLoginListener() {
 		const form = document.getElementById('login_form');
 
 		form.addEventListener('submit', async (e) => {
+			document.querySelector('.loader').style.display = 'flex';
+			document.getElementById('app').style.display = 'none';
 			e.preventDefault(); // Prevent the default form submission
 
 			const email = document.getElementById('loginEmail').value;
 			const password = document.getElementById('loginPassword').value;
 
-			// Prepare the data to send
 			const data = { email, password };
-
 			try {
-
-				// get CSRF token
 				console.log('CSRF Token:', getCSRFToken('csrftoken'));
 				const csrfToken = getCSRFToken('csrftoken');
 				if (!csrfToken) {
 					console.error('CSRF token is missing!');
 				}
 
-				// Send data to the backend
 				const response = await fetch('/api/login/', {
 					method: 'POST',
 					headers: {
@@ -125,8 +131,6 @@ export class loginBasePage extends Page {
 				if (response.ok) {
 					const result = await response.json();
 					console.log('Login successful:', result);
-					alert('YOU ARE LOGGED IN MWAH!');
-					// Optionally, redirect to home page or another page
 					window.location.href = '/home';
 				} else {
 					const error = await response.json();

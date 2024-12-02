@@ -119,7 +119,7 @@ def login_42(request):
             'grant_type': 'authorization_code',
             'client_id': 'u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c',
             'client_secret': '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',
-            'redirect_uri': 'http://10.12.249.15:9000/api/callback',
+            'redirect_uri': 'http://10.11.249.22:9000/api/callback',
             'code': code,
         })
         response_data = response.json()
@@ -151,6 +151,6 @@ def login_42(request):
                 user.profile_picture = NewProfile_picture
             user.save()
         login(request, user)
-        return redirect('https://10.12.249.15/home')
+        return redirect('https://10.11.249.22/home')
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

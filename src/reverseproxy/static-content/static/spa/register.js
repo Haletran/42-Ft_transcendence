@@ -3,8 +3,8 @@ import { getCSRFToken } from '../src/csrf.js';
 
 export class RegisterPage extends Page {
 	constructor() {
-	  super();
-	  this.template = `
+		super();
+		this.template = `
 		<div
 		  id="register_container"
 		  class="d-flex justify-content-center align-items-center"
@@ -94,13 +94,13 @@ export class RegisterPage extends Page {
 		  </form>
 		</div>
 	  `;
-	  }
-	
+	}
+
 	render() {
 		super.render(); // Call the parent render method
 		this.attachFormListener(); // Now attach the listener here
-	  }
-	  
+	}
+
 	attachFormListener() {
 		const form = document.getElementById('register_form');
 		let imageURL = '';
@@ -115,60 +115,62 @@ export class RegisterPage extends Page {
 		});
 
 		form.addEventListener('submit', async (e) => {
-		  e.preventDefault(); // Prevent the default form submission
-		  
-		  const email = document.getElementById('registerEmail').value;
-		  const password = document.getElementById('registerPassword').value;
-		  console.log(imageURL);
-		  // add profile picture
-		 // console.log(profilePics);
-		  
+			document.querySelector('.loader').style.display = 'flex';
+			document.getElementById('app').style.display = 'none';
+			e.preventDefault(); // Prevent the default form submission
 
-		  
-		  // Prepare the data to send
-		  const data = {
-		  	email: email,
-		  	password: password,
-			profile_picture: imageURL,
-		  };
-		  
-		  //{ email, password, pic };
-	
-		  try {
+			const email = document.getElementById('registerEmail').value;
+			const password = document.getElementById('registerPassword').value;
+			console.log(imageURL);
+			// add profile picture
+			// console.log(profilePics);
 
-			// get CSRF token
-			console.log('CSRF Token:', getCSRFToken('csrftoken'));
-			const csrfToken = getCSRFToken('csrftoken');
-			if (!csrfToken) {
-				console.error('CSRF token is missing!');
+
+
+			// Prepare the data to send
+			const data = {
+				email: email,
+				password: password,
+				profile_picture: imageURL,
+			};
+
+			//{ email, password, pic };
+
+			try {
+
+				// get CSRF token
+				console.log('CSRF Token:', getCSRFToken('csrftoken'));
+				const csrfToken = getCSRFToken('csrftoken');
+				if (!csrfToken) {
+					console.error('CSRF token is missing!');
+				}
+
+				// Send data to the backend
+
+				const response = await fetch('/api/register/', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRFToken': csrfToken,
+					},
+					credentials: 'include',
+					body: JSON.stringify(data),
+				});
+
+				if (response.ok) {
+					const result = await response.json();
+					console.log('Registration successful:', result);
+					// Optionally, redirect to login or home page
+					window.location.href = '/home';
+				} else {
+					const error = await response.json();
+					console.error('Registration failed:', error);
+					alert('Registration failed: ' + error.message);
+				}
+			} catch (error) {
+				console.error('Error:', error);
+				alert('An error occurred: ' + error.message);
 			}
-
-			// Send data to the backend
-			
-			const response = await fetch('/api/register/', {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'application/json',
-				'X-CSRFToken': csrfToken,
-			  },
-			  credentials: 'include',
-			  body: JSON.stringify(data),
-			});
-	
-			if (response.ok) {
-			  const result = await response.json();
-			  console.log('Registration successful:', result);
-			  // Optionally, redirect to login or home page
-			  window.location.href = '/home';
-			} else {
-			  const error = await response.json();
-			  console.error('Registration failed:', error);
-			  alert('Registration failed: ' + error.message);
-			}
-		  } catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred: ' + error.message);
-		  }
 		});
-	  }
-  }
+	}
+}
