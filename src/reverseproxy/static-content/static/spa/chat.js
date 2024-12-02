@@ -177,11 +177,3 @@ async function getCurrentUserInfo() {
 
     return await response.json();
 }
-
-// Initialize the chat
-document.addEventListener("DOMContentLoaded", async () => {
-    const userInfo = await getCurrentUserInfo();
-    window.currentUserName = userInfo.username; // Set the global variable
-    const chat = new Chat();
-    chat.render();
-});
