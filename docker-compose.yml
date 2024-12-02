@@ -122,31 +122,31 @@ services:
 
   #CHAT
 
-  # django-chat:
-  #   build: src/django_chat/.
-  #   container_name: django-chat
-  #   ports:
-  #     - "9002:9000"
-  #   depends_on:
-  #     - chat-database
-  #   networks:
-  #     - transcendence
-  #   command: >
-  #     sh -c "sleep 8 && python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 django_chat.wsgi:application"
+  django-chat:
+    build: src/django_chat/.
+    container_name: django-chat
+    ports:
+      - "9002:9000"
+    depends_on:
+      - chat-database
+    networks:
+      - transcendence
+    command: >
+      sh -c "sleep 8 && python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9002 django_chat.asgi:application"
 
-  # chat-database:
-  #   image: postgres:latest
-  #   container_name: chat-database
-  #   ports:
-  #     - "5434:5432"
-  #   volumes:
-  #     - chat_data:/var/lib/postgresql/data
-  #   environment:
-  #     POSTGRES_DB: chat_db
-  #     POSTGRES_USER: chat_user
-  #     POSTGRES_PASSWORD: chat_password
-  #   networks:
-  #     - transcendence
+  chat-database:
+    image: postgres:latest
+    container_name: chat-database
+    ports:
+      - "5434:5432"
+    volumes:
+      - chat_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: chat_db
+      POSTGRES_USER: chat_user
+      POSTGRES_PASSWORD: chat_password
+    networks:
+      - transcendence
 
 volumes:
   dblogins:

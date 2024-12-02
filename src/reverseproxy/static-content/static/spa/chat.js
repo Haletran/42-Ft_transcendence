@@ -4,7 +4,7 @@ export class Chat extends Page {
     constructor() {
         super();
         this.template = `
-    <div class="header">
+                    <div class="header">
         <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand " href="/home" data-link="/home">
