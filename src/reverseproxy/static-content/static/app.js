@@ -29,15 +29,21 @@ const routes = {
   '/logout': logoutUser,
 };
 
-const router = new Router(routes);
+export const router = new Router(routes);
 
 document.addEventListener('DOMContentLoaded', () => {
   initializeCSRFToken();
+
   document.body.addEventListener('click', (e) => {
-    if (e.target.matches('[data-link]')) {
+    const linkel = e.target.closest('[data-link]');
+    if (linkel) {
+      console.log("MATCHES DATA LINK ", e.target.getAttribute('data-link'));
       e.preventDefault();
-      history.pushState(null, null, e.target.getAttribute('data-link'));
-      router.navigate();
+
+      const path = linkel.getAttribute('data-link');
+      router.goTo(path);
+      //history.pushState(null, null, e.target.getAttribute('data-link'));
+      //router.navigate();
     }
   });
 
@@ -50,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       router.navigate();
     });
   }
-
+  console.log("BIND NAV");
   window.addEventListener('popstate', router.navigate.bind(router));
   router.navigate();
 });

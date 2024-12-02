@@ -1,5 +1,6 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
+import { router } from '../app.js';
 
 export class loginBasePage extends Page {
 	constructor() {
@@ -75,7 +76,7 @@ export class loginBasePage extends Page {
 
 			<div class="d-flex justify-content-center p-2 gap-2">
 			  <span class="text-muted">Don't have an account yet?</span>
-			  <a href="#" data-link="register" class="text-white fw-semibold">Register</a>
+			  <a href="/register" data-link="/register" class="text-white fw-semibold">Register</a>
 			</div>
 		  </form>
 		</div>
@@ -103,8 +104,8 @@ export class loginBasePage extends Page {
 		const form = document.getElementById('login_form');
 
 		form.addEventListener('submit', async (e) => {
-			document.querySelector('.loader').style.display = 'flex';
-			document.getElementById('app').style.display = 'none';
+			//document.querySelector('.loader').style.display = 'flex';
+			//document.getElementById('app').style.display = 'none';
 			e.preventDefault(); // Prevent the default form submission
 
 			const username = document.getElementById('loginUsername').value;
@@ -133,7 +134,7 @@ export class loginBasePage extends Page {
 				if (response.ok) {
 					const result = await response.json();
 					console.log('Login successful:', result);
-					window.location.href = '/home';
+					router.goTo('/home');
 				} else {
 					const error = await response.json();
 					console.error('Login failed:', error);

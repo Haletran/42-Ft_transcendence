@@ -1,5 +1,6 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
+import { router } from '../app.js';
 
 export class RegisterPage extends Page {
 	constructor() {
@@ -163,7 +164,7 @@ export class RegisterPage extends Page {
 			  const result = await response.json();
 			  console.log('Registration successful:', result);
 			  // Optionally, redirect to login or home page
-			  window.location.href = '/home';
+			  router.goTo('/home');
 			} else {
 			  const error = await response.json();
 			  console.error('Registration failed:', error);
