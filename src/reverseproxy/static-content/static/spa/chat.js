@@ -6,11 +6,8 @@ export class Chat extends Page {
     constructor() {
         super();
         this.template = `
-            <center><h1>Hello, Welcome to my chat site! {{request.user}}</h1></center>
+            <center><h1>Hello, Welcome to the chat site!</h1></center>
             <br>
-            {% if request.user.is_authenticated %}
-            <center> Logout the chat Page <a href="{% url 'logout-user' %}">Logout</a></center>
-            {% endif %}
             <div class="chat__item__container" id="id_chat_item_container" style="font-size: 20px">
               <br />
               <input type="text" id="id_message_send_input" />
@@ -23,7 +20,9 @@ export class Chat extends Page {
 
     async render() {
         super.render();
-        this.chatEvent("dorian");
+        const currentUserData = await getCurrentUserInfo();
+        const currentUserName = currentUserData.username;
+        this.chatEvent(currentUserName);
     }
 
     scrollToBottom() {
@@ -34,7 +33,7 @@ export class Chat extends Page {
     chatEvent(username) {
         const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
         const chatSocket = new WebSocket(protocol + window.location.host + "/ws/chat_test/");
-        // const chatSocket = new WebSocket(`wss://${window.location.host}/ws/chat_test/`)
+
         chatSocket.onopen = function (e) {
             console.log("The connection was setup successfully!");
         };
@@ -83,3 +82,18 @@ export class Chat extends Page {
         });
     }
 }
+
+async function getCurrentUserInfo() {
+    const response = await fetch('/api/user-info/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to fetch user info');
+    }
+  
+    return await response.json();
+  }

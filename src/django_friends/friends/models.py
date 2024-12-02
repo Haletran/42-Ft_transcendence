@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class Friend(models.Model):
     id_friend1 = models.IntegerField()  # Store user ID directly
@@ -15,6 +16,11 @@ class Friend(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['id_friend1', 'id_friend2'], name='unique_friendship')
         ]
+
+    def save(self, *args, **kwargs):
+        if Friend.objects.filter(id_friend1=self.id_friend2, id_friend2=self.id_friend1).exists():
+            raise ValidationError("This friendship already exists in reverse order.")
+        super(Friend, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"Friendship between {self.name_friend1} and {self.name_friend2}"
