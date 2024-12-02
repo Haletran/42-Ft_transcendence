@@ -1,6 +1,7 @@
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { updateProfilePicture } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
+import { getCSRFToken } from '../src/csrf.js';
 
 export class Friends extends Page {
     constructor() {
@@ -165,11 +166,15 @@ export class Friends extends Page {
 
                       // Step 3: Send POST request to add the friend
                       console.log('Starting fetch request to add friend...');
+                      const csrfToken = getCSRFToken('csrftoken');
+				      if (!csrfToken) {
+				        console.error('CSRF token is missing!');
+				      }
                       const addFriendResponse = await fetch('http://localhost:9001/api/friends/add/', {
                           method: 'POST',
                           headers: {
                               'Content-Type': 'application/json',
-                              // 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                              'X-CSRFToken': csrfToken,
                           },
                           body: JSON.stringify({ id_friend1: currentUserId, email_friend1: currentUserEmail, name_friend1: currentUserName, id_friend2: userId, email_friend2: userEmail, name_friend2: userName, sender: currentUserId, receiver: userId, status: "pending" })
                       });
@@ -309,11 +314,15 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
     try {
         const url = `http://localhost:9001/api/friends/respond_invitation/?id=${invitationId}`;
         console.log(`Making request to: ${url}`);
-
+        const csrfToken = getCSRFToken('csrftoken');
+		if (!csrfToken) {
+		  console.error('CSRF token is missing!');
+		}
         const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
             },
             body: JSON.stringify({
                 choice: accept,
