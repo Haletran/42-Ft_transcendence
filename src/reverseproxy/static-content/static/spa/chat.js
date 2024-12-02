@@ -64,10 +64,11 @@ export class Chat extends Page {
     async render() {
         super.render();
         const currentUserData = await getCurrentUserInfo();
-        this.displayFriends(currentUserData.id, currentUserData.username);
+        const currentUserName = currentUserData.username;
+        this.displayFriends(currentUserData.id);
     }
 
-    async displayFriends(currentUserId, currentUserName) {
+    async displayFriends(currentUserId) {
         try {
             const response = await fetch(`http://localhost:9001/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
                 method: 'GET',
@@ -95,7 +96,7 @@ export class Chat extends Page {
                     friendBox.style.padding = '10px';
                     friendBox.style.margin = '5px';
                     friendBox.style.cursor = 'pointer';
-                    friendBox.addEventListener('click', () => this.openChat(currentUserName));
+                    friendBox.addEventListener('click', () => this.openChat(friend.friend_username));
                     friendsList.appendChild(friendBox);
                 });
             }
@@ -142,17 +143,21 @@ export class Chat extends Page {
 
         document.getElementById("id_message_send_button").addEventListener("click", () => {
             var msg = document.getElementById("id_message_send_input").value;
-            chatSocket.send(JSON.stringify({ message: msg, username: username }));
-            document.getElementById("id_message_send_input").value = '';
-            this.scrollToBottom();
+            if (msg) {
+                chatSocket.send(JSON.stringify({ message: msg, username: username }));
+                document.getElementById("id_message_send_input").value = '';
+                this.scrollToBottom();
+            }
         });
 
         document.getElementById("id_message_send_input").addEventListener("keypress", (e) => {
             if (e.key === 'Enter') {
                 var msg = document.getElementById("id_message_send_input").value;
-                chatSocket.send(JSON.stringify({ message: msg, username: username }));
-                document.getElementById("id_message_send_input").value = '';
-                this.scrollToBottom();
+                if (msg) {
+                    chatSocket.send(JSON.stringify({ message: msg, username: username }));
+                    document.getElementById("id_message_send_input").value = '';
+                    this.scrollToBottom();
+                }
             }
         });
     }
