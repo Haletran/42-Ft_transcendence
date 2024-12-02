@@ -103,7 +103,7 @@ export class Settings extends Page {
             ;
     }
     render() {
-        fetchSettingsInfo();
+        // fetchSettingsInfo();
         super.render(); // Call the parent render method
         setupProfilePictureSelection();
         this.attachFormListener();
