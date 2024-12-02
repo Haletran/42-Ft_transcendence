@@ -6,14 +6,13 @@ import { Games } from './spa/games.js';
 import { Monopoly } from './spa/monopoly.js';
 import { Pong } from './spa/pong.js';
 import { Profile } from './spa/profile.js';
-import { Chat } from './spa/chat.js';
 import { Settings } from './spa/settings.js';
 import { Friends } from './spa/friends.js';
 import { initializeCSRFToken } from './src/csrf.js';
 import { fetchProfileInfo } from './src/fetchUser.js';
 import { loginBasePage } from './spa/login_base.js';
 import { logoutUser } from './src/logout.js';
-import { ChatPage } from './spa/chat_test.js';
+import { Chat } from './spa/chat.js';
 // import { ChatPage } from './spa/login_chat.js';
 
 const routes = {
@@ -25,7 +24,6 @@ const routes = {
   '/profile': Profile,
   '/settings': Settings,
   '/chat': Chat,
-  '/chat_test': ChatPage,
   '/monopoly': Monopoly,
   '/login_base': loginBasePage,
   '/friends': Friends,
