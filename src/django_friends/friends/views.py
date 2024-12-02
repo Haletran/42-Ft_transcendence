@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import Friend
 from .serializers import FriendSerializer
 from rest_framework.decorators import api_view
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_exempt
 from django.db import models
 
 @ensure_csrf_cookie

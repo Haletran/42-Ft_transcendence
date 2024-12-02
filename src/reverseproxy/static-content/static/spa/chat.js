@@ -1,3 +1,4 @@
+import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 
 export class Chat extends Page {
@@ -63,6 +64,7 @@ export class Chat extends Page {
 
     async render() {
         super.render();
+        fetchMinInfo();
         const currentUserData = await getCurrentUserInfo();
         const currentUserName = currentUserData.username;
         this.displayFriends(currentUserData.id);
