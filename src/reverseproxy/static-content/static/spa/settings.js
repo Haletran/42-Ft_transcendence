@@ -109,7 +109,7 @@ export class Settings extends Page {
     `
             ;
     }
-        render() {
+    render() {
         fetchSettingsInfo();
         super.render(); // Call the parent render method
         setupProfilePictureSelection();
@@ -124,73 +124,73 @@ export class Settings extends Page {
 
     attachFormListener() {
         const form = document.getElementById('profile_form');
-		let imageURL = null;
+        let imageURL = null;
 
-		const profilePics = document.getElementById('choice_pp');
-		profilePics.addEventListener('click', (event) => {
-			const clicked = event.target.closest('img');
-			if (clicked) {
-				imageURL = clicked.src;
-				console.log('Selected Image URL', imageURL);
-			}
-		});
+        const profilePics = document.getElementById('choice_pp');
+        profilePics.addEventListener('click', (event) => {
+            const clicked = event.target.closest('img');
+            if (clicked) {
+                imageURL = clicked.src;
+                console.log('Selected Image URL', imageURL);
+            }
+        });
 
-		form.addEventListener('submit', async (e) => {
-		  e.preventDefault(); // Prevent the default form submission
-		  
-		  const email = document.getElementById('floatingInput').value;
-          const username = document.getElementById('floatingUsername').value;
-		  const password = document.getElementById('floatingPassword').value;
-		  console.log(imageURL);
-		  // add profile picture
-		 // console.log(profilePics);
-		  
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
 
-		  
-		  // Prepare the data to send
-		  const data = {
-		  	email: email,
-            username: username,
-		  	password: password,
-			profile_picture: imageURL,
-		  };
-		  	
-		  try {
+            const email = document.getElementById('floatingInput').value;
+            const username = document.getElementById('floatingUsername').value;
+            const password = document.getElementById('floatingPassword').value;
+            console.log(imageURL);
+            // add profile picture
+            // console.log(profilePics);
 
-			// get CSRF token
-			console.log('CSRF Token:', getCSRFToken('csrftoken'));
-			const csrfToken = getCSRFToken('csrftoken');
-			if (!csrfToken) {
-				console.error('CSRF token is missing!');
-			}
 
-			// Send data to the backend
-			
-			const response = await fetch('/api/update_profile/', {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'application/json',
-				'X-CSRFToken': csrfToken,
-			  },
-			  credentials: 'include',
-			  body: JSON.stringify(data),
-			});
-	
-			if (response.ok) {
-			  const result = await response.json();
-			  console.log('Edit successful:', result);
-              alert('Informations successfully edited MWAH');
-			  this.render();
-			} else {
-			  const error = await response.json();
-			  console.error('Edit failed:', error);
-			  alert('Edit failed: ' + error.message);
-			}
-		  } catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred: ' + error.message);
-		  }
-		});
-        
+
+            // Prepare the data to send
+            const data = {
+                email: email,
+                username: username,
+                password: password,
+                profile_picture: imageURL,
+            };
+
+            try {
+
+                // get CSRF token
+                console.log('CSRF Token:', getCSRFToken('csrftoken'));
+                const csrfToken = getCSRFToken('csrftoken');
+                if (!csrfToken) {
+                    console.error('CSRF token is missing!');
+                }
+
+                // Send data to the backend
+
+                const response = await fetch('/api/update_profile/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Edit successful:', result);
+                    alert('Informations successfully edited MWAH');
+                    this.render();
+                } else {
+                    const error = await response.json();
+                    console.error('Edit failed:', error);
+                    alert('Edit failed: ' + error.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred: ' + error.message);
+            }
+        });
+
     }
 }

@@ -203,11 +203,12 @@ def login_42(request):
             raise Exception("Invalid token")
         me_data = me_response.json()
 
+        NewUsername = me_data.get('login')
         NewEmail = me_data.get('email')
         NewPassword = "NULL"
         NewProfile_picture = me_data.get('image', {}).get('versions', {}).get('medium', "NULL")
 
-        user, created = MyUser.objects.get_or_create(username=NewEmail, defaults={
+        user, created = MyUser.objects.get_or_create(username=NewUsername, email=NewEmail, defaults={
             'email': NewEmail,
             'profile_picture': NewProfile_picture,
         })
@@ -217,6 +218,8 @@ def login_42(request):
                 user.email = NewEmail
             if NewPassword:
                 user.set_password(NewPassword)
+            if NewUsername:
+                user.username = NewUsername                
             if NewProfile_picture:
                 user.profile_picture = NewProfile_picture
             user.save()
