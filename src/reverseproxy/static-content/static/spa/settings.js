@@ -1,5 +1,8 @@
-import { fetchUserInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
+import { Router } from '../src/router.js';
+import { fetchSettingsInfo } from '../src/fetchUser.js';
+import { getCSRFToken } from '../src/csrf.js';
+import { setupProfilePictureSelection } from '../js/event.js';
 
 export class Settings extends Page {
     constructor() {
@@ -41,7 +44,7 @@ export class Settings extends Page {
                         Profile
                     </a>
                     <a id="choose_param" data-link="/settings" 
-                        class="list-group-item list-group-item-action active">Settings</a>
+                        class="list-group-item list-group-item-action  active">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
                     <a id="choose_param" href="/chat" data-link="/chat"
@@ -52,16 +55,113 @@ export class Settings extends Page {
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Settings</h5>
-                        <p class="card-text">idk what to put here</p>
+                        <p class="card-text">Here you can update your profile information.</p>
+                        <form id="profile_form">
+                        <div class="form-floating mb-3">
+                            <input type="email" value="" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Email address</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="password" value="" class="form-control" id="floatingPassword"
+                                placeholder="Password">
+                            <label for="floatingPassword">Password</label>
+                        </div>
+                        <br>
+                        <h5 class="card-title">Profile Picture</h5>
+                        <p class="card-text">Here you can update your profile picture.</p>
+                        <div id="choice_pp" class="d-flex justify-content-center">
+                            <img id="actual_pp"
+                                src=""
+                                alt="profile_picture_main" class="rounded-circle pp">
+                            <img src="/static/imgs/asterix.gif"
+                                alt="profile_picture" class="rounded-circle pp">
+                            <img src="/static/imgs/spirou.jpeg"
+                                alt="profile_picture" class="rounded-circle pp">
+                            <img src="/static/imgs/gaston.jpg"
+                                alt="profile_picture" class="rounded-circle pp">
+                            <img src="/static/imgs/haddock.jpg"
+                                alt="profile_picture" class="rounded-circle pp">
+                        </div>
+                        <button id="update_info" type="submit" class="btn btn-primary mt-3">Update</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="toast align-items-center position-fixed bottom-0 end-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
     </div>
- `;
+    `
+            ;
     }
     render() {
-        fetchUserInfo();
+        fetchSettingsInfo();
         super.render(); // Call the parent render method
+        setupProfilePictureSelection();
+        this.attachFormListener();
+    }
+
+    attachFormListener() {
+        const form = document.getElementById('profile_form');
+        let imageURL = null;
+
+        const profilePics = document.getElementById('choice_pp');
+        profilePics.addEventListener('click', (event) => {
+            const clicked = event.target.closest('img');
+            if (clicked) {
+                imageURL = clicked.src;
+            }
+        });
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+
+            const email = document.getElementById('floatingInput').value;
+            const password = document.getElementById('floatingPassword').value;
+            // Prepare the data to send
+            const data = {
+                email: email,
+                password: password,
+                profile_picture: imageURL,
+            };
+
+            try {
+                const csrfToken = getCSRFToken('csrftoken');
+                if (!csrfToken) {
+                    console.error('CSRF token is missing!');
+                }
+                const response = await fetch('/api/update_profile/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    this.render();
+                    document.querySelector(".toast-body").textContent = "Profile updated successfully!";
+                    document.querySelector(".toast").classList.add("show");
+                } else {
+                    this.render();
+                    document.querySelector(".toast-body").textContent = "Error : Profile update failed!";
+                    document.querySelector(".toast").classList.add("show");
+                }
+            } catch (error) {
+                this.render();
+                document.querySelector(".toast-body").textContent = "Error: " + error;
+                document.querySelector(".toast").classList.add("show");
+            }
+        });
+
     }
 }

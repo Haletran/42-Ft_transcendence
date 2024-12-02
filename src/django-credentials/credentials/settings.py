@@ -167,7 +167,7 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_PATH = '/'
 CSRF_COOKIE_SAMESITE = 'None'
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost",
+    "https://10.12.249.15",
     'https://localhost',
 ]
 CORS_ALLOW_CREDENTIALS = True

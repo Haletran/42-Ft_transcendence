@@ -4,9 +4,21 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 
 body {
-    overflow: hidden;
 }
 
+
+/* @font-face {
+    font-family: 'nighty';
+    src: url('Basteleur-Bold.otf') format('opentype');
+    font-weight: bold;
+}
+
+.custom-font {
+    font-family: 'nighty';
+    color: #faece2;
+    font-size: 3em;
+}
+ */
 
 img.main-logo {
     filter: invert(1);
@@ -18,6 +30,30 @@ img.main-logo {
     font-weight: bold;
     font-style: normal;
     font-size: 1em;
+}
+
+.montserrat-bold-300 {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    font-size: 1em;
+}
+
+.montserrat-bold-400 {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1em;
+}
+
+.montserrat-bold-500-2 {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 2em;
 }
 
 .montserrat {
@@ -176,4 +212,24 @@ img.main-logo {
 
 .overflow-hidden {
     overflow: hidden;
+}
+
+.cover-fit {
+    object-fit: cover;
+}
+
+.btn-42 {
+    background-color: #00babc !important;
+}
+
+.btn-42:hover {
+    background-color: #029194 !important;
+}
+
+.btn-custom {
+    font-family: "Montserrat", sans-serif !important;
+    font-optical-sizing: auto !important;
+    font-weight: 500 !important;
+    font-style: normal !important;
+    font-size: 0.9em !important;
 }
