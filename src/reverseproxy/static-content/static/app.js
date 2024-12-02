@@ -9,7 +9,6 @@ import { Profile } from './spa/profile.js';
 import { Settings } from './spa/settings.js';
 import { Friends } from './spa/friends.js';
 import { initializeCSRFToken } from './src/csrf.js';
-import { fetchProfileInfo } from './src/fetchUser.js';
 import { loginBasePage } from './spa/login_base.js';
 import { logoutUser } from './src/logout.js';
 import { Chat } from './spa/chat.js';
