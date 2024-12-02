@@ -48,3 +48,11 @@ class Friend(models.Model):
     def get_friends(self):
         """Return QuerySet of all friends"""
         return Friend.objects.filter(id_friend1=self.id_friend1, status='accepted')
+    
+    def change_status(self, user_id, new_status):
+        """Change the status of the friendship"""
+        if user_id == self.id_friend2:
+            self.status = new_status
+            self.save()
+        else:
+            raise ValueError("User ID does not match the receiver ID")

@@ -130,7 +130,7 @@ services:
     networks:
       - transcendence
     command: >
-      sh -c "python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9002 django_chat.asgi:application"
+      sh -c "sleep 8 && python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9002 django_chat.asgi:application"
 
 
 

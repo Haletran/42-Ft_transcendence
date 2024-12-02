@@ -199,6 +199,7 @@ export class Friends extends Page {
           });
           fetchPendingConfirmations(currentUserId);
           getIncomingInvitations(currentUserId);
+          fetchAcceptedFriendships(currentUserId);
       } catch (error) {
           console.error('Error fetching user info:', error);
       }
@@ -284,11 +285,11 @@ async function getIncomingInvitations(currentUserId) {
 
                 const acceptButton = document.createElement('button');
                 acceptButton.textContent = 'Accept';
-                acceptButton.onclick = () => handleInvitationResponse(confirmation.id, true, currentUserId);
+                acceptButton.onclick = () => handleInvitationResponse(confirmation.id, 'accepted', currentUserId);
 
                 const denyButton = document.createElement('button');
                 denyButton.textContent = 'Deny';
-                denyButton.onclick = () => handleInvitationResponse(confirmation.id, false, currentUserId);
+                denyButton.onclick = () => handleInvitationResponse(confirmation.id, 'rejected', currentUserId);
 
                 listItem.appendChild(acceptButton);
                 listItem.appendChild(denyButton);
@@ -332,5 +333,39 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
         getIncomingInvitations(currentUserId);
     } catch (error) {
         console.error('Error responding to invitation:', error);
+    }
+}
+
+async function fetchAcceptedFriendships(currentUserId) {
+    try {
+        const response = await fetch(`http://localhost:9001/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch accepted friendships');
+        }
+
+        const data = await response.json();
+        console.log('Accepted friendships data:', data);
+
+        const friendshipList = document.getElementById('friends-list');
+        friendshipList.innerHTML = '';
+
+        if (data.accepted_friendships.length === 0) {
+            friendshipList.textContent = 'No accepted friendships.';
+        } else {
+            data.accepted_friendships.forEach(friendship => {
+                const listItem = document.createElement('div');
+                listItem.textContent = `Friend: ${friendship.friend_username}`;
+
+                friendshipList.appendChild(listItem);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching accepted friendships:', error);
     }
 }

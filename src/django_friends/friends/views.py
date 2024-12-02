@@ -5,6 +5,7 @@ from .models import Friend
 from .serializers import FriendSerializer
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
+from django.db import models
 
 @api_view(['POST'])
 @csrf_exempt
@@ -165,6 +166,41 @@ def handle_invitation_response(request):
 
         return Response({
             "message": f"Invitation {choice} successfully"
+        }, status=200)
+    except Exception as e:
+        return Response({
+            "error": str(e)
+        }, status=500)
+    
+@api_view(['GET'])
+def get_accepted_friendships(request):
+    user_id = request.query_params.get('user_id')
+
+    if not user_id:
+        return Response({
+            "error": "User ID is required"
+        }, status=400)
+
+    try:
+        accepted_friendships = Friend.objects.filter(
+            models.Q(id_friend1=user_id) | models.Q(id_friend2=user_id),
+            status='accepted'
+        )
+
+        accepted_friendships_data = []
+        for friendship in accepted_friendships:
+            if friendship.id_friend1 == int(user_id):
+                friend_username = friendship.name_friend2
+            else:
+                friend_username = friendship.name_friend1
+
+            accepted_friendships_data.append({
+                'id': friendship.id,
+                'friend_username': friend_username
+            })
+
+        return Response({
+            "accepted_friendships": accepted_friendships_data
         }, status=200)
     except Exception as e:
         return Response({
