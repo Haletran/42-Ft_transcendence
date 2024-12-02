@@ -71,7 +71,7 @@ export class Friends extends Page {
           </div>
           <div>
               <h2>Invitations pending confirmation</h2>
-              <div id="confirmation-invitations-list"></div>
+              <div id="incoming-invitations-list"></div>
           </div>
         </div>
     </div>
@@ -178,9 +178,9 @@ export class Friends extends Page {
                       console.log('Add friend response data:', addFriendData);
 
                       if (addFriendResponse.ok) {
-                          messageDiv.textContent = `Friend ${userName} added successfully!`;
+                          messageDiv.textContent = `Invitation to Friend ${userName} sent successfully!`;
                           messageDiv.style.color = 'green';
-                          console.log('Friend added successfully');
+                          console.log('Friend invitation sent successfully');
                       } else {
                           messageDiv.textContent = addFriendData.error || 'Failed to add friend.';
                           messageDiv.style.color = 'red';
@@ -198,6 +198,8 @@ export class Friends extends Page {
               }
           });
           fetchPendingConfirmations(currentUserId);
+          getIncomingInvitations(currentUserId);
+          fetchAcceptedFriendships(currentUserId);
       } catch (error) {
           console.error('Error fetching user info:', error);
       }
@@ -235,7 +237,7 @@ async function fetchPendingConfirmations(currentUserId) {
       const data = await response.json();
       console.log('Pending confirmations data:', data);
 
-      const confirmationList = document.getElementById('confirmation-invitations-list');
+      const confirmationList = document.getElementById('pending-invitations-list');
       confirmationList.innerHTML = '';
 
       if (data.pending_confirmations.length === 0) {
@@ -250,4 +252,120 @@ async function fetchPendingConfirmations(currentUserId) {
   } catch (error) {
       console.error('Error fetching pending confirmations:', error);
   }
+}
+
+async function getIncomingInvitations(currentUserId) {
+    try {
+        const response = await fetch(`http://localhost:9001/api/friends/get_incoming_invitations/?user_id=${currentUserId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch incoming invitations');
+        }
+
+        const data = await response.json();
+        console.log('incoming invitations data:', data);
+
+        const confirmationList = document.getElementById('incoming-invitations-list');
+        confirmationList.innerHTML = '';
+
+        if (data.pending_confirmations.length === 0) {
+            confirmationList.textContent = 'No incoming invitations.';
+        } else {
+            data.pending_confirmations.forEach(confirmation => {
+                console.log('Confirmation object:', confirmation); // Log the confirmation object
+                console.log('Confirmation ID:', confirmation.id); // Log the confirmation ID
+
+                const listItem = document.createElement('div');
+                listItem.textContent = `Pending confirmation for: ${confirmation.receiver_username}`;
+
+                const acceptButton = document.createElement('button');
+                acceptButton.textContent = 'Accept';
+                acceptButton.onclick = () => handleInvitationResponse(confirmation.id, 'accepted', currentUserId);
+
+                const denyButton = document.createElement('button');
+                denyButton.textContent = 'Deny';
+                denyButton.onclick = () => handleInvitationResponse(confirmation.id, 'rejected', currentUserId);
+
+                listItem.appendChild(acceptButton);
+                listItem.appendChild(denyButton);
+
+                confirmationList.appendChild(listItem);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching incoming invitations:', error);
+    }
+}
+
+async function handleInvitationResponse(invitationId, accept, currentUserId) {
+    try {
+        const url = `http://localhost:9001/api/friends/respond_invitation/?id=${invitationId}`;
+        console.log(`Making request to: ${url}`);
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                choice: accept,
+            }),
+        });
+
+        // Log response status for debugging
+        console.log(`Response status: ${response.status}`);
+
+        if (!response.ok) {
+            const errorMessage = `Failed to respond to invitation: ${response.statusText} (Status: ${response.status})`;
+            console.error(errorMessage);
+            throw new Error(errorMessage);
+        }
+
+        const data = await response.json();
+        console.log('Invitation response data:', data);
+
+        // Refresh the incoming invitations list
+        getIncomingInvitations(currentUserId);
+    } catch (error) {
+        console.error('Error responding to invitation:', error);
+    }
+}
+
+async function fetchAcceptedFriendships(currentUserId) {
+    try {
+        const response = await fetch(`http://localhost:9001/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch accepted friendships');
+        }
+
+        const data = await response.json();
+        console.log('Accepted friendships data:', data);
+
+        const friendshipList = document.getElementById('friends-list');
+        friendshipList.innerHTML = '';
+
+        if (data.accepted_friendships.length === 0) {
+            friendshipList.textContent = 'No accepted friendships.';
+        } else {
+            data.accepted_friendships.forEach(friendship => {
+                const listItem = document.createElement('div');
+                listItem.textContent = `Friend: ${friendship.friend_username}`;
+
+                friendshipList.appendChild(listItem);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching accepted friendships:', error);
+    }
 }
