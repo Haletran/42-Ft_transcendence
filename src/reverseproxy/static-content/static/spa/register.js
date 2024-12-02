@@ -170,6 +170,10 @@ export class RegisterPage extends Page {
 			  console.error('Registration failed:', error);
 			  alert('Registration failed: ' + error.message);
 			}
-		});
+		} catch (error) {
+			console.error('Error:', error);
+			alert('An error occurred: ' + error.message);
+		}
+	});
 	}
 }
