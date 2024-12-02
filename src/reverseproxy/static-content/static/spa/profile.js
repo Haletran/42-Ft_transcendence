@@ -58,9 +58,9 @@ export class Profile extends Page {
                         <p class="card-text">Here you can update your profile information.</p>
                         <form id="profile_form">
                         <div class="form-floating mb-3">
-                            <input type="username" value="" class="form-control" id="floatingInput"
-                                placeholder="name@example.com">
-                            <label for="floatingInput">Username</label>
+                            <input type="username" value="" class="form-control" id="floatingUsername"
+                                placeholder="exusername">
+                            <label for="floatingUsername">Username</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="email" value="" class="form-control" id="floatingInput"
@@ -139,6 +139,7 @@ export class Profile extends Page {
 		  e.preventDefault(); // Prevent the default form submission
 		  
 		  const email = document.getElementById('floatingInput').value;
+          const username = document.getElementById('floatingUsername').value;
 		  const password = document.getElementById('floatingPassword').value;
 		  console.log(imageURL);
 		  // add profile picture
@@ -149,7 +150,7 @@ export class Profile extends Page {
 		  // Prepare the data to send
 		  const data = {
 		  	email: email,
-            username: email,
+            username: username,
 		  	password: password,
 			profile_picture: imageURL,
 		  };

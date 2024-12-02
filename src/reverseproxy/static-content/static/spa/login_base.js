@@ -32,14 +32,14 @@ export class loginBasePage extends Page {
 			</button>
 			<h3 class="text-center text-light fw-bold">Login</h3>
 			<div class="mb-3">
-			  <label for="loginEmail" class="form-label"
-				>Email address</label
+			  <label for="loginUsername" class="form-label"
+				>Username</label
 			  >
 			  <input
-				type="email"
+				type="username"
 				class="form-control text-bg-dark"
-				id="loginEmail"
-				aria-describedby="emailHelp"
+				id="loginUsername"
+				aria-describedby="usernameHelp"
 			  />
 			</div>
 			<div class="mb-3">
@@ -81,11 +81,11 @@ export class loginBasePage extends Page {
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault(); // Prevent the default form submission
 
-			const email = document.getElementById('loginEmail').value;
+			const username = document.getElementById('loginUsername').value;
 			const password = document.getElementById('loginPassword').value;
 
 			// Prepare the data to send
-			const data = { email, password };
+			const data = { username, password };
 
 			try {
 
