@@ -1,5 +1,5 @@
 import { Page } from '../src/pages.js';
-import { fetchUserInfo } from '../src/fetchUser.js';
+import { fetchProfileInfo } from '../src/fetchUser.js';
 import { getProfileName } from '../src/fetchUser.js';
 
 export class Chat extends Page {

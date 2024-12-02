@@ -1,5 +1,5 @@
 import { Page } from '../src/pages.js';
-import { fetchUserInfo } from '../src/fetchUser.js';
+import { fetchProfileInfo } from '../src/fetchUser.js';
 
 export class HomePage extends Page {
     constructor() {
@@ -50,7 +50,7 @@ export class HomePage extends Page {
 	  `;
     }
     render() {
-        fetchUserInfo();
+        //fetchMinInfo(); // will go fetch ONLY the profile pic
         super.render(); // Call the parent render method
     }
 }

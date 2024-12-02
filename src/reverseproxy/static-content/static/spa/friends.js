@@ -1,4 +1,4 @@
-import { fetchUserInfo } from '../src/fetchUser.js';
+import { fetchProfileInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 
 export class Friends extends Page {
