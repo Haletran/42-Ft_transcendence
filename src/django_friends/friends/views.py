@@ -4,11 +4,13 @@ from rest_framework.response import Response
 from .models import Friend
 from .serializers import FriendSerializer
 from rest_framework.decorators import api_view
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_exempt
 from django.db import models
 
+@ensure_csrf_cookie
+
 @api_view(['POST'])
-@csrf_exempt
+# @csrf_exempt
 def add_friend(request):
     id_friend1 = request.data.get('id_friend1')
     email_friend1 = request.data.get('email_friend1')
@@ -43,7 +45,7 @@ def add_friend(request):
     return Response(serializer.data, status=201)
 
 @api_view(['GET'])
-@csrf_exempt
+# @csrf_exempt
 def fetch_emails_from_credentials(request):
     emails_service_url = 'http://django-credentials:9000/api/debug/emails/'
     emails_response = requests.get(emails_service_url)
@@ -64,7 +66,7 @@ def fetch_emails_from_credentials(request):
         return Response({"error": "Failed to fetch emails from credentials service"}, status=emails_response.status_code)
     
 @api_view(['GET'])
-@csrf_exempt
+# @csrf_exempt
 def get_friends_usernames(request):
     user_id = request.query_params.get('user_id')
     
@@ -87,7 +89,7 @@ def get_friends_usernames(request):
         }, status=404)
 
 @api_view(['GET'])
-@csrf_exempt
+# @csrf_exempt
 def get_pending_confirmations(request):
     user_id = request.query_params.get('user_id')
 
@@ -111,7 +113,7 @@ def get_pending_confirmations(request):
         }, status=500)
     
 @api_view(['GET'])
-@csrf_exempt
+# @csrf_exempt
 def get_incoming_invitations(request):
     user_id = request.query_params.get('user_id')
 
@@ -135,7 +137,7 @@ def get_incoming_invitations(request):
         }, status=500)
     
 @api_view(['POST'])
-@csrf_exempt
+# @csrf_exempt
 def handle_invitation_response(request):
     invitation_id = request.query_params.get('id')
     choice = request.data.get('choice')
