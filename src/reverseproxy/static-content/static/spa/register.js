@@ -4,8 +4,8 @@ import { router } from '../app.js';
 
 export class RegisterPage extends Page {
 	constructor() {
-	  super();
-	  this.template = `
+		super();
+		this.template = `
 		<div
 		  id="register_container"
 		  class="d-flex justify-content-center align-items-center"
@@ -86,12 +86,12 @@ export class RegisterPage extends Page {
 		</div>
 	  `;
 	}
-	
+
 	render() {
 		super.render(); // Call the parent render method
 		this.attachFormListener(); // Now attach the listener here
-	  }
-	  
+	}
+
 	attachFormListener() {
 		const form = document.getElementById('register_form');
 		
@@ -112,20 +112,20 @@ export class RegisterPage extends Page {
 		});
 
 		form.addEventListener('submit', async (e) => {
-		  e.preventDefault(); // Prevent the default form submission
-		  
-		  const username = document.getElementById('registerUsername').value;
-		  console.log(username);
-		  const email = document.getElementById('registerEmail').value;
-		  const password = document.getElementById('registerPassword').value;
-		  
+			e.preventDefault(); // Prevent the default form submission
 
-		  
-		  // Prepare the data to send
-		  const formData = new FormData();
-		  formData.append('username', username);
-		  formData.append('email', email);
-		  formData.append('password', password);
+			const username = document.getElementById('registerUsername').value;
+			console.log(username);
+			const email = document.getElementById('registerEmail').value;
+			const password = document.getElementById('registerPassword').value;
+
+
+
+			// Prepare the data to send
+			const formData = new FormData();
+			formData.append('username', username);
+			formData.append('email', email);
+			formData.append('password', password);
 
 		  if (profileInput.files[0]) {
 			formData.append('profile_picture', profileInput.files[0]);
@@ -140,12 +140,12 @@ export class RegisterPage extends Page {
 	
 		  try {
 
-			// get CSRF token
-			console.log('CSRF Token:', getCSRFToken('csrftoken'));
-			const csrfToken = getCSRFToken('csrftoken');
-			if (!csrfToken) {
-				console.error('CSRF token is missing!');
-			}
+				// get CSRF token
+				console.log('CSRF Token:', getCSRFToken('csrftoken'));
+				const csrfToken = getCSRFToken('csrftoken');
+				if (!csrfToken) {
+					console.error('CSRF token is missing!');
+				}
 
 			// Send data to the backend
 			
@@ -170,10 +170,6 @@ export class RegisterPage extends Page {
 			  console.error('Registration failed:', error);
 			  alert('Registration failed: ' + error.message);
 			}
-		  } catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred: ' + error.message);
-		  }
 		});
-	  }
-  }
+	}
+}
