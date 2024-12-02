@@ -1,4 +1,4 @@
-import { fetchUserInfo } from '../src/fetchUser.js';
+import { fetchProfileInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 
 export class Profile extends Page {
@@ -52,22 +52,13 @@ export class Profile extends Page {
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Profile Information</h5>
-                        <p class="card-text">Here you can update your profile information.</p>
-                        <form id="profile_form">
-                        <div class="form-floating mb-3">
-                            <input type="username" value="" class="form-control" id="floatingUsername"
-                                placeholder="exusername">
-                            <label for="floatingUsername">Username</label>
+                        <div class="mb-3">
+                            <label for="profileUsername">Username</label>
+                            <p id="username" class="form-control-plaintext"></p>
                         </div>
-                        <div class="form-floating mb-3">
-                            <input type="email" value="" class="form-control" id="floatingInput"
-                                placeholder="name@example.com">
-                            <label for="floatingInput">Email address</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="password" value="" class="form-control" id="floatingPassword"
-                                placeholder="Password">
-                            <label for="floatingPassword">Password</label>
+                        <div class="mb-3">
+                            <label for="profileInput">Email address</label>
+                            <p id="email" class="form-control-plaintext"></p>
                         </div>
                         <br>
                         <div class="d-flex flex-column gap-2">
@@ -90,10 +81,6 @@ export class Profile extends Page {
                             </div>
                             <canvas id="myChart"></canvas>
                         </div>
-                        <br>
-    			        <input type="file" id="customProfilePicture" name="customProfilePicture" accept="image/*" class="form-control">
-                        <button id="update_info" type="submit" class="btn btn-primary mt-3">Update</button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -102,7 +89,7 @@ export class Profile extends Page {
  `;
     }
     render() {
-        fetchUserInfo();
+        fetchProfileInfo();
         super.render(); // Call the parent render method
         this.render_chart();
     }
