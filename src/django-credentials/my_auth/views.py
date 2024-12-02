@@ -219,7 +219,7 @@ def login_42(request):
             if NewPassword:
                 user.set_password(NewPassword)
             if NewUsername:
-                user.username = NewUsername                
+                user.username = NewUsername              
             if NewProfile_picture:
                 user.profile_picture = NewProfile_picture
             user.save()

@@ -61,18 +61,44 @@ export class Friends extends Page {
                     </div>
                 </div>
             </div>
-            <div>
-                <h2>Your Friends</h2>
-            <div id="friends-list"></div>
-        </div>
-          <div>
-              <h2>Your Pending Invitations</h2>
-              <div id="pending-invitations-list"></div>
-          </div>
-          <div>
-              <h2>Invitations pending confirmation</h2>
-              <div id="incoming-invitations-list"></div>
-          </div>
+            <div class="col mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h2 class="title" >Friends</h2>
+                            <div id="friends-list"></div>
+                        </div>
+                        <hr>
+                        <div class="card-title">
+                            <h2 class="title" >Friends request</h2>
+                            <p class="text-muted">Manage your incoming and outgoing friend requests</p>
+                                <ul class="nav nav-tabs" id="requestTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link active" id="incoming-tab" data-bs-toggle="tab" href="#incoming" role="tab" aria-controls="incoming" aria-selected="true">Incoming Requests</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link" id="outgoing-tab" data-bs-toggle="tab" href="#outgoing" role="tab" aria-controls="outgoing" aria-selected="false">Outgoing Requests</a>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab content -->
+                                <div class="tab-content" id="requestTabsContent">
+                                    <!-- Incoming Requests Tab -->
+                                    <div class="tab-pane fade show active" id="incoming" role="tabpanel" aria-labelledby="incoming-tab">
+                                        <ul id="incoming-invitations-list" class="list-group mt-3">
+                                        </ul>
+                                    </div>
+                                    <!-- Outgoing Requests Tab -->
+                                    <div class="tab-pane fade" id="outgoing" role="tabpanel" aria-labelledby="outgoing-tab">
+                                        <ul id="pending-invitations-list" class="list-group mt-3">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
  `;
@@ -244,8 +270,20 @@ async function fetchPendingConfirmations(currentUserId) {
             confirmationList.textContent = 'No pending confirmations.';
         } else {
             data.pending_confirmations.forEach(confirmation => {
-                const listItem = document.createElement('div');
+
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
                 listItem.textContent = `Pending confirmation for: ${confirmation.receiver_username}`;
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'btn-container';
+
+                const cancelButton = document.createElement('button');
+                cancelButton.className = 'btn btn-outline-light';
+                cancelButton.innerHTML = '<i class="bi bi-x"></i>';
+                cancelButton.onclick = () => handleInvitationResponse(confirmation.id, 'cancelled', currentUserId);
+
+                btnContainer.appendChild(cancelButton);
+                listItem.appendChild(btnContainer);
                 confirmationList.appendChild(listItem);
             });
         }
@@ -277,22 +315,26 @@ async function getIncomingInvitations(currentUserId) {
             confirmationList.textContent = 'No incoming invitations.';
         } else {
             data.pending_confirmations.forEach(confirmation => {
-                console.log('Confirmation object:', confirmation); // Log the confirmation object
-                console.log('Confirmation ID:', confirmation.id); // Log the confirmation ID
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                listItem.textContent = `Friend request from ${confirmation.sender_username}`;
 
-                const listItem = document.createElement('div');
-                listItem.textContent = `Pending confirmation for: ${confirmation.receiver_username}`;
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'btn-container';
 
                 const acceptButton = document.createElement('button');
-                acceptButton.textContent = 'Accept';
+                acceptButton.className = 'btn btn-outline-light';
+                acceptButton.innerHTML = '<i class="bi bi-check2"></i> Accept';
                 acceptButton.onclick = () => handleInvitationResponse(confirmation.id, 'accepted', currentUserId);
 
                 const denyButton = document.createElement('button');
-                denyButton.textContent = 'Deny';
+                denyButton.className = 'btn btn-outline-light';
+                denyButton.innerHTML = '<i class="bi bi-x"></i> Reject';
                 denyButton.onclick = () => handleInvitationResponse(confirmation.id, 'rejected', currentUserId);
 
-                listItem.appendChild(acceptButton);
-                listItem.appendChild(denyButton);
+                btnContainer.appendChild(acceptButton);
+                btnContainer.appendChild(denyButton);
+                listItem.appendChild(btnContainer);
 
                 confirmationList.appendChild(listItem);
             });
@@ -356,6 +398,7 @@ async function fetchAcceptedFriendships(currentUserId) {
         friendshipList.innerHTML = '';
 
         if (data.accepted_friendships.length === 0) {
+            friendshipList.className = 'text-muted';
             friendshipList.textContent = 'No accepted friendships.';
         } else {
             data.accepted_friendships.forEach(friendship => {
