@@ -26,7 +26,7 @@ export async function fetchProfileInfo() {
     }
 }
 
-function updateProfilePicture(profilePictureUrl) {
+export function updateProfilePicture(profilePictureUrl) {
     const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
     console.log(profilePictureUrl);
     profilePic.src = profilePictureUrl;
@@ -94,6 +94,28 @@ export async function fetchSettingsInfo() {
         //    console.error("Fail in user info:", response.status);
     }
     catch (error) {
+        console.error("User not logged in:", error);
+        window.location.href = '/';
+    }
+}
+
+export async function fetchMinInfo() {
+    try {
+        const response = await fetch('/api/user-info/', {
+            method: 'GET',
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const userData = await response.json();
+            console.log('fetchMinInfo', userData.profile_picture);
+            updateProfilePicture(userData.profile_picture);
+        }
+        else {
+            console.log(response.status);
+            console.log('User not logged in');
+            window.location.href = '/';
+        }
+    } catch (error) {
         console.error("User not logged in:", error);
         window.location.href = '/';
     }

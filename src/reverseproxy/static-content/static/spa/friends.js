@@ -1,5 +1,7 @@
-import { fetchProfileInfo } from '../src/fetchUser.js';
+import { fetchMinInfo } from '../src/fetchUser.js';
+import { updateProfilePicture } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
+import { getCSRFToken } from '../src/csrf.js';
 
 export class Friends extends Page {
     constructor() {
@@ -103,18 +105,20 @@ export class Friends extends Page {
     </div>
  `;
     }
-
-    async render() {
+      async render() {
         try {
-            const currentUserData = await getCurrentUserInfo();
-            if (!currentUserData) {
-                throw new Error('Failed to fetch user info');
-            }
-            const currentUserId = currentUserData.id;
-            const currentUserEmail = currentUserData.email;
-            const currentUserName = currentUserData.username;
-
-            super.render(); // Call the parent render method
+          const currentUserData = await getCurrentUserInfo();
+          if (!currentUserData) {
+              throw new Error('Failed to fetch user info');
+          }
+          const currentUserId = currentUserData.id;
+          const currentUserEmail = currentUserData.email;
+          const currentUserName = currentUserData.username;
+          //const currentPic = currentUserData.profile_picture;
+          fetchMinInfo();
+          //console.log('HELLO', currentPic);
+          //updateProfilePicture(currentPic);
+          super.render(); // Call the parent render method
 
             document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
                 event.preventDefault();
@@ -186,16 +190,20 @@ export class Friends extends Page {
                         console.log('User Email:', userEmail);
                         console.log('User Name:', userName);
 
-                        // Step 3: Send POST request to add the friend
-                        console.log('Starting fetch request to add friend...');
-                        const addFriendResponse = await fetch('http://localhost:9001/api/friends/add/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                // 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
-                            },
-                            body: JSON.stringify({ id_friend1: currentUserId, email_friend1: currentUserEmail, name_friend1: currentUserName, id_friend2: userId, email_friend2: userEmail, name_friend2: userName, sender: currentUserId, receiver: userId, status: "pending" })
-                        });
+                      // Step 3: Send POST request to add the friend
+                      console.log('Starting fetch request to add friend...');
+                      const csrfToken = getCSRFToken('csrftoken');
+				      if (!csrfToken) {
+				        console.error('CSRF token is missing!');
+				      }
+                      const addFriendResponse = await fetch('http://localhost:9001/api/friends/add/', {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                              'X-CSRFToken': csrfToken,
+                          },
+                          body: JSON.stringify({ id_friend1: currentUserId, email_friend1: currentUserEmail, name_friend1: currentUserName, id_friend2: userId, email_friend2: userEmail, name_friend2: userName, sender: currentUserId, receiver: userId, status: "pending" })
+                      });
 
                         console.log('Fetch request to add friend completed.');
                         console.log('Response status:', addFriendResponse.status);
@@ -348,11 +356,15 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
     try {
         const url = `http://localhost:9001/api/friends/respond_invitation/?id=${invitationId}`;
         console.log(`Making request to: ${url}`);
-
+        const csrfToken = getCSRFToken('csrftoken');
+		if (!csrfToken) {
+		  console.error('CSRF token is missing!');
+		}
         const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
             },
             body: JSON.stringify({
                 choice: accept,

@@ -110,22 +110,25 @@ def unauthorized_user_info(request):
 def update_profile_view(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)
-            NewEmail = data.get('email')
-            NewPassword = data.get('password')
-            NewProfile_picture = data.get('profile_picture')
-            NewUsername = data.get('username')
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            # profile_picture = request.POST.get('profile_picture')
+            uploaded_file = request.FILES.get('profile_picture')
 
             user = MyUser.objects.get(username=request.user.username)
             
-            if NewEmail:
-                user.email = NewEmail
-            if NewUsername:
-                user.username = NewUsername
-            if NewPassword:
-                user.set_password(NewPassword)
-            if NewProfile_picture:
-                user.profile_picture = NewProfile_picture
+            if email:
+                user.email = email
+            if username:
+                user.username = username
+            if password:
+                user.set_password(password)
+            if uploaded_file:
+                print(f"Received file: {uploaded_file.name}")
+                user.profile_picture = uploaded_file
+                user.save()
+                print(f"File saved: {user.profile_picture.url}")
             user.save()
             update_session_auth_hash(request, user)
 
@@ -135,7 +138,6 @@ def update_profile_view(request):
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
 
-@csrf_exempt
 def check_user_view(request):
     if request.method == 'POST':
         try:
@@ -157,7 +159,6 @@ def check_user_view(request):
 
 
 @api_view(['GET'])
-@csrf_exempt
 def print_all_emails(request):
     User = get_user_model()
     emails = MyUser.objects.values_list('email', flat=True)

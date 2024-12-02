@@ -1,3 +1,4 @@
+import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 
 export class Chat extends Page {
@@ -63,6 +64,7 @@ export class Chat extends Page {
 
     async render() {
         super.render();
+        fetchMinInfo();
         const currentUserData = await getCurrentUserInfo();
         const currentUserName = currentUserData.username;
         this.displayFriends(currentUserData.id);
@@ -143,27 +145,21 @@ export class Chat extends Page {
 
         document.getElementById("id_message_send_button").addEventListener("click", () => {
             var msg = document.getElementById("id_message_send_input").value;
-            chatSocket.send(JSON.stringify({ message: msg, username: username }));
-            var chat = document.getElementById("id_chat_item_container");
-            var p = document.createElement("p");
-            p.textContent = username + " : " + msg;
-            p.style.margin = '0';
-            chat.appendChild(p);
-            document.getElementById("id_message_send_input").value = '';
-            this.scrollToBottom();
+            if (msg) {
+                chatSocket.send(JSON.stringify({ message: msg, username: username }));
+                document.getElementById("id_message_send_input").value = '';
+                this.scrollToBottom();
+            }
         });
 
         document.getElementById("id_message_send_input").addEventListener("keypress", (e) => {
             if (e.key === 'Enter') {
                 var msg = document.getElementById("id_message_send_input").value;
-                chatSocket.send(JSON.stringify({ message: msg, username: username }));
-                var chat = document.getElementById("id_chat_item_container");
-                var p = document.createElement("p");
-                p.textContent = username + " : " + msg;
-                p.style.margin = '0';
-                chat.appendChild(p);
-                document.getElementById("id_message_send_input").value = '';
-                this.scrollToBottom();
+                if (msg) {
+                    chatSocket.send(JSON.stringify({ message: msg, username: username }));
+                    document.getElementById("id_message_send_input").value = '';
+                    this.scrollToBottom();
+                }
             }
         });
     }
@@ -183,11 +179,3 @@ async function getCurrentUserInfo() {
 
     return await response.json();
 }
-
-// Initialize the chat
-document.addEventListener("DOMContentLoaded", async () => {
-    const userInfo = await getCurrentUserInfo();
-    window.currentUserName = userInfo.username; // Set the global variable
-    const chat = new Chat();
-    chat.render();
-});
