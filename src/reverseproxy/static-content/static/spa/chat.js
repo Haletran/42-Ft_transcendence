@@ -67,10 +67,10 @@ export class Chat extends Page {
         fetchMinInfo();
         const currentUserData = await getCurrentUserInfo();
         const currentUserName = currentUserData.username;
-        this.displayFriends(currentUserData.id);
+        this.displayFriends(currentUserData.id, currentUserName);
     }
 
-    async displayFriends(currentUserId) {
+    async displayFriends(currentUserId, currentUserName) {
         try {
             const response = await fetch(`http://localhost:9001/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
                 method: 'GET',
@@ -98,7 +98,7 @@ export class Chat extends Page {
                     friendBox.style.padding = '10px';
                     friendBox.style.margin = '5px';
                     friendBox.style.cursor = 'pointer';
-                    friendBox.addEventListener('click', () => this.openChat(friend.friend_username));
+                    friendBox.addEventListener('click', () => this.openChat(currentUserName));
                     friendsList.appendChild(friendBox);
                 });
             }
