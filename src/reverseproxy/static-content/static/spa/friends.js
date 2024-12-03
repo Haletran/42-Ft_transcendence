@@ -67,8 +67,8 @@ export class Friends extends Page {
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title">
-                            <h2 class="title" >Friends</h2>
-                            <div id="friends-list"></div>
+                            <h2 class="title">My Friends</h2>
+                                <div id="friends-list" class="row row-cols-2 g-2 mt-2"></div>
                         </div>
                         <hr>
                         <div class="card-title">
@@ -426,9 +426,26 @@ async function fetchAcceptedFriendships(currentUserId) {
             friendshipList.textContent = 'No accepted friendships.';
         } else {
             data.accepted_friendships.forEach(friendship => {
+                console.log('Friendship:', friendship);
                 const listItem = document.createElement('div');
-                listItem.textContent = `Friend: ${friendship.friend_username}`;
-
+                listItem.className = 'col-sm-6';
+                listItem.innerHTML = `
+                    <div class="card">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div class="d-flex align-items-center gap-3">
+                            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2F474x%2F29%2F69%2Fa1%2F2969a1fc3691bf3a1622f2cc6077407b.jpg&f=1&nofb=1&ipt=6c62855b0d2a818dace79ded07edd9052c124789e23dab1fb3bf341e4eafb449&ipo=images" alt="profile_picture" class="rounded-circle" width="50" height="50">
+                            <div class="d-flex flex-column g-1">
+                              <h5 class="card-title">${friendship.friend_username}</h5>
+                            </div>
+                          </div>
+                          <div>
+                            <button class="btn btn-outline-light"><i class="bi bi-chat"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                `;
                 friendshipList.appendChild(listItem);
             });
         }
