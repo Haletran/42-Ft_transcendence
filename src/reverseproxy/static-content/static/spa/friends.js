@@ -45,7 +45,7 @@ export class Friends extends Page {
                     <a id="choose_param" data-link="/settings" 
                         class="list-group-item list-group-item-action">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
-                        class="list-group-item list-group-item-action active">Friends</a>
+                        class="list-group-item list-group-item-action active-menu">Friends</a>
                     <a id="choose_param" href="/chat" data-link="/chat"
                         class="list-group-item list-group-item-action">Messages</a>
                 </div>
@@ -67,8 +67,9 @@ export class Friends extends Page {
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title">
-                            <h2 class="title" >Friends</h2>
-                            <div id="friends-list"></div>
+                            <h2 class="title">My Friends</h2>
+                            <p class="text-muted" >Here are your friends</p>
+                                <div id="friends-list" class="row row-cols-2 g-2 mt-2"></div>
                         </div>
                         <hr>
                         <div class="card-title">
@@ -87,12 +88,12 @@ export class Friends extends Page {
                                 <div class="tab-content" id="requestTabsContent">
                                     <!-- Incoming Requests Tab -->
                                     <div class="tab-pane fade show active" id="incoming" role="tabpanel" aria-labelledby="incoming-tab">
-                                        <ul id="incoming-invitations-list" class="list-group mt-3">
+                                        <ul id="incoming-invitations-list" class="list-group mt-3 max-width-inherit">
                                         </ul>
                                     </div>
                                     <!-- Outgoing Requests Tab -->
                                     <div class="tab-pane fade" id="outgoing" role="tabpanel" aria-labelledby="outgoing-tab">
-                                        <ul id="pending-invitations-list" class="list-group mt-3">
+                                        <ul id="pending-invitations-list" class="list-group mt-3 max-width-inherit">
                                         </ul>
                                     </div>
                                 </div>
@@ -101,24 +102,32 @@ export class Friends extends Page {
                     </div>
                 </div>
             </div>
+            <div class="toast align-items-center position-fixed bottom-0 end-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
         </div>
     </div>
  `;
     }
-      async render() {
+    async render() {
         try {
-          const currentUserData = await getCurrentUserInfo();
-          if (!currentUserData) {
-              throw new Error('Failed to fetch user info');
-          }
-          const currentUserId = currentUserData.id;
-          const currentUserEmail = currentUserData.email;
-          const currentUserName = currentUserData.username;
-          //const currentPic = currentUserData.profile_picture;
-          fetchMinInfo();
-          //console.log('HELLO', currentPic);
-          //updateProfilePicture(currentPic);
-          super.render(); // Call the parent render method
+            const currentUserData = await getCurrentUserInfo();
+            if (!currentUserData) {
+                throw new Error('Failed to fetch user info');
+            }
+            const currentUserId = currentUserData.id;
+            const currentUserEmail = currentUserData.email;
+            const currentUserName = currentUserData.username;
+            //const currentPic = currentUserData.profile_picture;
+            fetchMinInfo();
+            //console.log('HELLO', currentPic);
+            //updateProfilePicture(currentPic);
+            super.render(); // Call the parent render method
 
             document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
                 event.preventDefault();
@@ -165,6 +174,7 @@ export class Friends extends Page {
                             userEmail = usernameOrEmail;
                             userName = emailsData.usernames[index];
                             userId = emailsData.id[index];  // Get the user ID using the same index
+
                             messageDiv.textContent = `Email ${usernameOrEmail} found. Username: ${userName}, ID: ${userId}`;
                             messageDiv.style.color = 'green';
                             console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
@@ -190,20 +200,20 @@ export class Friends extends Page {
                         console.log('User Email:', userEmail);
                         console.log('User Name:', userName);
 
-                      // Step 3: Send POST request to add the friend
-                      console.log('Starting fetch request to add friend...');
-                      const csrfToken = getCSRFToken('csrftoken');
-				      if (!csrfToken) {
-				        console.error('CSRF token is missing!');
-				      }
-                      const addFriendResponse = await fetch('http://localhost:9001/api/friends/add/', {
-                          method: 'POST',
-                          headers: {
-                              'Content-Type': 'application/json',
-                              'X-CSRFToken': csrfToken,
-                          },
-                          body: JSON.stringify({ id_friend1: currentUserId, email_friend1: currentUserEmail, name_friend1: currentUserName, id_friend2: userId, email_friend2: userEmail, name_friend2: userName, sender: currentUserId, receiver: userId, status: "pending" })
-                      });
+                        // Step 3: Send POST request to add the friend
+                        console.log('Starting fetch request to add friend...');
+                        const csrfToken = getCSRFToken('csrftoken');
+                        if (!csrfToken) {
+                            console.error('CSRF token is missing!');
+                        }
+                        const addFriendResponse = await fetch('http://localhost:9001/api/friends/add/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: JSON.stringify({ id_friend1: currentUserId, email_friend1: currentUserEmail, name_friend1: currentUserName, id_friend2: userId, email_friend2: userEmail, name_friend2: userName, sender: currentUserId, receiver: userId, status: "pending" })
+                        });
 
                         console.log('Fetch request to add friend completed.');
                         console.log('Response status:', addFriendResponse.status);
@@ -212,8 +222,11 @@ export class Friends extends Page {
                         console.log('Add friend response data:', addFriendData);
 
                         if (addFriendResponse.ok) {
-                            messageDiv.textContent = `Invitation to Friend ${userName} sent successfully!`;
-                            messageDiv.style.color = 'green';
+                            document.querySelector(".toast-body").textContent = `Invitation to Friend ${userName} sent successfully!`;
+                            document.querySelector(".toast").classList.add("show");
+                            setTimeout(() => {
+                                document.querySelector(".toast").classList.remove("show");
+                            }, 3000);
                             console.log('Friend invitation sent successfully');
                         } else {
                             messageDiv.textContent = addFriendData.error || 'Failed to add friend.';
@@ -275,13 +288,18 @@ async function fetchPendingConfirmations(currentUserId) {
         confirmationList.innerHTML = '';
 
         if (data.pending_confirmations.length === 0) {
-            confirmationList.textContent = 'No pending confirmations.';
+            confirmationList.innerHTML = `
+                <div class="d-flex flex-column justify-content-center align-items-center" style="font-size: 1.2rem;">
+                    <i class="bi bi-person-dash-fill text-gray-400" style="font-size: 2rem;"></i>
+                    No outgoing requests.
+                    <p class="text-muted" style="font-size: 1rem;">You haven't sent any friend requests.</p>
+                </div>`;
         } else {
             data.pending_confirmations.forEach(confirmation => {
 
                 const listItem = document.createElement('li');
-                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                listItem.textContent = `Pending confirmation for: ${confirmation.receiver_username}`;
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center max-width-inherit';
+                listItem.innerHTML = `<p class="mt-3" >Pending confirmation to: <strong>${confirmation.receiver_username}</strong></p>`;
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'btn-container';
 
@@ -320,12 +338,18 @@ async function getIncomingInvitations(currentUserId) {
         confirmationList.innerHTML = '';
 
         if (data.pending_confirmations.length === 0) {
-            confirmationList.textContent = 'No incoming invitations.';
+            confirmationList.innerHTML = `
+                <div class="d-flex flex-column justify-content-center align-items-center" style="font-size: 1.2rem;">
+                    <i class="bi bi-person-plus-fill text-gray-400 " style="font-size: 2rem;"></i>
+                    No incoming requests.
+                    <p class="text-muted" style="font-size: 1rem;">You don't have any pending friend requests.</p>
+                </div>
+            `;
         } else {
             data.pending_confirmations.forEach(confirmation => {
                 const listItem = document.createElement('li');
-                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                listItem.textContent = `Friend request from ${confirmation.sender_username}`;
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center  max-width-inherit';
+                listItem.innerHTML = `<p class="mt-3" >Friend request from <strong>${confirmation.sender_username}</strong></p>`;
 
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'btn-container';
@@ -343,7 +367,6 @@ async function getIncomingInvitations(currentUserId) {
                 btnContainer.appendChild(acceptButton);
                 btnContainer.appendChild(denyButton);
                 listItem.appendChild(btnContainer);
-
                 confirmationList.appendChild(listItem);
             });
         }
@@ -357,9 +380,9 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
         const url = `http://localhost:9001/api/friends/respond_invitation/?id=${invitationId}`;
         console.log(`Making request to: ${url}`);
         const csrfToken = getCSRFToken('csrftoken');
-		if (!csrfToken) {
-		  console.error('CSRF token is missing!');
-		}
+        if (!csrfToken) {
+            console.error('CSRF token is missing!');
+        }
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -414,9 +437,26 @@ async function fetchAcceptedFriendships(currentUserId) {
             friendshipList.textContent = 'No accepted friendships.';
         } else {
             data.accepted_friendships.forEach(friendship => {
+                console.log('Friendship:', friendship);
                 const listItem = document.createElement('div');
-                listItem.textContent = `Friend: ${friendship.friend_username}`;
-
+                listItem.className = 'col-sm-6';
+                listItem.innerHTML = `
+                    <div class="card">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div class="d-flex align-items-center gap-3">
+                            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2F474x%2F29%2F69%2Fa1%2F2969a1fc3691bf3a1622f2cc6077407b.jpg&f=1&nofb=1&ipt=6c62855b0d2a818dace79ded07edd9052c124789e23dab1fb3bf341e4eafb449&ipo=images" alt="profile_picture" class="rounded-circle" width="50" height="50">
+                            <div class="d-flex flex-column g-1">
+                              <h5 class="card-title">${friendship.friend_username}</h5>
+                            </div>
+                          </div>
+                          <div>
+                            <button class="btn btn-outline-light"><i class="bi bi-chat"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                `;
                 friendshipList.appendChild(listItem);
             });
         }

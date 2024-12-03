@@ -125,7 +125,7 @@ def get_incoming_invitations(request):
     try:
         # Get pending friend requests where the receiver is the current user
         pending_requests = Friend.objects.filter(receiver=user_id, status='pending')
-        pending_confirmations = [{'id': req.id, 'receiver_username': req.name_friend2} for req in pending_requests]
+        pending_confirmations = [{'id': req.id, 'receiver_username': req.name_friend2, 'sender_username': req.name_friend1} for req in pending_requests]
 
         return Response({
             "sender": user_id,

@@ -45,7 +45,7 @@ export class Chat extends Page {
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
                     <a id="choose_param" href="/chat" data-link="/chat"
-                        class="list-group-item list-group-item-action active">Messages</a>
+                        class="list-group-item list-group-item-action active-menu">Messages</a>
                 </div>
             </div>
             <center><h1>Hello, Welcome to the chat site!</h1></center>

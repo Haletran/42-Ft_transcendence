@@ -238,3 +238,31 @@ img.main-logo {
     justify-content: center;
     gap: 10px;
 }
+
+[aria-selected="true"] {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+[aria-selected="false"] {
+    color: #6c757d !important;
+}
+
+.text-gray-400 {
+    color: #cbd5e0;
+    /* This is a Tailwind CSS gray-400 color equivalent */
+}
+
+.custom-size {
+    height: 48px;
+    width: 48px;
+}
+
+.max-width-inherit {
+    max-width: 100%;
+}
+
+.active-menu {
+    color: #212529 !important;
+    background-color: white !important;
+}

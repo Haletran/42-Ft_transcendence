@@ -62,19 +62,19 @@ export class ChatPage extends Page {
     setupWebSocket(username) {
         const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
         const chatSocket = new WebSocket(protocol + window.location.hostname + ":9000/ws/chat_test/");
-        
+
         chatSocket.onopen = function (e) {
             console.log("The connection was setup successfully!");
         };
-        
+
         chatSocket.onclose = function (e) {
             console.log("WebSocket connection closed unexpectedly!");
         };
-        
+
         chatSocket.onerror = function (e) {
             console.error("WebSocket error observed:", e);
         };
-        
+
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
             var div = document.createElement("div");
@@ -82,15 +82,15 @@ export class ChatPage extends Page {
             document.querySelector("#id_message_send_input").value = "";
             document.querySelector("#id_chat_item_container").appendChild(div);
         };
-        
+
         document.querySelector("#id_message_send_input").focus();
-        
+
         document.querySelector("#id_message_send_input").onkeyup = function (e) {
             if (e.keyCode == 13) {
                 document.querySelector("#id_message_send_button").click();
             }
         };
-        
+
         document.querySelector("#id_message_send_button").onclick = function (e) {
             if (chatSocket.readyState === WebSocket.OPEN) {
                 var messageInput = document.querySelector("#id_message_send_input").value;
