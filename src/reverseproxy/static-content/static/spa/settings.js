@@ -44,7 +44,7 @@ export class Settings extends Page {
                         Profile
                     </a>
                     <a id="choose_param" data-link="/settings" 
-                        class="list-group-item list-group-item-action  active">Settings</a>
+                        class="list-group-item list-group-item-action  active-menu">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
                     <a id="choose_param" href="/chat" data-link="/chat"
@@ -82,7 +82,7 @@ export class Settings extends Page {
                         </div>
                         <br>
     			        <input type="file" id="customProfilePicture" name="customProfilePicture" accept="image/*" class="form-control">
-                        <button id="update_info" type="submit" class="btn btn-primary mt-3">Update</button>
+                        <button id="update_info" type="submit" class="btn btn-light mt-3">Update</button>
                         </form>
                     </div>
                 </div>
