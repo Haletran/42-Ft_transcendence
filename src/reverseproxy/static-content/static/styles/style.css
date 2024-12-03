@@ -238,3 +238,12 @@ img.main-logo {
     justify-content: center;
     gap: 10px;
 }
+
+[aria-selected="true"] {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+[aria-selected="false"] {
+    color: #6c757d !important;
+}

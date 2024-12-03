@@ -92,7 +92,6 @@ export class Settings extends Page {
             aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
-                    
                 </div>
                 <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -108,40 +107,34 @@ export class Settings extends Page {
         this.attachFormListener();
     }
 
-    // getProfileInfo() {
-    //     const profilePicture = document.querySelector('img[alt="logo_profile_picture"]');
-    //     const actualProfilePicture = document.getElementById('actual_pp').src;
-    //     profilePicture.src = actualProfilePicture;
-    // }
-
     attachFormListener() {
         const form = document.getElementById('profile_form');
 
-		const profileInput = document.getElementById('customProfilePicture');
-		profileInput.addEventListener('change', () => {
-			imageURL = null;
-			console.log("Uploaded file:", profileInput.files[0]);
-		});
+        const profileInput = document.getElementById('customProfilePicture');
+        profileInput.addEventListener('change', () => {
+            imageURL = null;
+            console.log("Uploaded file:", profileInput.files[0]);
+        });
 
-		form.addEventListener('submit', async (e) => {
-		  e.preventDefault(); // Prevent the default form submission
-		  
-		  const email = document.getElementById('floatingInput').value;
-          const username = document.getElementById('floatingUsername').value;
-		  const password = document.getElementById('floatingPassword').value;
-		  
-		  // Prepare the data to send
-          const formData = new FormData();
-		  formData.append('username', username);
-		  formData.append('email', email);
-		  formData.append('password', password);
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
 
-		  if (profileInput.files[0]) {
-			formData.append('profile_picture', profileInput.files[0]);
-			console.log(profileInput.files[0]);
-		  }
-		  	
-		  try {
+            const email = document.getElementById('floatingInput').value;
+            const username = document.getElementById('floatingUsername').value;
+            const password = document.getElementById('floatingPassword').value;
+
+            // Prepare the data to send
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('email', email);
+            formData.append('password', password);
+
+            if (profileInput.files[0]) {
+                formData.append('profile_picture', profileInput.files[0]);
+                console.log(profileInput.files[0]);
+            }
+
+            try {
 
                 // get CSRF token
                 console.log('CSRF Token:', getCSRFToken('csrftoken'));
@@ -150,33 +143,41 @@ export class Settings extends Page {
                     console.error('CSRF token is missing!');
                 }
 
-			// Send data to the backend
-			
-			const response = await fetch('/api/update_profile/', {
-			  method: 'POST',
-			  headers: {
-				//'Content-Type': 'application/json',
-				'X-CSRFToken': csrfToken,
-			  },
-			  credentials: 'include',
-			  body: formData,
-			});
-	
-			if (response.ok) {
-			  const result = await response.json();
-			  console.log('Edit successful:', result);
-              alert('Informations successfully edited MWAH');
-			  this.render();
-			} else {
-			  const error = await response.json();
-			  console.error('Edit failed:', error);
-			  alert('Edit failed: ' + error.message);
-			}
-		  } catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred: ' + error.message);
-		  }
-		});
-        
+                // Send data to the backend
+
+                const response = await fetch('/api/update_profile/', {
+                    method: 'POST',
+                    headers: {
+                        //'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    credentials: 'include',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Edit successful:', result);
+                    this.render();
+                    document.querySelector(".toast-body").textContent = "Profile updated successfully!";
+                    document.querySelector(".toast").classList.add("show");
+                    setTimeout(() => {
+                        document.querySelector(".toast").classList.remove("show");
+                    }, 3000);
+                } else {
+                    const error = await response.json();
+                    console.error('Edit failed:', error);
+                    document.querySelector(".toast-body").textContent = "Edit failed: " + error.message;
+                    document.querySelector(".toast").classList.add("show");
+                    setTimeout(() => {
+                        document.querySelector(".toast").classList.remove("show");
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred: ' + error.message);
+            }
+        });
+
     }
 }

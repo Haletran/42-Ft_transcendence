@@ -23,21 +23,24 @@ export class RegisterPage extends Page {
 			  border: 2px solid #393c49;
 			"
 		  >
-			<button
-			  id="back_button"
-			  type="button"
-			  class="btn btn-light fw-bold opacity"
-			  data-link="/login_base"
-			>
-			  Back
-			</button>
-			<h3 class="text-center text-light fw-bold">Register</h3>
+			<div class="d-flex justify-content-between align-items-center mb-3">
+			  <h3 class="text-center text-light fw-bold mb-0">Register</h3>
+			  <button
+				id="back_button"
+				type="button"
+				class="btn btn-light fw-bold opacity"
+				data-link="/login_base"
+			  >
+			  <i class="bi bi-x" data-link="/login_base"></i>
+			  </button>
+			</div>
 			<div class="mb-3">
 			  <label for="registerUsername" class="form-label">Username</label>
 			  <input
 			  	type="username"
 				class="form-control text-bg-dark"
 				id="registerUsername"
+				placeholder="Enter a username"
 			  />
 			</div>
 			<div class="mb-3">
@@ -47,6 +50,7 @@ export class RegisterPage extends Page {
 				class="form-control text-bg-dark"
 				id="registerEmail"
 				aria-describedby="emailHelp"
+				placeholder="Enter your email"
 			  />
 			  <div id="emailHelp" class="form-text text-white">
 				We'll never share your email with anyone else.
@@ -58,6 +62,7 @@ export class RegisterPage extends Page {
 				type="password"
 				class="form-control text-bg-dark"
 				id="registerPassword"
+				placeholder="Enter a password"
 			  />
 			  <div id="passwordHelpBlock" class="form-text text-white">
 				Your password must be 8-20 characters long.
