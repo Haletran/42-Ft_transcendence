@@ -211,8 +211,19 @@ def login_42(request):
 
         user, created = MyUser.objects.get_or_create(username=NewUsername, email=NewEmail, defaults={
             'email': NewEmail,
-            'profile_picture': NewProfile_picture,
+            # 'profile_picture': NewProfile_picture,
         })
+
+       # if created or NewProfile_picture:
+        if NewProfile_picture:
+            pic_response = requests.get(NewProfile_picture)
+            pic_response.raise_for_status()
+
+            file_name = f"profile_pics/{NewUsername}_profile.jpg"
+            file_path = default_storage.save(file_name, ContentFile(pic_response.content))
+
+            user.profile_picture = file_path
+            user.save()
 
         if not created:
             if NewEmail:
@@ -222,7 +233,11 @@ def login_42(request):
             if NewUsername:
                 user.username = NewUsername              
             if NewProfile_picture:
-                user.profile_picture = NewProfile_picture
+                pic_response = requests.get(NewProfile_picture)
+                pic_response.raise_for_status()
+                file_name = f"profile_pics/{NewUsername}_profile.jpg"
+                file_path = default_storage.save(file_name, ContentFile(pic_response.content))
+                user.profile_picture = file_path
             user.save()
         login(request, user)
         return redirect('https://localhost/home')

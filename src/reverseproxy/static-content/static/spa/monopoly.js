@@ -1,4 +1,4 @@
-import { fetchSettingsInfo } from '../src/fetchUser.js';
+import { fetchMonopInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 
 export class Monopoly extends Page {
@@ -13,9 +13,9 @@ export class Monopoly extends Page {
                     <p class="d-inline montserrat-bold">Ft_transcendence</p>
                 </a>
                 <a class="nav-link active" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img alt="Logo" width="40" height="40" class="rounded-circle" style="
+                    <img alt="logo_profile_picture" width="40" height="40" class="rounded-circle" style="
                               object-fit: cover;
-                            " src="https://cdn.intra.42.fr/users/65ca7a946948378f5cf99fb253ea4907/bapasqui.jpg"
+                            " src=""
                         alt="profile_picture" />
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -53,7 +53,7 @@ export class Monopoly extends Page {
                         </div>
                         <ul class="list-group list-group-flush ">
                             <li class="list-group-item bg-grey">
-                                <i class="bi bi-person"></i> bapasqui
+                                <i class="bi bi-person"></i> <span id="username"></span>
                             </li>
                             <li class="list-group-item">
                                 <i class="bi bi-robot"></i> AI
@@ -71,7 +71,7 @@ export class Monopoly extends Page {
         `;
     }
     render() {
-        // fetchSettingsInfo();
+        fetchMonopInfo();
         super.render(); // Call the parent render method
     }
 }
