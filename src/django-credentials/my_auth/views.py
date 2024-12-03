@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_exempt
 import json
+import os
+
 # from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
@@ -188,9 +190,9 @@ def login_42(request):
     try:
         response = requests.post("https://api.intra.42.fr/oauth/token", data={
             'grant_type': 'authorization_code',
-            'client_id': 'u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c',
-            'client_secret': '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',
-            'redirect_uri': 'http://localhost:9000/api/callback',
+            'client_id': os.getenv('CLIENT_ID'),
+            'client_secret': os.getenv('CLIENT_SECRET'),
+            'redirect_uri': os.getenv('REDIRECT_URI'),
             'code': code,
         })
         response_data = response.json()

@@ -1,25 +1,21 @@
 services:
   reverseproxy:
-    #    build: src/reverseproxy/.
-    image: nginx:latest
+    build: src/reverseproxy
     container_name: reverseproxy
-    networks:
-      - transcendence
     ports:
       - "443:443"
+    networks:
+      - transcendence
+    depends_on:
+      - django-credentials
+    env_file:
+      - .env
     volumes:
       - ./src/reverseproxy/conf/core.conf:/etc/nginx/conf.d/core.conf # location of static content:
       - ./src/reverseproxy/static-content:/var/www/html
       - ./src/reverseproxy/ssl/nginx.crt:/etc/nginx/ssl/nginx.crt
       - ./src/reverseproxy/ssl/nginx.key:/etc/nginx/ssl/nginx.key
       - profile_pictures:/usr/share/nginx/media/
-    depends_on:
-      - django-credentials
-    env_file:
-      - .env
-    environment:
-      CLIENT_ID: "u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c"
-      CLIENT_SECRET: "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"
 
   # hardhat:
   #   build:
@@ -64,8 +60,6 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./src/django-credentials/ssl/django-credentials.key:/etc/ssl/private/django.key
-      - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt
       - profile_pictures:/app/media/
     env_file:
       - .env
@@ -73,6 +67,7 @@ services:
       VAULT_ADDR: 'http://vault_container:8200' # Vault service name here
       CLIENT_ID: "u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c"
       CLIENT_SECRET: "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"
+      REDIRECT_URI: "http://localhost:9000/api/callback"
     depends_on:
       - database
     networks:
