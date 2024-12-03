@@ -94,7 +94,7 @@ export class RegisterPage extends Page {
 
 	attachFormListener() {
 		const form = document.getElementById('register_form');
-		
+
 		const defaultPic = '/static/imgs/gaston.jpg';
 		let defaultFileBlob = null;
 
@@ -127,18 +127,18 @@ export class RegisterPage extends Page {
 			formData.append('email', email);
 			formData.append('password', password);
 
-		  if (profileInput.files[0]) {
-			formData.append('profile_picture', profileInput.files[0]);
-			console.log(profileInput.files[0]);
-		  } else if (defaultFileBlob) {
-			formData.append('profile_picture', defaultFileBlob)
-		  } else {
-            console.error('Default file is not ready yet!');
-            alert('Default file is not ready yet! Please try again.');
-            return;
-        }
-	
-		  try {
+			if (profileInput.files[0]) {
+				formData.append('profile_picture', profileInput.files[0]);
+				console.log(profileInput.files[0]);
+			} else if (defaultFileBlob) {
+				formData.append('profile_picture', defaultFileBlob)
+			} else {
+				console.error('Default file is not ready yet!');
+				alert('Default file is not ready yet! Please try again.');
+				return;
+			}
+
+			try {
 
 				// get CSRF token
 				console.log('CSRF Token:', getCSRFToken('csrftoken'));
@@ -147,33 +147,33 @@ export class RegisterPage extends Page {
 					console.error('CSRF token is missing!');
 				}
 
-			// Send data to the backend
-			
-			const response = await fetch('/api/register/', {
-			  method: 'POST',
-			  headers: {
-				//'Content-Type': 'application/json',
-				'X-CSRFToken': csrfToken,
-			  },
-			  credentials: 'include',
-			  //body: JSON.stringify(data),
-			  body: formData,
-			});
-	
-			if (response.ok) {
-			  const result = await response.json();
-			  console.log('Registration successful:', result);
-			  // Optionally, redirect to login or home page
-			  router.goTo('/home');
-			} else {
-			  const error = await response.json();
-			  console.error('Registration failed:', error);
-			  alert('Registration failed: ' + error.message);
+				// Send data to the backend
+
+				const response = await fetch('/api/register/', {
+					method: 'POST',
+					headers: {
+						//'Content-Type': 'application/json',
+						'X-CSRFToken': csrfToken,
+					},
+					credentials: 'include',
+					//body: JSON.stringify(data),
+					body: formData,
+				});
+
+				if (response.ok) {
+					const result = await response.json();
+					console.log('Registration successful:', result);
+					// Optionally, redirect to login or home page
+					router.goTo('/home');
+				} else {
+					const error = await response.json();
+					console.error('Registration failed:', error);
+					alert('Registration failed: ' + error.message);
+				}
+			} catch (error) {
+				console.error('Error:', error);
+				alert('An error occurred: ' + error.message);
 			}
-		} catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred: ' + error.message);
-		}
-	});
+		});
 	}
 }
