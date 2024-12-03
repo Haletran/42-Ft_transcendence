@@ -71,7 +71,7 @@ export async function checkUserAuthentification(path) {
 
 export async function isUserLoggedIn() {
   try {
-    const response = await fetch('/api/user-info', { method: 'GET', credentials: 'include' });
+    const response = await fetch('/api/credentials/user-info', { method: 'GET', credentials: 'include' });
     if (response.ok) {
       const userData = await response.json();
       return userData != null;

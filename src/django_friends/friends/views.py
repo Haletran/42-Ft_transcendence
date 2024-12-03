@@ -47,7 +47,7 @@ def add_friend(request):
 @api_view(['GET'])
 # @csrf_exempt
 def fetch_emails_from_credentials(request):
-    emails_service_url = 'http://django-credentials:9000/api/debug/emails/'
+    emails_service_url = 'http://django-credentials:9000/api/credentials/debug/emails/'
     emails_response = requests.get(emails_service_url)
     if emails_response.status_code == 200:
         emails_data = emails_response.json()
@@ -125,7 +125,7 @@ def get_incoming_invitations(request):
     try:
         # Get pending friend requests where the receiver is the current user
         pending_requests = Friend.objects.filter(receiver=user_id, status='pending')
-        pending_confirmations = [{'id': req.id, 'receiver_username': req.name_friend2} for req in pending_requests]
+        pending_confirmations = [{'id': req.id, 'receiver_username': req.name_friend2, 'sender_username': req.name_friend1} for req in pending_requests]
 
         return Response({
             "sender": user_id,

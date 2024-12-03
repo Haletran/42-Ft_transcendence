@@ -102,6 +102,25 @@ def user_info(request):
         'profile_picture': profile_picture_url
     })
 
+@login_required
+def userid_info(request):
+    user_id = request.GET.get('user_id')
+
+    if not user_id:
+        return Response({
+            "error": "User ID is required"
+        }, status=400)
+
+    user = MyUser.objects.get(id=user_id)
+
+    profile_picture_url = user.profile_picture.url if user.profile_picture else None
+    return JsonResponse({
+        'id' : user.id,
+        'email': user.email,
+        'username': user.username,
+        'profile_picture': profile_picture_url
+    })
+
 def unauthorized_user_info(request):
     return JsonResponse({'error': 'Unauthorized'}, status=401)
 
@@ -190,7 +209,7 @@ def login_42(request):
             'grant_type': 'authorization_code',
             'client_id': 'u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c',
             'client_secret': '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',
-            'redirect_uri': 'http://localhost:9000/api/callback',
+            'redirect_uri': 'http://localhost:9000/api/credentials/callback',
             'code': code,
         })
         response_data = response.json()

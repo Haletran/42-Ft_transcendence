@@ -2,7 +2,7 @@ import { router } from '../app.js';
 
 export async function fetchProfileInfo() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -55,7 +55,7 @@ function updateProfileUsername(Username) {
 
 export async function getProfileName() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('er-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -76,7 +76,7 @@ export async function getProfileName() {
 
 export async function fetchSettingsInfo() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -103,7 +103,7 @@ export async function fetchSettingsInfo() {
 
 export async function fetchMinInfo() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -125,7 +125,7 @@ export async function fetchMinInfo() {
 
 export async function fetchMonopInfo() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('er-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -148,7 +148,7 @@ export async function fetchMonopInfo() {
 
 export async function getUserInfos() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
             credentials: 'include',
         });

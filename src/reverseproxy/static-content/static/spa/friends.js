@@ -67,8 +67,8 @@ export class Friends extends Page {
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title">
-                            <h2 class="title" >Friends</h2>
-                            <div id="friends-list"></div>
+                            <h2 class="title">My Friends</h2>
+                                <div id="friends-list" class="row row-cols-2 g-2 mt-2"></div>
                         </div>
                         <hr>
                         <div class="card-title">
@@ -101,24 +101,32 @@ export class Friends extends Page {
                     </div>
                 </div>
             </div>
+            <div class="toast align-items-center position-fixed bottom-0 end-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
         </div>
     </div>
  `;
     }
-      async render() {
+    async render() {
         try {
-          const currentUserData = await getCurrentUserInfo();
-          if (!currentUserData) {
-              throw new Error('Failed to fetch user info');
-          }
-          const currentUserId = currentUserData.id;
-          const currentUserEmail = currentUserData.email;
-          const currentUserName = currentUserData.username;
-          //const currentPic = currentUserData.profile_picture;
-          fetchMinInfo();
-          //console.log('HELLO', currentPic);
-          //updateProfilePicture(currentPic);
-          super.render(); // Call the parent render method
+            const currentUserData = await getCurrentUserInfo();
+            if (!currentUserData) {
+                throw new Error('Failed to fetch user info');
+            }
+            const currentUserId = currentUserData.id;
+            const currentUserEmail = currentUserData.email;
+            const currentUserName = currentUserData.username;
+            //const currentPic = currentUserData.profile_picture;
+            fetchMinInfo();
+            //console.log('HELLO', currentPic);
+            //updateProfilePicture(currentPic);
+            super.render(); // Call the parent render method
 
             document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
                 event.preventDefault();
@@ -165,6 +173,7 @@ export class Friends extends Page {
                             userEmail = usernameOrEmail;
                             userName = emailsData.usernames[index];
                             userId = emailsData.id[index];  // Get the user ID using the same index
+
                             messageDiv.textContent = `Email ${usernameOrEmail} found. Username: ${userName}, ID: ${userId}`;
                             messageDiv.style.color = 'green';
                             console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
@@ -190,20 +199,20 @@ export class Friends extends Page {
                         console.log('User Email:', userEmail);
                         console.log('User Name:', userName);
 
-                      // Step 3: Send POST request to add the friend
-                      console.log('Starting fetch request to add friend...');
-                      const csrfToken = getCSRFToken('csrftoken');
-				      if (!csrfToken) {
-				        console.error('CSRF token is missing!');
-				      }
-                      const addFriendResponse = await fetch('http://localhost:9001/api/friends/add/', {
-                          method: 'POST',
-                          headers: {
-                              'Content-Type': 'application/json',
-                              'X-CSRFToken': csrfToken,
-                          },
-                          body: JSON.stringify({ id_friend1: currentUserId, email_friend1: currentUserEmail, name_friend1: currentUserName, id_friend2: userId, email_friend2: userEmail, name_friend2: userName, sender: currentUserId, receiver: userId, status: "pending" })
-                      });
+                        // Step 3: Send POST request to add the friend
+                        console.log('Starting fetch request to add friend...');
+                        const csrfToken = getCSRFToken('csrftoken');
+                        if (!csrfToken) {
+                            console.error('CSRF token is missing!');
+                        }
+                        const addFriendResponse = await fetch('http://localhost:9001/api/friends/add/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: JSON.stringify({ id_friend1: currentUserId, email_friend1: currentUserEmail, name_friend1: currentUserName, id_friend2: userId, email_friend2: userEmail, name_friend2: userName, sender: currentUserId, receiver: userId, status: "pending" })
+                        });
 
                         console.log('Fetch request to add friend completed.');
                         console.log('Response status:', addFriendResponse.status);
@@ -212,8 +221,11 @@ export class Friends extends Page {
                         console.log('Add friend response data:', addFriendData);
 
                         if (addFriendResponse.ok) {
-                            messageDiv.textContent = `Invitation to Friend ${userName} sent successfully!`;
-                            messageDiv.style.color = 'green';
+                            document.querySelector(".toast-body").textContent = `Invitation to Friend ${userName} sent successfully!`;
+                            document.querySelector(".toast").classList.add("show");
+                            setTimeout(() => {
+                                document.querySelector(".toast").classList.remove("show");
+                            }, 3000);
                             console.log('Friend invitation sent successfully');
                         } else {
                             messageDiv.textContent = addFriendData.error || 'Failed to add friend.';
@@ -241,7 +253,7 @@ export class Friends extends Page {
 }
 
 async function getCurrentUserInfo() {
-    const response = await fetch('/api/user-info/', {
+    const response = await fetch('/api/credentials/user-info/', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -281,7 +293,7 @@ async function fetchPendingConfirmations(currentUserId) {
 
                 const listItem = document.createElement('li');
                 listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                listItem.textContent = `Pending confirmation for: ${confirmation.receiver_username}`;
+                listItem.innerHTML = `<p class="mt-3" >Pending confirmation to: <strong>${confirmation.receiver_username}</strong></p>`;
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'btn-container';
 
@@ -325,7 +337,7 @@ async function getIncomingInvitations(currentUserId) {
             data.pending_confirmations.forEach(confirmation => {
                 const listItem = document.createElement('li');
                 listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                listItem.textContent = `Friend request from ${confirmation.sender_username}`;
+                listItem.innerHTML = `<p class="mt-3" >Friend request from <strong>${confirmation.sender_username}</strong></p>`;
 
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'btn-container';
@@ -357,9 +369,9 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
         const url = `http://localhost:9001/api/friends/respond_invitation/?id=${invitationId}`;
         console.log(`Making request to: ${url}`);
         const csrfToken = getCSRFToken('csrftoken');
-		if (!csrfToken) {
-		  console.error('CSRF token is missing!');
-		}
+        if (!csrfToken) {
+            console.error('CSRF token is missing!');
+        }
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -414,13 +426,49 @@ async function fetchAcceptedFriendships(currentUserId) {
             friendshipList.textContent = 'No accepted friendships.';
         } else {
             data.accepted_friendships.forEach(friendship => {
+                console.log('Friendship:', friendship);
                 const listItem = document.createElement('div');
-                listItem.textContent = `Friend: ${friendship.friend_username}`;
-
+                const friendData = getCurrentFriendInfo(friendship.id);
+                listItem.className = 'col-sm-6';
+                listItem.innerHTML = `
+                    <div class="card">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div class="d-flex align-items-center gap-3">
+                            <img src="${friendData.profile_picture}" alt="friend_profile_picture" class="rounded-circle" width="50" height="50">
+                            <div class="d-flex flex-column g-1">
+                              <h5 class="card-title">${friendship.friend_username}</h5>
+                            </div>
+                          </div>
+                          <div>
+                            <button class="btn btn-outline-light"><i class="bi bi-chat"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                `;
+                console.log(friendship.friend_profile_picture);
                 friendshipList.appendChild(listItem);
             });
         }
     } catch (error) {
         console.error('Error fetching accepted friendships:', error);
     }
+}
+
+async function getCurrentFriendInfo(Id) {
+    console.log('getCurrentFriendInfo, friend ID: ', Id);
+    const response = await fetch(`/api/credentials/userid-info/?user_id=${Id}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch user info');
+    }
+
+    return await response.json();
 }
