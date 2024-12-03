@@ -1,4 +1,4 @@
-import { fetchSettingsInfo } from '../src/fetchUser.js';
+import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
 
@@ -14,9 +14,9 @@ export class Pong extends Page {
                     <p class="d-inline montserrat-bold">Ft_transcendence</p>
                 </a>
                 <a class="nav-link active" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img alt="Logo" width="40" height="40" class="rounded-circle" style="
+                    <img alt="logo_profile_picture" width="40" height="40" class="rounded-circle" style="
                               object-fit: cover;
-                            " src="https://cdn.intra.42.fr/users/65ca7a946948378f5cf99fb253ea4907/bapasqui.jpg"
+                            " src=""
                         alt="profile_picture" />
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -87,7 +87,7 @@ export class Pong extends Page {
     }
 
     render() {
-        // fetchSettingsInfo();
+        fetchMinInfo();
         super.render();
 
         const setupEventListeners = () => {

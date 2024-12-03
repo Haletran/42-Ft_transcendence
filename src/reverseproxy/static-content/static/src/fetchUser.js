@@ -120,3 +120,26 @@ export async function fetchMinInfo() {
         window.location.href = '/';
     }
 }
+
+export async function fetchMonopInfo() {
+    try {
+        const response = await fetch('/api/user-info/', {
+            method: 'GET',
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const userData = await response.json();
+            console.log('fetchMinInfo', userData.profile_picture);
+            updateProfilePicture(userData.profile_picture);
+            document.getElementById("username").textContent = userData.username;
+        }
+        else {
+            console.log(response.status);
+            console.log('User not logged in');
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error("User not logged in:", error);
+        window.location.href = '/';
+    }
+}

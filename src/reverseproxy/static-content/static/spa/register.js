@@ -1,5 +1,6 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
+import { router } from '../app.js';
 
 export class RegisterPage extends Page {
 	constructor() {
@@ -146,33 +147,33 @@ export class RegisterPage extends Page {
 					console.error('CSRF token is missing!');
 				}
 
-				// Send data to the backend
-
-				const response = await fetch('/api/register/', {
-					method: 'POST',
-					headers: {
-						//'Content-Type': 'application/json',
-						'X-CSRFToken': csrfToken,
-					},
-					credentials: 'include',
-					//body: JSON.stringify(data),
-					body: formData,
-				});
-
-				if (response.ok) {
-					const result = await response.json();
-					console.log('Registration successful:', result);
-					// Optionally, redirect to login or home page
-					window.location.href = '/home';
-				} else {
-					const error = await response.json();
-					console.error('Registration failed:', error);
-					alert('Registration failed: ' + error.message);
-				}
-			} catch (error) {
-				console.error('Error:', error);
-				alert('An error occurred: ' + error.message);
+			// Send data to the backend
+			
+			const response = await fetch('/api/register/', {
+			  method: 'POST',
+			  headers: {
+				//'Content-Type': 'application/json',
+				'X-CSRFToken': csrfToken,
+			  },
+			  credentials: 'include',
+			  //body: JSON.stringify(data),
+			  body: formData,
+			});
+	
+			if (response.ok) {
+			  const result = await response.json();
+			  console.log('Registration successful:', result);
+			  // Optionally, redirect to login or home page
+			  router.goTo('/home');
+			} else {
+			  const error = await response.json();
+			  console.error('Registration failed:', error);
+			  alert('Registration failed: ' + error.message);
 			}
-		});
+		} catch (error) {
+			console.error('Error:', error);
+			alert('An error occurred: ' + error.message);
+		}
+	});
 	}
 }

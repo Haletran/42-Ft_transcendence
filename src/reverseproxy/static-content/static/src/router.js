@@ -1,10 +1,9 @@
 export class Router {
+
 	constructor(routes) {
 	  this.routes = routes;
-  
 	  // Navigate to the initial path
 	  this.navigate();
-  
 	  // Add event listener for navigation
 	  window.addEventListener('popstate', () => {
 		this.navigate(); // This will handle back/forward navigation
@@ -19,6 +18,7 @@ export class Router {
 	  const page = new route(); // Create an instance of the route page
 	  document.getElementById('app').innerHTML = page.template; // Render the template to the app container
 	  page.render(); // Optionally call a render method if needed for further initialization
+	  console.log("here");
 	}
   
 	goTo(path) {
