@@ -126,7 +126,7 @@ services:
     build: src/django_chat/.
     container_name: django-chat
     ports:
-      - "9002:9000"
+      - "9002:9002"
     depends_on:
       - chat-database
     networks:

@@ -104,7 +104,7 @@ export class Chat extends Page {
                     friendBox.style.cursor = 'pointer';
                     friendBox.addEventListener('click', () => this.openChat(friend.friend_username));
                     friendsList.appendChild(friendBox);
-                });
+                }); 
             }
         } catch (error) {
             console.error('Error fetching friends:', error);
@@ -112,17 +112,30 @@ export class Chat extends Page {
     }
 
     openChat(friendUsername) {
-        const chatContainer = document.getElementById('id_chat_item_container');
-        chatContainer.style.display = 'block';
-        chatContainer.innerHTML = `
-            <br />
-            <input type="text" id="id_message_send_input" />
-            <button type="submit" id="id_message_send_button">Send Message</button>
-            <br />
-            <br />
-        `;
-        this.chatEvent(friendUsername);
-    }
+    // Fetch or create the chat room for the selected friend
+    const currentUserId = getCurrentUserInfo().id;
+    const currentUserName = getCurrentUserInfo().name;
+    const currentUserEmail = getCurrentUserInfo().email;
+    fetch(`http://localhost:9002/api/create-or-fetch-chat-room/?id1=${currentUserId}&name1=${currentUserName}&email1=${currentUserEmail}&id2=${friendId}&name2=${friendUsername}&email2=${friendEmail}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.room_id) {
+                // Open chat with the room ID
+                const chatContainer = document.getElementById('id_chat_item_container');
+                chatContainer.style.display = 'block';
+                chatContainer.innerHTML = `
+                    <br />
+                    <input type="text" id="id_message_send_input" />
+                    <button type="submit" id="id_message_send_button">Send Message</button>
+                    <br />
+                    <br />
+                `;
+                this.chatEvent(friendUsername, data.room_id);
+            }
+        })
+        .catch(error => console.error('Error fetching room:', error));
+}
+
 
     scrollToBottom() {
         const chat = document.getElementById("id_chat_item_container");
@@ -145,7 +158,7 @@ export class Chat extends Page {
         chatSocket.onerror = function (e) {
             console.error("WebSocket error observed:", e);
         };
-    
+
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
             const div = document.createElement("div");
@@ -199,4 +212,3 @@ async function getCurrentUserInfo() {
 
     return await response.json();
 }
-
