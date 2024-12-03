@@ -1,6 +1,7 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { router } from '../app.js';
+import { logoutUser } from '../src/logout.js';
 
 export class RegisterPage extends Page {
 	constructor() {
@@ -88,6 +89,7 @@ export class RegisterPage extends Page {
 	}
 
 	render() {
+		logoutUser();
 		super.render(); // Call the parent render method
 		this.attachFormListener(); // Now attach the listener here
 	}

@@ -1,6 +1,7 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { router } from '../app.js';
+import { logoutUser } from '../src/logout.js';
 
 export class loginBasePage extends Page {
 	constructor() {
@@ -83,6 +84,7 @@ export class loginBasePage extends Page {
 	  `;
 	}
 	render() {
+		logoutUser();
 		super.render(); // Call the parent render method
 		this.attachFormLoginListener(); // Now attach the listener here
 		// document.getElementById('42_oauth').addEventListener('click', () => {
