@@ -6,6 +6,7 @@ from .serializers import FriendSerializer
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_exempt
 from django.db import models
+from django.http import JsonResponse
 
 @ensure_csrf_cookie
 
@@ -103,7 +104,7 @@ def get_pending_confirmations(request):
         pending_requests = Friend.objects.filter(sender=user_id, status='pending')
         pending_confirmations = [{'receiver_username': req.name_friend2} for req in pending_requests]
 
-        return Response({
+        return JsonResponse({
             "sender": user_id,
             "pending_confirmations": pending_confirmations
         }, status=200)

@@ -124,7 +124,7 @@ export class Friends extends Page {
             const currentUserName = currentUserData.username;
             //const currentPic = currentUserData.profile_picture;
             fetchMinInfo();
-            //console.log('HELLO', currentPic);
+            console.log('HELLO');
             //updateProfilePicture(currentPic);
             super.render(); // Call the parent render method
 
@@ -147,7 +147,7 @@ export class Friends extends Page {
                 try {
                     // Step 1: Fetch emails from credentials service
                     console.log('Starting fetch request for emails...');
-                    const emailsResponse = await fetch('http://localhost:9001/api/friends/fetch_emails/', {
+                    const emailsResponse = await fetch('/api/friends/fetch_emails/', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -205,7 +205,7 @@ export class Friends extends Page {
                         if (!csrfToken) {
                             console.error('CSRF token is missing!');
                         }
-                        const addFriendResponse = await fetch('http://localhost:9001/api/friends/add/', {
+                        const addFriendResponse = await fetch('/api/friends/add/', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -244,8 +244,11 @@ export class Friends extends Page {
                 }
             });
             fetchPendingConfirmations(currentUserId);
-            getIncomingInvitations(currentUserId);
-            fetchAcceptedFriendships(currentUserId);
+            console.log('AFTER FETCH PENDING CONFIRMATIONS');
+            //getIncomingInvitations(currentUserId);
+            console.log('AFTER GET INCOMING INVITATIONS');
+            //fetchAcceptedFriendships(currentUserId);
+            console.log('AFTER FETCH ACCEPTED FRIENDSHIPS');
         } catch (error) {
             console.error('Error fetching user info:', error);
         }
@@ -269,10 +272,11 @@ async function getCurrentUserInfo() {
 
 async function fetchPendingConfirmations(currentUserId) {
     try {
-        const response = await fetch(`http://localhost:9001/api/friends/get_pending_confirmations/?user_id=${currentUserId}`, {
+        const response = await fetch(`/api/friends/get_pending_confirmations/?user_id=${currentUserId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                content: 'include',
             }
         });
 
@@ -280,33 +284,33 @@ async function fetchPendingConfirmations(currentUserId) {
             throw new Error('Failed to fetch pending confirmations');
         }
 
-        const data = await response.json();
-        console.log('Pending confirmations data:', data);
+        // const data = await response.json();
+        // console.log('Pending confirmations data:', data);
 
-        const confirmationList = document.getElementById('pending-invitations-list');
-        confirmationList.innerHTML = '';
+        // const confirmationList = document.getElementById('pending-invitations-list');
+        // confirmationList.innerHTML = '';
 
-        if (data.pending_confirmations.length === 0) {
-            confirmationList.textContent = 'No pending confirmations.';
-        } else {
-            data.pending_confirmations.forEach(confirmation => {
+        // if (data.pending_confirmations.length === 0) {
+        //     confirmationList.textContent = 'No pending confirmations.';
+        // } else {
+        //     data.pending_confirmations.forEach(confirmation => {
 
-                const listItem = document.createElement('li');
-                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                listItem.innerHTML = `<p class="mt-3" >Pending confirmation to: <strong>${confirmation.receiver_username}</strong></p>`;
-                const btnContainer = document.createElement('div');
-                btnContainer.className = 'btn-container';
+        //         const listItem = document.createElement('li');
+        //         listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+        //         listItem.innerHTML = `<p class="mt-3" >Pending confirmation to: <strong>${confirmation.receiver_username}</strong></p>`;
+        //         const btnContainer = document.createElement('div');
+        //         btnContainer.className = 'btn-container';
 
-                const cancelButton = document.createElement('button');
-                cancelButton.className = 'btn btn-outline-light';
-                cancelButton.innerHTML = '<i class="bi bi-x"></i>';
-                cancelButton.onclick = () => handleInvitationResponse(confirmation.id, 'cancelled', currentUserId);
+        //         const cancelButton = document.createElement('button');
+        //         cancelButton.className = 'btn btn-outline-light';
+        //         cancelButton.innerHTML = '<i class="bi bi-x"></i>';
+        //         cancelButton.onclick = () => handleInvitationResponse(confirmation.id, 'cancelled', currentUserId);
 
-                btnContainer.appendChild(cancelButton);
-                listItem.appendChild(btnContainer);
-                confirmationList.appendChild(listItem);
-            });
-        }
+        //         btnContainer.appendChild(cancelButton);
+        //         listItem.appendChild(btnContainer);
+        //         confirmationList.appendChild(listItem);
+        //     });
+        // }
     } catch (error) {
         console.error('Error fetching pending confirmations:', error);
     }
@@ -314,7 +318,7 @@ async function fetchPendingConfirmations(currentUserId) {
 
 async function getIncomingInvitations(currentUserId) {
     try {
-        const response = await fetch(`http://localhost:9001/api/friends/get_incoming_invitations/?user_id=${currentUserId}`, {
+        const response = await fetch(`/api/friends/get_incoming_invitations/?user_id=${currentUserId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -366,7 +370,7 @@ async function getIncomingInvitations(currentUserId) {
 
 async function handleInvitationResponse(invitationId, accept, currentUserId) {
     try {
-        const url = `http://localhost:9001/api/friends/respond_invitation/?id=${invitationId}`;
+        const url = `/api/friends/respond_invitation/?id=${invitationId}`;
         console.log(`Making request to: ${url}`);
         const csrfToken = getCSRFToken('csrftoken');
         if (!csrfToken) {
@@ -404,10 +408,15 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
 
 async function fetchAcceptedFriendships(currentUserId) {
     try {
-        const response = await fetch(`http://localhost:9001/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
+        const csrfToken = getCSRFToken('csrftoken');
+        if (!csrfToken) {
+            console.error('CSRF token is missing!');
+        }
+        const response = await fetch(`/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
             }
         });
 
@@ -428,15 +437,16 @@ async function fetchAcceptedFriendships(currentUserId) {
             data.accepted_friendships.forEach(async (friendship) => {
                 console.log('Friendship:', friendship);
                 const listItem = document.createElement('div');
-                const friendData = await getCurrentFriendInfo(friendship.friend_username);
-                console.log(friendship.id);
+                console.log('here');
+                //const friendData = await getCurrentFriendInfo(friendship.friend_username);
+                //console.log(friendship.id);
                 listItem.className = 'col-sm-6';
                 listItem.innerHTML = `
                     <div class="card">
                       <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                           <div class="d-flex align-items-center gap-3">
-                            <img src="${friendData.profile_picture}" alt="friend_profile_picture" class="cover-fit rounded-circle" width="50" height="50">
+                            <img src="" alt="friend_profile_picture" class="cover-fit rounded-circle" width="50" height="50">
                             <div class="d-flex flex-column g-1">
                               <h5 class="card-title">${friendship.friend_username}</h5>
                             </div>
@@ -468,7 +478,7 @@ async function getCurrentFriendInfo(username) {
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch user info');
+        throw new Error('Failed to get current user info');
     }
 
     return await response.json();

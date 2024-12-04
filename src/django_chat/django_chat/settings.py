@@ -90,7 +90,6 @@ DATABASES = {
         'USER': 'chat_user',
         'PASSWORD': 'chat_password',
         'HOST': 'chat-database',  # Container name from docker-compose
-        'PORT': '5432',  # Internal PostgreSQL port
     }
 }
 

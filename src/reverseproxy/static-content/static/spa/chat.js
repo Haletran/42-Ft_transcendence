@@ -72,7 +72,7 @@ export class Chat extends Page {
 
     async displayFriends(currentUserId) {
         try {
-            const response = await fetch(`http://localhost:9001/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
+            const response = await fetch(`/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

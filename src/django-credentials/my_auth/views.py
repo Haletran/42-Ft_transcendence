@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view #To delete after tests
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.core.exceptions import ObjectDoesNotExist
 
 @ensure_csrf_cookie
 def set_csrf_token(request):
@@ -93,33 +94,44 @@ def logout_view(request):
 @login_required
 def user_info(request):
     # print(user)
-    user = request.user
-    profile_picture_url = user.profile_picture.url if user.profile_picture else None
-    return JsonResponse({
-        'id' : user.id,
-        'email': user.email,
-        'username': user.username,
-        'profile_picture': profile_picture_url
-    })
+    try:
+        user = request.user
+        profile_picture_url = user.profile_picture.url if user.profile_picture else None
+        return JsonResponse({
+            'id' : user.id,
+            'email': user.email,
+            'username': user.username,
+            'profile_picture': profile_picture_url
+        })
+    except ObjectDoesNotExist:
+        return JsonResponse({
+            "error": "User not found."
+        }, status=404)
 
 @login_required
 def userid_info(request):
     username = request.GET.get('user')
 
     if not username:
-        return Response({
-            "error": "User ID is required"
+        return JsonResponse({
+            "error": "Username parameter is required."
         }, status=400)
 
-    user = MyUser.objects.get(username=username)
+    try:
+        user = MyUser.objects.get(username=username)
+        profile_picture_url = user.profile_picture.url if user.profile_picture else None
 
-    profile_picture_url = user.profile_picture.url if user.profile_picture else None
-    return JsonResponse({
-        'id' : user.id,
-        'email': user.email,
-        'username': user.username,
-        'profile_picture': profile_picture_url
-    })
+        return JsonResponse({
+            'id': user.id,
+            'email': user.email,
+            'username': user.username,
+            'profile_picture': profile_picture_url
+        })
+
+    except ObjectDoesNotExist:
+        return JsonResponse({
+            "error": "User not found."
+        }, status=404)
 
 def unauthorized_user_info(request):
     return JsonResponse({'error': 'Unauthorized'}, status=401)
@@ -209,7 +221,7 @@ def login_42(request):
             'grant_type': 'authorization_code',
             'client_id': 'u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c',
             'client_secret': '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',
-            'redirect_uri': 'http://localhost:9000/api/credentials/callback',
+            'redirect_uri': 'https://localhost/api/credentials/callback',
             'code': code,
         })
         response_data = response.json()

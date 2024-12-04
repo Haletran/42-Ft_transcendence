@@ -62,7 +62,7 @@ services:
     build: src/django-credentials/.
     container_name: django-credentials
     ports:
-      - "9000:9000"
+      - "9000"
     volumes:
       - ./src/django-credentials/ssl/django-credentials.key:/etc/ssl/private/django.key
       - ./src/django-credentials/ssl/django-credentials.crt:/etc/ssl/certs/django.crt
@@ -86,7 +86,7 @@ services:
     env_file:
       - .env
     ports:
-      - "5432:5432"
+      - "5432"
     volumes:
       - credentials_data:/var/lib/postgresql/data
     networks:
@@ -98,19 +98,19 @@ services:
     build: src/django_friends/.
     container_name: django-friends
     ports:
-      - "9001:9000"
+      - "9001"
     depends_on:
       - friends-database
     networks:
       - transcendence
     command: >
-      sh -c "sleep 8 && python3 manage.py makemigrations && python manage.py makemigrations friends && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9000 django_friends.wsgi:application"
+      sh -c "sleep 8 && python3 manage.py makemigrations && python manage.py makemigrations friends && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9001 django_friends.wsgi:application"
 
   friends-database:
     image: postgres:latest
     container_name: friends-database
     ports:
-      - "5433:5432"
+      - "5433"
     volumes:
       - friends_data:/var/lib/postgresql/data
     environment:
@@ -126,7 +126,7 @@ services:
     build: src/django_chat/.
     container_name: django-chat
     ports:
-      - "9002:9000"
+      - "9002"
     depends_on:
       - chat-database
     networks:
@@ -138,7 +138,7 @@ services:
     image: postgres:latest
     container_name: chat-database
     ports:
-      - "5434:5432"
+      - "5434"
     volumes:
       - chat_data:/var/lib/postgresql/data
     environment:
