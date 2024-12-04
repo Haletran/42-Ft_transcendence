@@ -49,6 +49,7 @@ export class HomePage extends Page {
     </div>
 	  `;
     }
+    
     render() {
         fetchMinInfo(); // will go fetch ONLY the profile pic
         super.render(); // Call the parent render method

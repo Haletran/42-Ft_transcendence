@@ -254,7 +254,7 @@ export class Friends extends Page {
 }
 
 async function getCurrentUserInfo() {
-    const response = await fetch('/api/user-info/', {
+    const response = await fetch('/api/credentials/user-info/', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -436,16 +436,18 @@ async function fetchAcceptedFriendships(currentUserId) {
             friendshipList.className = 'text-muted';
             friendshipList.textContent = 'No accepted friendships.';
         } else {
-            data.accepted_friendships.forEach(friendship => {
+            data.accepted_friendships.forEach(async (friendship) => {
                 console.log('Friendship:', friendship);
                 const listItem = document.createElement('div');
+                const friendData = await getCurrentFriendInfo(friendship.friend_username);
+                console.log(friendship.id);
                 listItem.className = 'col-sm-6';
                 listItem.innerHTML = `
                     <div class="card">
                       <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                           <div class="d-flex align-items-center gap-3">
-                            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2F474x%2F29%2F69%2Fa1%2F2969a1fc3691bf3a1622f2cc6077407b.jpg&f=1&nofb=1&ipt=6c62855b0d2a818dace79ded07edd9052c124789e23dab1fb3bf341e4eafb449&ipo=images" alt="profile_picture" class="rounded-circle" width="50" height="50">
+                            <img src="${friendData.profile_picture}" alt="friend_profile_picture" class="cover-fit rounded-circle" width="50" height="50">
                             <div class="d-flex flex-column g-1">
                               <h5 class="card-title">${friendship.friend_username}</h5>
                             </div>
@@ -457,10 +459,28 @@ async function fetchAcceptedFriendships(currentUserId) {
                       </div>
                     </div>
                 `;
+                console.log(friendship.friend_profile_picture);
                 friendshipList.appendChild(listItem);
             });
         }
     } catch (error) {
         console.error('Error fetching accepted friendships:', error);
     }
+}
+
+async function getCurrentFriendInfo(username) {
+    console.log("getCurrentFriendInfo: ", username);
+    const response = await fetch(`/api/credentials/userid-info/?user=${username}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch user info');
+    }
+
+    return await response.json();
 }

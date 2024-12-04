@@ -47,7 +47,7 @@ def add_friend(request):
 @api_view(['GET'])
 # @csrf_exempt
 def fetch_emails_from_credentials(request):
-    emails_service_url = 'http://django-credentials:9000/api/debug/emails/'
+    emails_service_url = 'http://django-credentials:9000/api/credentials/debug/emails/'
     emails_response = requests.get(emails_service_url)
     if emails_response.status_code == 200:
         emails_data = emails_response.json()

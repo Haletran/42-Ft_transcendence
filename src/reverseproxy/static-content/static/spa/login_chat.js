@@ -73,7 +73,7 @@ export class LoginPageTest extends Page {
 }
 
 async function getCurrentUserInfo() {
-    const response = await fetch('/api/user-info/', {
+    const response = await fetch('/api/credentials/user-info/', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

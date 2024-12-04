@@ -104,6 +104,25 @@ def user_info(request):
         'profile_picture': profile_picture_url
     })
 
+@login_required
+def userid_info(request):
+    username = request.GET.get('user')
+
+    if not username:
+        return Response({
+            "error": "User ID is required"
+        }, status=400)
+
+    user = MyUser.objects.get(username=username)
+
+    profile_picture_url = user.profile_picture.url if user.profile_picture else None
+    return JsonResponse({
+        'id' : user.id,
+        'email': user.email,
+        'username': user.username,
+        'profile_picture': profile_picture_url
+    })
+
 def unauthorized_user_info(request):
     return JsonResponse({'error': 'Unauthorized'}, status=401)
 

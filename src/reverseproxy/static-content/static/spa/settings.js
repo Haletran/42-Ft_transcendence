@@ -145,7 +145,7 @@ export class Settings extends Page {
 
                 // Send data to the backend
 
-                const response = await fetch('/api/update_profile/', {
+                const response = await fetch('/api/credentials/update_profile/', {
                     method: 'POST',
                     headers: {
                         //'Content-Type': 'application/json',

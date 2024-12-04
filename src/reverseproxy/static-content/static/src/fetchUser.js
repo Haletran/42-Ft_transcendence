@@ -1,6 +1,8 @@
+import { router } from '../app.js';
+
 export async function fetchProfileInfo() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -22,7 +24,7 @@ export async function fetchProfileInfo() {
     catch (error) {
         console.error("User not logged in:", error);
         // here to check 42 login
-        window.location.href = '/';
+        router.goTo('/');
     }
 }
 
@@ -53,7 +55,7 @@ function updateProfileUsername(Username) {
 
 export async function getProfileName() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('er-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -74,7 +76,7 @@ export async function getProfileName() {
 
 export async function fetchSettingsInfo() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -88,20 +90,20 @@ export async function fetchSettingsInfo() {
         else /*if (response.status === 401)*/ {
             console.log(response.status);
             console.log('User not logged in');
-            window.location.href = '/';
+            router.goTo('/');
         }
         //else
         //    console.error("Fail in user info:", response.status);
     }
     catch (error) {
         console.error("User not logged in:", error);
-        window.location.href = '/';
+        router.goTo('/');
     }
 }
 
 export async function fetchMinInfo() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -113,17 +115,17 @@ export async function fetchMinInfo() {
         else {
             console.log(response.status);
             console.log('User not logged in');
-            window.location.href = '/';
+            router.goTo('/');
         }
     } catch (error) {
         console.error("User not logged in:", error);
-        window.location.href = '/';
+        router.goTo('/');
     }
 }
 
 export async function fetchMonopInfo() {
     try {
-        const response = await fetch('/api/user-info/', {
+        const response = await fetch('er-info/', {
             method: 'GET',
             credentials: 'include',
         });
@@ -136,10 +138,30 @@ export async function fetchMonopInfo() {
         else {
             console.log(response.status);
             console.log('User not logged in');
-            window.location.href = '/';
+            router.goTo('/');
         }
     } catch (error) {
         console.error("User not logged in:", error);
-        window.location.href = '/';
+        router.goTo('/');
+    }
+}
+
+export async function getUserInfos() {
+    try {
+        const response = await fetch('/api/credentials/user-info/', {
+            method: 'GET',
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const userData = await response.json();
+        }
+        else {
+            console.log(response.status);
+            console.log('User not logged in');
+            router.goTo('/');
+        }
+    } catch (error) {
+        console.error("User not logged in:", error);
+        router.goTo('/');
     }
 }

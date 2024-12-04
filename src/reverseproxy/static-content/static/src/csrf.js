@@ -1,5 +1,5 @@
 export function initializeCSRFToken() {
-    fetch('/api/set-csrf-token/')
+    fetch('/api/credentials/set-csrf-token/')
       .then(response => response.json())
       .then(data => {
     console.log('CSRF token set:', data);

@@ -40,7 +40,7 @@ export class ChatPage extends Page {
 
     async fetchUserInfo() {
         try {
-            const response = await fetch('/api/user-info/', {
+            const response = await fetch('/api/credentials/user-info/', {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
