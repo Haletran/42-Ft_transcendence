@@ -104,14 +104,14 @@ def user_info(request):
 
 @login_required
 def userid_info(request):
-    user_id = request.GET.get('user_id')
+    username = request.GET.get('user')
 
-    if not user_id:
+    if not username:
         return Response({
             "error": "User ID is required"
         }, status=400)
 
-    user = MyUser.objects.get(id=user_id)
+    user = MyUser.objects.get(username=username)
 
     profile_picture_url = user.profile_picture.url if user.profile_picture else None
     return JsonResponse({
