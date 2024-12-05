@@ -63,15 +63,17 @@ export class Friends extends Page {
                     </div>
                 </div>
             </div>
-            <div class="col mt-4">
+            <div class="d-flex flex-column mt-4 gap-2">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title">
                             <h2 class="title">My Friends</h2>
-                            <p class="text-muted" >Here are your friends</p>
-                                <div id="friends-list" class="row row-cols-2 g-2 mt-2"></div>
+                            <div id="friends-list" class="row row-cols-2 g-2 mt-2"></div>
                         </div>
-                        <hr>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
                         <div class="card-title">
                             <h2 class="title" >Friends request</h2>
                             <p class="text-muted">Manage your incoming and outgoing friend requests</p>
@@ -83,7 +85,6 @@ export class Friends extends Page {
                                         <a class="nav-link" id="outgoing-tab" data-bs-toggle="tab" href="#outgoing" role="tab" aria-controls="outgoing" aria-selected="false">Outgoing Requests</a>
                                     </li>
                                 </ul>
-
                                 <!-- Tab content -->
                                 <div class="tab-content" id="requestTabsContent">
                                     <!-- Incoming Requests Tab -->
@@ -434,7 +435,12 @@ async function fetchAcceptedFriendships(currentUserId) {
 
         if (data.accepted_friendships.length === 0) {
             friendshipList.className = 'text-muted';
-            friendshipList.textContent = 'No accepted friendships.';
+            friendshipList.textContent = 'No friends yet.';
+            friendshipList.innerHTML = `
+                <div class="d-flex flex-column justify-content-start">
+                    <p class="text-muted">When you add friends, they'll appear here. Start connecting with others!</p>
+                </div>
+            `;
         } else {
             data.accepted_friendships.forEach(async (friendship) => {
                 console.log('Friendship:', friendship);

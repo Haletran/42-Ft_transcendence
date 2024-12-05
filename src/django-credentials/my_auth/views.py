@@ -264,3 +264,10 @@ def login_42(request):
         return redirect('https://localhost/home')
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@api_view(['GET'])
+def get42(request):
+    client_id = os.getenv('CLIENT_ID')
+    redirect_uri = os.getenv('REDIRECT_URI')
+    url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
+    return JsonResponse({"url": url})

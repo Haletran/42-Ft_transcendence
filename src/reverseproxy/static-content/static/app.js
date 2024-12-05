@@ -81,3 +81,16 @@ export async function isUserLoggedIn() {
   }
   return false;
 }
+
+export async function get42() {
+  try {
+    const response = await fetch('/api/credentials/get42-info', { method: 'GET' });
+    if (response.ok) {
+      const data = await response.json();
+      return data.url;
+    }
+  } catch (error) {
+    console.error('Error fetching 42 info:', error);
+  }
+  return false;
+}

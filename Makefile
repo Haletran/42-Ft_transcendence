@@ -11,6 +11,7 @@ build:
 		echo $$PASSWORD | openssl enc -aes-256-cbc -d -pbkdf2 -in encrypt.env.enc -out .env || (echo "Decryption failed. Exiting."; exit 1); \
 		echo "" >> .env && echo GLOBAL_IP=$$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $$2}' | cut -d/ -f1 | head -n 1) >> .env; \
 	fi
+	cp -R .env ./src/reverseproxy/static-content/.env
 	@docker compose -f ${COMPOSE_FILE} up --build --remove-orphans
 
 up:
