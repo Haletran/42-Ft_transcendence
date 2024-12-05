@@ -40,7 +40,7 @@ export class ChatPage extends Page {
 
     async fetchUserInfo() {
         try {
-            const response = await fetch('/api/user-info/', {
+            const response = await fetch('/api/credentials/user-info/', {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -61,7 +61,7 @@ export class ChatPage extends Page {
 
     setupWebSocket(username) {
         const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-        const chatSocket = new WebSocket(protocol + window.location.hostname + ":9000/ws/chat_test/");
+        const chatSocket = new WebSocket(protocol + window.location.hostname + ":9002/ws/chat_test/");
         
         chatSocket.onopen = function (e) {
             console.log("The connection was setup successfully!");

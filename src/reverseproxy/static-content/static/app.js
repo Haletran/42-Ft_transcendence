@@ -2,7 +2,6 @@ import { Router } from './src/router.js';
 import { HomePage } from './spa/home.js';
 import { RegisterPage } from './spa/register.js';
 import { LoginPage } from './spa/login.js';
-import { Games } from './spa/games.js';
 import { Monopoly } from './spa/monopoly.js';
 import { Pong } from './spa/pong.js';
 import { Profile } from './spa/profile.js';
@@ -15,16 +14,15 @@ import { Chat } from './spa/chat.js';
 // import { ChatPage } from './spa/login_chat.js';
 
 const routes = {
-  '/': LoginPage,
-  '/register': RegisterPage,
+  '/': LoginPage, // accessible without auth, should log out
+  '/register': RegisterPage, // accessible without auth, should log out
   '/home': HomePage,
-  '/games': Games,
   '/pong': Pong,
   '/profile': Profile,
   '/settings': Settings,
   '/chat': Chat,
   '/monopoly': Monopoly,
-  '/login_base': loginBasePage,
+  '/login_base': loginBasePage, // accessible without auth, should log out
   '/friends': Friends,
   '/logout': logoutUser,
 };
@@ -37,13 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('click', (e) => {
     const linkel = e.target.closest('[data-link]');
     if (linkel) {
-      console.log("MATCHES DATA LINK ", e.target.getAttribute('data-link'));
       e.preventDefault();
 
       const path = linkel.getAttribute('data-link');
       router.goTo(path);
-      //history.pushState(null, null, e.target.getAttribute('data-link'));
-      //router.navigate();
     }
   });
 
@@ -56,7 +51,33 @@ document.addEventListener('DOMContentLoaded', () => {
       router.navigate();
     });
   }
-  console.log("BIND NAV");
+  //console.log("BIND NAV", window.location.pathname);
+  //checkUserAuthentification(window.location.pathname);
   window.addEventListener('popstate', router.navigate.bind(router));
-  router.navigate();
+  // router.navigate();
 });
+
+export async function checkUserAuthentification(path) {
+  const isLogged = await isUserLoggedIn();
+
+  console.log('inCheckUserAuth: ', isLogged);
+  if (isLogged || path === '/login_base' || path === '/register' || path === '/') {
+    console.log("going to the path");
+    router.goTo(path);
+  } else {
+    router.goTo('/login_base');
+  }
+}
+
+export async function isUserLoggedIn() {
+  try {
+    const response = await fetch('/api/credentials/user-info', { method: 'GET', credentials: 'include' });
+    if (response.ok) {
+      const userData = await response.json();
+      return userData != null;
+    }
+  } catch (error) {
+    console.error('Error checking user authentication:', error);
+  }
+  return false;
+}

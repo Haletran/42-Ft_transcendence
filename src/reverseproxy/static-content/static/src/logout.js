@@ -9,7 +9,7 @@ export function logoutUser() {
         console.error('CSRF token is missing!');
     }
 
-    fetch('/api/logout/', {
+    fetch('/api/credentials/logout/', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json',

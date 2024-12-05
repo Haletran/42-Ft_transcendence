@@ -7,3 +7,4 @@ djangorestframework
 djangorestframework-simplejwt
 daphne
 channels
+django-redis
