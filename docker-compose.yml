@@ -35,6 +35,14 @@ services:
   #     - transcendence
   #   command: npx hardhat node
 
+  redis:
+    image: redis:6
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - transcendence
+
   vault:
     image: hashicorp/vault:latest
     container_name: vault_container

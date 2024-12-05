@@ -245,9 +245,9 @@ export class Friends extends Page {
             });
             fetchPendingConfirmations(currentUserId);
             console.log('AFTER FETCH PENDING CONFIRMATIONS');
-            //getIncomingInvitations(currentUserId);
+            getIncomingInvitations(currentUserId);
             console.log('AFTER GET INCOMING INVITATIONS');
-            //fetchAcceptedFriendships(currentUserId);
+            fetchAcceptedFriendships(currentUserId);
             console.log('AFTER FETCH ACCEPTED FRIENDSHIPS');
         } catch (error) {
             console.error('Error fetching user info:', error);
@@ -284,33 +284,33 @@ async function fetchPendingConfirmations(currentUserId) {
             throw new Error('Failed to fetch pending confirmations');
         }
 
-        // const data = await response.json();
-        // console.log('Pending confirmations data:', data);
+        const data = await response.json();
+        console.log('Pending confirmations data:', data);
 
-        // const confirmationList = document.getElementById('pending-invitations-list');
-        // confirmationList.innerHTML = '';
+        const confirmationList = document.getElementById('pending-invitations-list');
+        confirmationList.innerHTML = '';
 
-        // if (data.pending_confirmations.length === 0) {
-        //     confirmationList.textContent = 'No pending confirmations.';
-        // } else {
-        //     data.pending_confirmations.forEach(confirmation => {
+        if (data.pending_confirmations.length === 0) {
+            confirmationList.textContent = 'No pending confirmations.';
+        } else {
+            data.pending_confirmations.forEach(confirmation => {
 
-        //         const listItem = document.createElement('li');
-        //         listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-        //         listItem.innerHTML = `<p class="mt-3" >Pending confirmation to: <strong>${confirmation.receiver_username}</strong></p>`;
-        //         const btnContainer = document.createElement('div');
-        //         btnContainer.className = 'btn-container';
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                listItem.innerHTML = `<p class="mt-3" >Pending confirmation to: <strong>${confirmation.receiver_username}</strong></p>`;
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'btn-container';
 
-        //         const cancelButton = document.createElement('button');
-        //         cancelButton.className = 'btn btn-outline-light';
-        //         cancelButton.innerHTML = '<i class="bi bi-x"></i>';
-        //         cancelButton.onclick = () => handleInvitationResponse(confirmation.id, 'cancelled', currentUserId);
+                const cancelButton = document.createElement('button');
+                cancelButton.className = 'btn btn-outline-light';
+                cancelButton.innerHTML = '<i class="bi bi-x"></i>';
+                cancelButton.onclick = () => handleInvitationResponse(confirmation.id, 'cancelled', currentUserId);
 
-        //         btnContainer.appendChild(cancelButton);
-        //         listItem.appendChild(btnContainer);
-        //         confirmationList.appendChild(listItem);
-        //     });
-        // }
+                btnContainer.appendChild(cancelButton);
+                listItem.appendChild(btnContainer);
+                confirmationList.appendChild(listItem);
+            });
+        }
     } catch (error) {
         console.error('Error fetching pending confirmations:', error);
     }
@@ -438,7 +438,7 @@ async function fetchAcceptedFriendships(currentUserId) {
                 console.log('Friendship:', friendship);
                 const listItem = document.createElement('div');
                 console.log('here');
-                //const friendData = await getCurrentFriendInfo(friendship.friend_username);
+                const friendData = await getCurrentFriendInfo(friendship.friend_username);
                 //console.log(friendship.id);
                 listItem.className = 'col-sm-6';
                 listItem.innerHTML = `
@@ -446,7 +446,7 @@ async function fetchAcceptedFriendships(currentUserId) {
                       <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                           <div class="d-flex align-items-center gap-3">
-                            <img src="" alt="friend_profile_picture" class="cover-fit rounded-circle" width="50" height="50">
+                            <img src="${friendData.profile_picture}" alt="friend_profile_picture" class="cover-fit rounded-circle" width="50" height="50">
                             <div class="d-flex flex-column g-1">
                               <h5 class="card-title">${friendship.friend_username}</h5>
                             </div>
@@ -458,7 +458,7 @@ async function fetchAcceptedFriendships(currentUserId) {
                       </div>
                     </div>
                 `;
-                console.log(friendship.friend_profile_picture);
+                //console.log(friendship.friend_profile_picture);
                 friendshipList.appendChild(listItem);
             });
         }
@@ -476,7 +476,7 @@ async function getCurrentFriendInfo(username) {
             'Content-Type': 'application/json',
         }
     });
-
+    //console.log("HELLO: ", response.json());
     if (!response.ok) {
         throw new Error('Failed to get current user info');
     }
