@@ -158,4 +158,20 @@ SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-SESSION_COOKIE_DOMAIN = ".my_auth.com"
+# SESSION_COOKIE_DOMAIN = ".friends.com"
+
+# cache configuration
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://redis:6379/1',
+        # 'OPTIONS': {
+        #     'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        # },
+        # 'TIMEOUT': None,
+    }
+}
