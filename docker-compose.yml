@@ -156,6 +156,33 @@ services:
     networks:
       - transcendence
 
+# SCORES
+  django-scores:
+    build: src/django_scores/.
+    container_name: django-scores
+    ports:
+      - "9003"
+    depends_on:
+      - scores-database
+    networks:
+      - transcendence
+    command: >
+      sh -c "sleep 8 && python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9003 django_scores.asgi:application"
+
+  scores-database:
+    image: postgres:latest
+    container_name: scores-database
+    ports:
+      - "5435:5435"
+    volumes:
+      - scores_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: scores_db
+      POSTGRES_USER: scores_user
+      POSTGRES_PASSWORD: scores_password
+    networks:
+      - transcendence
+
 volumes:
   dblogins:
     driver: local
@@ -166,6 +193,7 @@ volumes:
   credentials_data:
   friends_data:
   chat_data:
+  scores_data:
   profile_pictures:
 
 
