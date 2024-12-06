@@ -193,12 +193,15 @@ def get_accepted_friendships(request):
         accepted_friendships_data = []
         for friendship in accepted_friendships:
             if friendship.id_friend1 == int(user_id):
+                friend_id = friendship.id_friend2
                 friend_username = friendship.name_friend2
             else:
+                friend_id = friendship.id_friend1
                 friend_username = friendship.name_friend1
 
             accepted_friendships_data.append({
                 'id': friendship.id,
+                'friend_id': friend_id,
                 'friend_username': friend_username
             })
 

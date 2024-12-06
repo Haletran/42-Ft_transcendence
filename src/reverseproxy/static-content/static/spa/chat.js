@@ -25,10 +25,12 @@ export class Chat extends Page {
                                 <a class="dropdown-item" href="/profile" data-link="/profile">Profile</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
+                                <a id="choose_param" data-link="/settings" 
+                                    class="list-group-item list-group-item-action">Settings</a>
+                                <a id="choose_param" href="/friends" data-link="/friends"
+                                    class="list-group-item list-group-item-action">Friends</a>
+                                <a id="choose_param" href="/chat" data-link="/chat"
+                                    class="list-group-item list-group-item-action active">Messages</a>
                             </li>
                         </ul>
                     </div>
@@ -70,31 +72,37 @@ export class Chat extends Page {
         super.render();
         fetchMinInfo();
         const currentUserData = await getCurrentUserInfo();
+        console.log('Current User Data:', currentUserData);
         const currentUserName = currentUserData.username;
         this.displayFriends(currentUserData.id, currentUserName);
     }
 
     async displayFriends(currentUserId, currentUserName) {
         try {
+            console.log('Fetching friends for user ID:', currentUserId);
             const response = await fetch(`/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 }
             });
-
+    
             if (!response.ok) {
                 throw new Error('Failed to fetch friends');
             }
-
+    
             const data = await response.json();
+            console.log('Friends Data:', data);
             const friendsList = document.getElementById('friends-list');
             friendsList.innerHTML = '';
-
+    
             if (data.accepted_friendships.length === 0) {
                 friendsList.textContent = 'No friends found.';
             } else {
                 data.accepted_friendships.forEach(friend => {
+                    console.log('Friend:', friend.friend_id);
+                    const friendId = friend.friend_id;
+                    console.log('Friend ID:', friendId); // Log the friend's ID
                     const friendBox = document.createElement('div');
                     friendBox.textContent = friend.friend_username;
                     friendBox.className = 'friend-box';
@@ -102,23 +110,47 @@ export class Chat extends Page {
                     friendBox.style.padding = '10px';
                     friendBox.style.margin = '5px';
                     friendBox.style.cursor = 'pointer';
-                    friendBox.addEventListener('click', () => this.openChat(friend.friend_username));
+                    friendBox.addEventListener('click', () => this.openChat(friend.friend_username, friendId));
                     friendsList.appendChild(friendBox);
-                }); 
+                });
             }
         } catch (error) {
             console.error('Error fetching friends:', error);
         }
     }
 
-    openChat(friendUsername) {
-    // Fetch or create the chat room for the selected friend
-    const currentUserId = getCurrentUserInfo().id;
-    const currentUserName = getCurrentUserInfo().name;
-    const currentUserEmail = getCurrentUserInfo().email;
-    fetch(`http://localhost:9002/api/create-or-fetch-chat-room/?id1=${currentUserId}&name1=${currentUserName}&email1=${currentUserEmail}&id2=${friendId}&name2=${friendUsername}&email2=${friendEmail}`)
-        .then(response => response.json())
-        .then(data => {
+    // Need to finish the fetching of the friend Id to create a room
+
+    async fetchOrCreateChatRoom(currentUserId, friendId) {
+        console.log('Fetching or creating chat room for:', { currentUserId, friendId });
+        const response = await fetch(`/api/create-or-fetch-chat-room/?id1=${currentUserId}&id2=${friendId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+    
+        if (!response.ok) {
+            console.error('Failed to fetch or create chat room:', response.statusText);
+            throw new Error('Failed to fetch or create chat room');
+        }
+    
+        const data = await response.json();
+        console.log('Chat Room Data:', data);
+        return data;
+    }
+
+    async openChat(friendUsername, friendId) {
+        try {
+            // Fetch the current user's information
+            const currentUserInfo = await getCurrentUserInfo();
+            console.log('Current User Info:', currentUserInfo);
+            const currentUserId = currentUserInfo.id;
+
+            // Fetch or create the chat room for the selected friend
+            const data = await this.fetchOrCreateChatRoom(currentUserId, friendId);
+            console.log('Chat Room Data:', data);
+
             if (data.room_id) {
                 // Open chat with the room ID
                 const chatContainer = document.getElementById('id_chat_item_container');
@@ -132,29 +164,29 @@ export class Chat extends Page {
                 `;
                 this.chatEvent(friendUsername, data.room_id);
             }
-        })
-        .catch(error => console.error('Error fetching room:', error));
-}
-
+        } catch (error) {
+            console.error('Error fetching room or user info:', error);
+        }
+    }
 
     scrollToBottom() {
         const chat = document.getElementById("id_chat_item_container");
         chat.scrollTop = chat.scrollHeight;
     }
 
-    chatEvent(username) {
+    chatEvent(username, roomId) {
         const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-        if(!chatSocket)
+        if (!chatSocket)
             chatSocket = new WebSocket(protocol + window.location.host + "/ws/chat_test/");
-    
+
         chatSocket.onopen = function (e) {
             console.log("The connection was set up successfully!");
         };
-    
+
         chatSocket.onclose = function (e) {
             console.log("WebSocket connection closed unexpectedly!");
         };
-    
+
         chatSocket.onerror = function (e) {
             console.error("WebSocket error observed:", e);
         };
@@ -167,7 +199,7 @@ export class Chat extends Page {
             document.getElementById("id_chat_item_container").appendChild(div);
             this.scrollToBottom();
         }.bind(this);
-    
+
         // Store `sendMessage` reference
         const sendMessage = () => {
             const msg = document.getElementById("id_message_send_input").value.trim();
@@ -177,16 +209,16 @@ export class Chat extends Page {
                 this.scrollToBottom();
             }
         };
-    
+
         // Ensure event listeners are added only once
         const messageSendButton = document.getElementById("id_message_send_button");
         const messageSendInput = document.getElementById("id_message_send_input");
-    
+
         if (!messageSendButton.dataset.listenerAdded) {
             messageSendButton.addEventListener("click", sendMessage);
             messageSendButton.dataset.listenerAdded = true;
         }
-    
+
         if (!messageSendInput.dataset.listenerAdded) {
             messageSendInput.addEventListener("keypress", (e) => {
                 if (e.key === 'Enter') {
@@ -196,7 +228,7 @@ export class Chat extends Page {
             messageSendInput.dataset.listenerAdded = true;
         }
     }
-}    
+}
 
 async function getCurrentUserInfo() {
     const response = await fetch('/api/credentials/user-info/', {

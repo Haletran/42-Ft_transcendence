@@ -221,11 +221,6 @@ export class Friends extends Page {
                         console.log('Add friend response data:', addFriendData);
 
                         if (addFriendResponse.ok) {
-                            document.querySelector(".toast-body").textContent = `Invitation to Friend ${userName} sent successfully!`;
-                            document.querySelector(".toast").classList.add("show");
-                            setTimeout(() => {
-                                document.querySelector(".toast").classList.remove("show");
-                            }, 3000);
                             console.log('Friend invitation sent successfully');
                         } else {
                             messageDiv.textContent = addFriendData.error || 'Failed to add friend.';
