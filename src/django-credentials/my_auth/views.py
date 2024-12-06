@@ -20,6 +20,8 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 
+from .utils import is_user_active
+
 @ensure_csrf_cookie
 def set_csrf_token(request):
     csrf_token = get_token(request)
@@ -101,7 +103,10 @@ def user_info(request):
             'id' : user.id,
             'email': user.email,
             'username': user.username,
-            'profile_picture': profile_picture_url
+            'profile_picture': profile_picture_url,
+            'is_online': user.is_online,
+            'last_active': user.last_active,
+            'is_active' : is_user_active(user)
         })
     except ObjectDoesNotExist:
         return JsonResponse({
@@ -125,7 +130,9 @@ def userid_info(request):
             'id': user.id,
             'email': user.email,
             'username': user.username,
-            'profile_picture': profile_picture_url
+            'profile_picture': profile_picture_url,
+            'is_online': user.is_online,
+            'is_active' : is_user_active(user)
         })
 
     except ObjectDoesNotExist:

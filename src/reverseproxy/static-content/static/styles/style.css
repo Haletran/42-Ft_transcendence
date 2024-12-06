@@ -19,6 +19,17 @@ body {}
 }
  */
 
+.online-dot {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white; /* Optional: Border to match the image background */
+}
+  
+
 img.main-logo {
     filter: invert(1);
 }

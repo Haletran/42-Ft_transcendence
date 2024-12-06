@@ -5,7 +5,8 @@ from django.db import models
 
 class MyUser(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
-
+    is_online = models.BooleanField(default=False)
+    last_active = models.DateTimeField(null=True, blank=True)
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='myuser_set',

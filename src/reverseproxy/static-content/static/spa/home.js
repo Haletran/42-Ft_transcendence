@@ -1,5 +1,6 @@
 import { Page } from '../src/pages.js';
 import { fetchMinInfo } from '../src/fetchUser.js';
+import { startWebSocket } from './login_base.js';
 
 export class HomePage extends Page {
     constructor() {
@@ -52,6 +53,7 @@ export class HomePage extends Page {
     
     render() {
         fetchMinInfo(); // will go fetch ONLY the profile pic
+        startWebSocket();
         super.render(); // Call the parent render method
         console.log("home is rendered");
     }

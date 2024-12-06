@@ -1,6 +1,7 @@
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
+import { startWebSocket } from './login_base.js';
 
 export class Pong extends Page {
     constructor() {
@@ -88,6 +89,7 @@ export class Pong extends Page {
 
     render() {
         fetchMinInfo();
+        startWebSocket();
         super.render();
 
         const setupEventListeners = () => {

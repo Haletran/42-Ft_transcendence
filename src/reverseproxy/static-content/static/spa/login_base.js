@@ -2,6 +2,8 @@ import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { router } from '../app.js';
 import { logoutUser } from '../src/logout.js';
+import { getUserInfos } from '../src/fetchUser.js';
+import { isUserLoggedIn } from '../app.js';
 
 export class loginBasePage extends Page {
 	constructor() {
@@ -144,5 +146,30 @@ export class loginBasePage extends Page {
 				alert('An error occurred: ' + error.message);
 			}
 		});
+	}
+}
+
+export function startWebSocket() {
+	const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const StatusSocket = new WebSocket(protocol + window.location.host + "/ws/online-status/");
+
+	StatusSocket.onopen = function (e) {
+		console.log("The connection for online status was setup successfully!");
+	};
+
+	StatusSocket.onmessage = (message) => {
+		console.log('Received from server:', message.data);
+	}
+
+	const intervalID = setInterval(() => {
+		if (StatusSocket.readyState === WebSocket.OPEN) {
+			console.log("Sending ping");
+			StatusSocket.send(JSON.stringify({ type: 'ping' }));
+		}
+	}, 5000);
+
+	StatusSocket.onclose = function () {
+		console.log('Websocket connection closed.');
+		clearInterval(intervalID);
 	}
 }

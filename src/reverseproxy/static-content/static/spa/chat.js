@@ -1,5 +1,6 @@
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
+import { startWebSocket } from './login_base.js';
 
 let chatSocket;
 
@@ -71,6 +72,7 @@ export class Chat extends Page {
     async render() {
         super.render();
         fetchMinInfo();
+        startWebSocket();
         const currentUserData = await getCurrentUserInfo();
         console.log('Current User Data:', currentUserData);
         const currentUserName = currentUserData.username;

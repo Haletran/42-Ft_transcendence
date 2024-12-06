@@ -1,5 +1,6 @@
 import { fetchMonopInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
+import { startWebSocket } from './login_base.js';
 
 export class Monopoly extends Page {
     constructor() {
@@ -72,6 +73,7 @@ export class Monopoly extends Page {
     }
     render() {
         fetchMonopInfo();
+        startWebSocket();
         super.render(); // Call the parent render method
     }
 }

@@ -2,6 +2,7 @@ import { fetchMinInfo } from '../src/fetchUser.js';
 import { updateProfilePicture } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
+import { startWebSocket } from './login_base.js';
 
 export class Friends extends Page {
     constructor() {
@@ -114,6 +115,7 @@ export class Friends extends Page {
  `;
     }
     async render() {
+        startWebSocket();
         try {
             const currentUserData = await getCurrentUserInfo();
             if (!currentUserData) {
@@ -434,7 +436,7 @@ async function fetchAcceptedFriendships(currentUserId) {
                 const listItem = document.createElement('div');
                 console.log('here');
                 const friendData = await getCurrentFriendInfo(friendship.friend_username);
-                //console.log(friendship.id);
+                console.log(friendData);
                 listItem.className = 'col-sm-6';
                 listItem.innerHTML = `
                     <div class="card">
@@ -443,7 +445,9 @@ async function fetchAcceptedFriendships(currentUserId) {
                           <div class="d-flex align-items-center gap-3">
                             <img src="${friendData.profile_picture}" alt="friend_profile_picture" class="cover-fit rounded-circle" width="50" height="50">
                             <div class="d-flex flex-column g-1">
-                              <h5 class="card-title">${friendship.friend_username}</h5>
+                              <h5 class="card-title">${friendData.username}
+                              ${friendData.is_online === true ? '<span class="online-dot bg-success"></span>' : ''}
+                              </h5>
                             </div>
                           </div>
                           <div>

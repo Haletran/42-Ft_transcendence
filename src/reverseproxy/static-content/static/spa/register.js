@@ -2,6 +2,7 @@ import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { router } from '../app.js';
 import { logoutUser } from '../src/logout.js';
+import { startWebSocket } from './login_base.js';
 
 export class RegisterPage extends Page {
 	constructor() {

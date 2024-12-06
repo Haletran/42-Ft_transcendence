@@ -3,6 +3,7 @@ import { Router } from '../src/router.js';
 import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { setupProfilePictureSelection } from '../js/event.js';
+import { startWebSocket } from './login_base.js';
 
 export class Settings extends Page {
     constructor() {
@@ -102,6 +103,7 @@ export class Settings extends Page {
     }
     render() {
         fetchSettingsInfo();
+        startWebSocket();
         super.render(); // Call the parent render method
         setupProfilePictureSelection();
         this.attachFormListener();
@@ -112,7 +114,6 @@ export class Settings extends Page {
 
         const profileInput = document.getElementById('customProfilePicture');
         profileInput.addEventListener('change', () => {
-            imageURL = null;
             console.log("Uploaded file:", profileInput.files[0]);
         });
 
