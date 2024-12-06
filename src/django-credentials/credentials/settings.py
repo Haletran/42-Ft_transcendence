@@ -61,11 +61,13 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'daphne',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'my_auth',
     'corsheaders',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -98,6 +100,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'credentials.wsgi.application'
+ASGI_APPLICATION = 'credentials.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 
 # Database

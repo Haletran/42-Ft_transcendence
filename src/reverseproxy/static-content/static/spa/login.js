@@ -1,7 +1,8 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { logoutUser } from '../src/logout.js';
-
+import { isUserLoggedIn } from '../app.js';
+import { router } from '../app.js';
 
 export class LoginPage extends Page {
     constructor() {
@@ -22,7 +23,11 @@ export class LoginPage extends Page {
     }
 
     render() {
-        logoutUser();
-        super.render();
+        if (isUserLoggedIn())
+            router.goTo('/home');
+        else {
+            logoutUser();
+            super.render();
+        }
     }
 }

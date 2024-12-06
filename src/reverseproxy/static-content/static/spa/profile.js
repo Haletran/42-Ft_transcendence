@@ -1,5 +1,6 @@
 import { fetchProfileInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
+import { startWebSocket } from './login_base.js';
 
 export class Profile extends Page {
     constructor() {
@@ -90,6 +91,7 @@ export class Profile extends Page {
     }
     render() {
         fetchProfileInfo();
+        startWebSocket();
         super.render(); // Call the parent render method
         this.render_chart();
     }

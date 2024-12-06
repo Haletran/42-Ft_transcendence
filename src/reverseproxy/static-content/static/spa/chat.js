@@ -1,5 +1,6 @@
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
+import { startWebSocket } from './login_base.js';
 
 export class Chat extends Page {
     constructor() {
@@ -65,6 +66,7 @@ export class Chat extends Page {
     async render() {
         super.render();
         fetchMinInfo();
+        startWebSocket();
         const currentUserData = await getCurrentUserInfo();
         const currentUserName = currentUserData.username;
         this.displayFriends(currentUserData.id);

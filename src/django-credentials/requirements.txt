@@ -7,3 +7,6 @@ djangorestframework
 djangorestframework-simplejwt
 Pillow
 django-redis
+channels
+channels-redis
+daphne
