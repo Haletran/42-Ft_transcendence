@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -79,18 +80,12 @@ WSGI_APPLICATION = 'django_friends.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'friends_db',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': 'friends-database',
+        'NAME': os.getenv('POSTGRES_DB_FRIENDS'),
+        'USER': os.getenv('POSTGRES_USER_FRIENDS'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD_FRIENDS'),
+        'HOST': os.getenv('POSTGRES_HOST_FRIENDS'),
+        'PORT': os.getenv('POSTGRES_PORT'),
     },
-    'credentials': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'credentials_db',
-        'USER': 'credentials_user',
-        'PASSWORD': 'credentials_password',
-        'HOST': 'credentials-database',
-    }
 }
 
 

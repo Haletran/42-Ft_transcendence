@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,11 +89,12 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chat_db',
-        'USER': 'chat_user',
-        'PASSWORD': 'chat_password',
-        'HOST': 'chat-database',  # Container name from docker-compose
-    }
+        'NAME': os.getenv('POSTGRES_DB_CHAT'),
+        'USER': os.getenv('POSTGRES_USER_CHAT'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD_CHAT'),
+        'HOST': os.getenv('POSTGRES_HOST_CHAT'),
+        'PORT': os.getenv('POSTGRES_PORT'),
+    },
 }
 
 

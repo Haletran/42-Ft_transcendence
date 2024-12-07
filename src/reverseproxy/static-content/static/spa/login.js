@@ -23,11 +23,11 @@ export class LoginPage extends Page {
     }
 
     render() {
-        if (isUserLoggedIn())
-            router.goTo('/home');
-        else {
+        // if (isUserLoggedIn())
+        //     router.goTo('/home');
+        // else {
             logoutUser();
             super.render();
         }
     }
-}
+// }
