@@ -1,3 +1,5 @@
+import { set1v1victory } from "../src/scoreTable.js";
+
 const canvas = document.getElementById("pong_canvas");
 const ctx = canvas.getContext("2d");
 let gameRunning = true;
@@ -217,7 +219,7 @@ function circleRectCollision(circleX, circleY, circleRadius, rectX, rectY, rectW
 }
 
 
-function draw_ball() {
+async function draw_ball() {
     if (!gameRunning) return;
     clearCanvas();
     if (player1.score == 5 || player2.score == 5) {
@@ -226,6 +228,12 @@ function draw_ball() {
                 alert(player1.name + " wins!");
             else
                 alert(player2.name + " wins!");
+            try {
+                set1v1victory(player1, player2, false, false);
+            } catch (err) {
+                console.error('Error updating game victory:', err);
+            }
+           // set1v1victory(player1, player2, false, false);
             player1.score = 0;
             player2.score = 0;
             stopGame();

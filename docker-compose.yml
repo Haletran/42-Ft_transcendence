@@ -158,7 +158,7 @@ services:
 
 # SCORES
   django-scores:
-    build: src/django_scores/.
+    build: src/django-scores/.
     container_name: django-scores
     ports:
       - "9003"
@@ -176,10 +176,12 @@ services:
       - "5435:5435"
     volumes:
       - scores_data:/var/lib/postgresql/data
+      - ./src/scores-database/postgresql.conf:/etc/postgresql/postgresql.conf
     environment:
       POSTGRES_DB: scores_db
       POSTGRES_USER: scores_user
       POSTGRES_PASSWORD: scores_password
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     networks:
       - transcendence
 

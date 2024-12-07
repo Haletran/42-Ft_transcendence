@@ -31,7 +31,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,9 +39,11 @@ INSTALLED_APPS = [
     'daphne',
     'django.contrib.staticfiles',
     'scores',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,6 +84,7 @@ DATABASES = {
         'USER': 'scores_user',
         'PASSWORD': 'scores_password',
         'HOST': 'scores-database',  # Container name from docker-compose
+        'PORT': '5435',
     }
 }
 
@@ -132,10 +134,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # cookie configuration
 
-CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost',
+]
 CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_PATH = '/'
+CSRF_COOKIE_SAMESITE = 'None'
+CORS_ALLOWED_ORIGINS = [
+    'https://localhost',
+]
+CORS_ALLOW_CREDENTIALS = True
 
 # SESSION_COOKIE_DOMAIN = ".chat.com"
 
