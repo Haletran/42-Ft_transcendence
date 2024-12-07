@@ -1,6 +1,7 @@
 import { Page } from '../src/pages.js';
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { startWebSocket } from './login_base.js';
+import { logoutUser } from '../src/logout.js';
 
 export class HomePage extends Page {
     constructor() {
@@ -27,7 +28,7 @@ export class HomePage extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -54,7 +55,14 @@ export class HomePage extends Page {
     render() {
         fetchMinInfo(); // will go fetch ONLY the profile pic
         startWebSocket();
-        super.render(); // Call the parent render method
-        console.log("home is rendered");
+        super.render();
+        
+        const logoutButton = document.getElementById('logout-butt');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                logoutUser();
+            });
+        }
     }
 }
