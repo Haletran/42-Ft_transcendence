@@ -229,11 +229,10 @@ async function draw_ball() {
             else
                 alert(player2.name + " wins!");
             try {
-                set1v1victory(player1, player2, false, false);
+                await set1v1victory(player1, player2, false, false);
             } catch (err) {
                 console.error('Error updating game victory:', err);
             }
-           // set1v1victory(player1, player2, false, false);
             player1.score = 0;
             player2.score = 0;
             stopGame();

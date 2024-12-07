@@ -13,28 +13,31 @@ def add_game(request):
         try:
             user_origin = request.POST.get('user_origin')
             player1_username = request.POST.get('player1_username')
-            player2_username = request.POST.get('player1_username')
+            player2_username = request.POST.get('player2_username')
             result = request.POST.get('result')
             player1_score = request.POST.get('player1_score')
             player2_score = request.POST.get('player2_score')
             is_ai = request.POST.get('is_ai')
             is_tournament = request.POST.get('is_tournament')
 
-            if not user_origin or not player1_username or not player2_username or not player1_score or not player2_score or not player1_result or not is_ai or not is_tournament:
+            if not user_origin or not player1_username or not player2_username or not player1_score or not player2_score or not result or not is_ai or not is_tournament:
                 return Response({
                     "error": "All fields are required"
                 }, status=400)
 
-            new_game = Game.objects.create()
-            new_game.user_origin = user_origin
-            new_game.player1_username = player1_username
-            new_game.player2_username = player2_username
-            new_game.result = result
-            new_game.player1_score = player1_score
-            new_game.player2_score = player2_score
-            new_game.is_ai = is_ai
-            new_game.is_tournament = is_tournament
+            is_ai = is_ai.lower() == 'true' if is_ai else False
+            is_tournament = is_tournament.lower() == 'true' if is_tournament else False
 
+            new_game = Game.objects.create(
+                user_origin=user_origin,
+                player1_username=player1_username,
+                player2_username=player2_username,
+                result=result,
+                player1_score=int(player1_score),
+                player2_score=int(player2_score),
+                is_ai=is_ai,
+                is_tournament=is_tournament
+            )
             new_game.save()
 
             response = JsonResponse({'message': 'Game added successfully'}, status=200)
