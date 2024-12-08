@@ -12,16 +12,45 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from hvac import Client
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Vault configurations
+VAULT_ADDR = os.getenv('VAULT_ADDR')  # Vault service name in Docker Compose
+VAULT_TOKEN = os.getenv('VAULT_TOKEN', None)
+
+# Create a client for Vault
+client = Client(url=VAULT_ADDR, token=VAULT_TOKEN)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a19ct16@$pr*(wnrqlydc8rn1ma$q+^qg9=m3@5)$*2kf=$quq'
+try:
+    # Attempt to fetch the secret stored at the given path in Vault
+    secret = client.secrets.kv.v2.read_secret_version(path='data/django/db_friends/')
+    
+    # Correct way to access the 'value' field from Vault response
+    SECRET_KEY = secret['data']['data']['secret_key']
+except Exception as e:
+    raise RuntimeError(f"Unable to retrieve SECRET_KEY from Vault: {e}")
+
+# Fetch database credentials from Vault
+try:
+    # Attempt to fetch the secret stored at the given path in Vault
+    secret_db = client.secrets.kv.v2.read_secret_version(path='data/django/db_friends')
+    
+    # Correct way to access the credentials from Vault response
+    db_credentials = secret_db['data']['data']
+    POSTGRES_DB = db_credentials['db_name']
+    POSTGRES_USER = db_credentials['db_user']
+    POSTGRES_PASSWORD = db_credentials['db_password']
+    POSTGRES_HOST = db_credentials['db_host']
+    POSTGRES_PORT = db_credentials['db_port']
+
+except Exception as e:
+    raise RuntimeError(f"Unable to retrieve DB credentials from Vault: {e}")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
