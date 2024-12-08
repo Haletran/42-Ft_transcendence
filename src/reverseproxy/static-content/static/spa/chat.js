@@ -1,6 +1,9 @@
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { startWebSocket } from './login_base.js';
+import { getCurrentFriendInfo } from './friends.js';
+import { logoutUser } from '../src/logout.js';
+import { fetchFriendHistory, fetchFriendStatistics } from '../src/scoreTable.js';
 
 export class Chat extends Page {
     constructor() {
@@ -27,7 +30,7 @@ export class Chat extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -70,6 +73,14 @@ export class Chat extends Page {
         const currentUserData = await getCurrentUserInfo();
         const currentUserName = currentUserData.username;
         this.displayFriends(currentUserData.id);
+
+        const logoutButton = document.getElementById('logout-butt');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function (event) {
+                //event.preventDefault();
+                logoutUser();
+            });
+        }
     }
 
     async displayFriends(currentUserId) {
@@ -92,15 +103,100 @@ export class Chat extends Page {
             if (data.accepted_friendships.length === 0) {
                 friendsList.textContent = 'No friends found.';
             } else {
-                data.accepted_friendships.forEach(friend => {
+                data.accepted_friendships.forEach(async(friend) => {
                     const friendBox = document.createElement('div');
-                    friendBox.textContent = friend.friend_username;
-                    friendBox.className = 'friend-box';
+                    friendBox.className = 'friend-box d-flex align-items-center';
                     friendBox.style.border = '1px solid black';
                     friendBox.style.padding = '10px';
                     friendBox.style.margin = '5px';
-                    friendBox.style.cursor = 'pointer';
-                    friendBox.addEventListener('click', () => this.openChat(friend.friend_username));
+
+                    const pictureBox = document.createElement('div');
+                    const friendData = await getCurrentFriendInfo(friend.friend_username);
+                    pictureBox.className = 'cover-fit rounded-circle';
+                    pictureBox.style.width = '40px';
+                    pictureBox.style.height = '40px';
+                    pictureBox.style.marginRight = '10px';
+                    pictureBox.style.backgroundImage = `url('${friendData.profile_picture}')`;
+                    pictureBox.style.backgroundSize = 'cover';
+                    pictureBox.style.backgroundPosition = 'center';
+
+                    const profileBox = document.createElement('div');
+                    profileBox.className = 'profile-box';
+                    profileBox.style.position = 'absolute';
+                    profileBox.style.border = '1px solid gray';
+                    profileBox.style.padding = '30px';
+                    profileBox.style.backgroundColor = 'grey';
+                    profileBox.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                    profileBox.style.opacity = '0';
+                    profileBox.style.transition = 'opacity 0.3s ease';
+                    profileBox.style.pointerEvents = 'none';
+                    profileBox.style.display = 'none';
+                    //profileBox.textContent = `Profile of ${friend.friend_username}`;
+                    document.body.appendChild(profileBox);
+
+                    const friendName = document.createElement('span');
+                    friendName.textContent = friend.friend_username;
+                    friendName.style.flexGrow = '1';
+
+                    friendName.addEventListener('mouseover', async (e) => {
+                        profileBox.style.display = 'block';
+                        profileBox.style.opacity = '1';
+                        profileBox.style.pointerEvents = 'auto';
+                        profileBox.textContent = '';
+
+                        const rect = friendName.getBoundingClientRect();
+                        profileBox.style.top = `${rect.bottom + 5}px`;
+                        profileBox.style.left = `${rect.left}px`;
+
+                        try {
+                            const friendinfo = await getCurrentFriendInfo(friend.friend_username);
+                            const profileSection = document.createElement('div');
+                            profileSection.style.marginBottom = '10px';
+                            profileSection.innerHTML = `
+                                <strong>Profile Info:</strong><br>
+                                ${friendinfo.username || 'N/A'}<br>
+                                ${friendinfo.email || 'N/A'}<br>
+                            `;
+                            profileBox.appendChild(profileSection);
+
+                            const statinfo = await fetchFriendStatistics(friend.friend_username);
+                            const statSection = document.createElement('div');
+                            statSection.style.marginBottom = '10px';
+                            statSection.innerHTML = statinfo;
+                            profileBox.appendChild(statSection);
+                            
+
+                            const matchhistory = await fetchFriendHistory(friend.friend_username);
+                            const matchSection = document.createElement('div');
+                            matchSection.style.marginBottom = '10px';
+                            matchSection.innerHTML = matchhistory;
+                            profileBox.appendChild(matchSection);
+
+                        }
+                        catch(error) {
+                            console.error(error);
+                            profileBox.textContent = 'Failed to load profile info';
+                        }
+                    });
+
+                    friendName.addEventListener('mouseout', () => {
+                        profileBox.style.opacity = '0';
+                        profileBox.style.pointerEvents = 'none';
+                    });
+
+                    friendBox.appendChild(pictureBox);
+                    friendBox.appendChild(friendName);
+
+                    const chatIcon = document.createElement('i');
+                    chatIcon.className = 'bi bi-chat';
+                    chatIcon.style.cursor = 'pointer';
+                    chatIcon.style.marginLeft = '10px';
+                    chatIcon.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.openChat(friend.friend_username)
+                    });
+                    friendBox.appendChild(chatIcon);
+
                     friendsList.appendChild(friendBox);
                 });
             }

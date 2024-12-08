@@ -1,4 +1,5 @@
 import { getUserInfos } from "./fetchUser.js";
+import { getCurrentFriendInfo } from "../spa/friends.js";
 import { getCSRFToken } from "./csrf.js";
 
 export async function set1v1victory(player1, player2, is_ai, is_tournament) {
@@ -57,7 +58,7 @@ export async function fetchMatchHistory() {
         const MatchHistoryList = document.getElementById('match-history-list');
         MatchHistoryList.innerHTML = '';
 
-        data.forEach(match => {
+        data.reverse().forEach(match => {
             const matchItem = document.createElement('a');
             //matchItem.href = '#';
             matchItem.classList.add('list-group-item');
@@ -98,6 +99,54 @@ export async function fetchStatistics() {
         wins_f.innerHTML = 'LOSSES: ' + data.wins;
         losses_f.innerHTML = 'WINS: ' + data.losses;
         rate_f.innerHTML = data.rate + ' % of wins';
+
+    } catch (error) {
+        console.error('Error fetching statistics:', error);
+    }
+}
+
+export async function fetchFriendHistory(username) {
+    try {
+        
+        // const userData = await getCurrentFriendInfo(username);
+
+        // console.log(userData);
+
+        const response = await fetch(`/api/scores/match_history/?username=${encodeURIComponent(username)}`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        const data = await response.json();
+        let MatchHistoryList = '<strong>3 last games played:</strong><br>';
+
+        data.reverse().slice(0, 3).forEach(match => {
+            MatchHistoryList += `
+                ${match.player1_username} (${match.player1_score}) vs ${match.player2_username} (${match.player2_score})`;
+            match.is_ai === true ? MatchHistoryList += ` (AI game)<br>` : MatchHistoryList += '<br>';
+        });
+        console.log(MatchHistoryList);
+        return MatchHistoryList;
+
+    } catch (error) {
+        console.error('Error fetching match history:', error);
+    }
+}
+
+export async function fetchFriendStatistics(username) {
+    try {
+
+        const response = await fetch(`/api/scores/statistics/?username=${encodeURIComponent(username)}`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+        const data = await response.json();
+
+        let StatList = `<strong>${username} stats vs AI:</strong><br>
+            ${data.total_matches} games played, ${data.rate} % of wins
+        `;
+
+        return StatList;
 
     } catch (error) {
         console.error('Error fetching statistics:', error);

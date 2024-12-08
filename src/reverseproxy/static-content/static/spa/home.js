@@ -60,7 +60,7 @@ export class HomePage extends Page {
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {
-                event.preventDefault();
+                //event.preventDefault();
                 logoutUser();
             });
         }

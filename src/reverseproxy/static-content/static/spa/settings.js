@@ -4,6 +4,7 @@ import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { setupProfilePictureSelection } from '../js/event.js';
 import { startWebSocket } from './login_base.js';
+import { logoutUser } from '../src/logout.js';
 
 export class Settings extends Page {
     constructor() {
@@ -30,7 +31,7 @@ export class Settings extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -107,6 +108,13 @@ export class Settings extends Page {
         super.render(); // Call the parent render method
         setupProfilePictureSelection();
         this.attachFormListener();
+        const logoutButton = document.getElementById('logout-butt');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function (event) {
+                //event.preventDefault();
+                logoutUser();
+            });
+        }
     }
 
     attachFormListener() {

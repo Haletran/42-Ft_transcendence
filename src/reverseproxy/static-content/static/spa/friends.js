@@ -3,6 +3,7 @@ import { updateProfilePicture } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { startWebSocket } from './login_base.js';
+import { logoutUser } from '../src/logout.js';
 
 export class Friends extends Page {
     constructor() {
@@ -29,7 +30,7 @@ export class Friends extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -116,6 +117,9 @@ export class Friends extends Page {
     }
     async render() {
         startWebSocket();
+
+
+
         try {
             const currentUserData = await getCurrentUserInfo();
             if (!currentUserData) {
@@ -128,7 +132,15 @@ export class Friends extends Page {
             fetchMinInfo();
             console.log('HELLO');
             //updateProfilePicture(currentPic);
-            super.render(); // Call the parent render method
+            super.render();// Call the parent render method
+
+            const logoutButton = document.getElementById('logout-butt');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function (event) {
+                    //event.preventDefault();
+                    logoutUser();
+                });
+            }
 
             document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
                 event.preventDefault();
@@ -471,7 +483,7 @@ async function fetchAcceptedFriendships(currentUserId) {
     }
 }
 
-async function getCurrentFriendInfo(username) {
+export async function getCurrentFriendInfo(username) {
     console.log("getCurrentFriendInfo: ", username);
     const response = await fetch(`/api/credentials/userid-info/?user=${username}`, {
         method: 'GET',

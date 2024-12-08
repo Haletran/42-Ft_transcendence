@@ -2,6 +2,7 @@ import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
 import { startWebSocket } from './login_base.js';
+import { logoutUser } from '../src/logout.js';
 
 export class Pong extends Page {
     constructor() {
@@ -28,7 +29,7 @@ export class Pong extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/chat" data-link="/chat" >Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt" >Logout</a>
                     </li>
                 </ul>
             </div>
@@ -37,7 +38,7 @@ export class Pong extends Page {
     <div class="menu">
         <div class="container-fluid d-flex justify-content-center align-items-center center">
             <div id="menu" class="d-flex flex-column align-items-center gap-2">
-                <button onclick="window.history.back()" class="btn btn-outline-light me-auto"><i
+                <button class="btn btn-outline-light me-auto" href="/home" data-link="/home"><i
                         class="bi bi-arrow-left"></i></button>
                 <div id="logo" style="display: flex; align-items: center">
 
@@ -92,6 +93,13 @@ export class Pong extends Page {
         startWebSocket();
         super.render();
 
+        const logoutButton = document.getElementById('logout-butt');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function (event) {
+                //event.preventDefault();
+                logoutUser();
+            });
+        }
         const setupEventListeners = () => {
             const buttons = ['start_button', 'start_button2', 'tournament_button'];
             buttons.forEach(buttonId => {
