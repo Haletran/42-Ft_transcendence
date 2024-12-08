@@ -19,6 +19,7 @@ from rest_framework.decorators import api_view #To delete after tests
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.cache import cache
 
 from .utils import is_user_active
 
@@ -144,17 +145,17 @@ def unauthorized_user_info(request):
     return JsonResponse({'error': 'Unauthorized'}, status=401)
 
 @login_required
-@transaction.atomic
 def update_profile_view(request):
     if request.method == 'POST':
         try:
             username = request.POST.get('username')
+            print(username)
             email = request.POST.get('email')
+            print(email)
             password = request.POST.get('password')
-            # profile_picture = request.POST.get('profile_picture')
             uploaded_file = request.FILES.get('profile_picture')
-
-            user = MyUser.objects.get(username=request.user.username)
+            with transaction.atomic():
+                user = MyUser.objects.select_for_update().get(username=request.user.username)
             
             if email:
                 user.email = email
@@ -165,12 +166,19 @@ def update_profile_view(request):
             if uploaded_file:
                 print(f"Received file: {uploaded_file.name}")
                 user.profile_picture = uploaded_file
-                user.save()
                 print(f"File saved: {user.profile_picture.url}")
             user.save()
             update_session_auth_hash(request, user)
+            cache.delete(f"user_{user.pk}")
+            # update_session_auth_hash(request, user)
 
-            return JsonResponse({'status': 'success', 'message': 'Profile successfully updated'})
+            user_data = {
+                'username': user.username,
+                'email': user.email,
+                'profile_picture': user.profile_picture.url if user.profile_picture else None,
+            }
+
+            return JsonResponse({'status': 'success', 'message': 'Profile successfully updated', 'user': user_data})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     

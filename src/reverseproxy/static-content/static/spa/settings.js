@@ -49,8 +49,6 @@ export class Settings extends Page {
                         class="list-group-item list-group-item-action  active">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
-                    <a id="choose_param" href="/chat" data-link="/chat"
-                        class="list-group-item list-group-item-action">Messages</a>
                 </div>
             </div>
             <div class="col">
@@ -138,15 +136,16 @@ export class Settings extends Page {
             formData.append('email', email);
             formData.append('password', password);
 
+
             if (profileInput.files[0]) {
                 formData.append('profile_picture', profileInput.files[0]);
                 console.log(profileInput.files[0]);
             }
 
+            console.log('In update profile, data to send: ', formData);
+
             try {
 
-                // get CSRF token
-                console.log('CSRF Token:', getCSRFToken('csrftoken'));
                 const csrfToken = getCSRFToken('csrftoken');
                 if (!csrfToken) {
                     console.error('CSRF token is missing!');
@@ -168,19 +167,19 @@ export class Settings extends Page {
                     const result = await response.json();
                     console.log('Edit successful:', result);
                     this.render();
-                    document.querySelector(".toast-body").textContent = "Profile updated successfully!";
-                    document.querySelector(".toast").classList.add("show");
-                    setTimeout(() => {
-                        document.querySelector(".toast").classList.remove("show");
-                    }, 3000);
+                    // document.querySelector(".toast-body").textContent = "Profile updated successfully!";
+                    // document.querySelector(".toast").classList.add("show");
+                    // setTimeout(() => {
+                    //     document.querySelector(".toast").classList.remove("show");
+                    // }, 3000);
                 } else {
                     const error = await response.json();
                     console.error('Edit failed:', error);
-                    document.querySelector(".toast-body").textContent = "Edit failed: " + error.message;
-                    document.querySelector(".toast").classList.add("show");
-                    setTimeout(() => {
-                        document.querySelector(".toast").classList.remove("show");
-                    }, 3000);
+                    // document.querySelector(".toast-body").textContent = "Edit failed: " + error.message;
+                    // document.querySelector(".toast").classList.add("show");
+                    // setTimeout(() => {
+                    //     document.querySelector(".toast").classList.remove("show");
+                    // }, 3000);
                 }
             } catch (error) {
                 console.error('Error:', error);

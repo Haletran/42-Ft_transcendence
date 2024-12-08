@@ -10,8 +10,6 @@ import { Friends } from './spa/friends.js';
 import { initializeCSRFToken } from './src/csrf.js';
 import { loginBasePage } from './spa/login_base.js';
 import { logoutUser } from './src/logout.js';
-import { Chat } from './spa/chat.js';
-// import { ChatPage } from './spa/login_chat.js';
 
 const routes = {
   '/': LoginPage, // accessible without auth, should log out
@@ -20,7 +18,6 @@ const routes = {
   '/pong': Pong,
   '/profile': Profile,
   '/settings': Settings,
-  '/chat': Chat,
   '/monopoly': Monopoly,
   '/login_base': loginBasePage, // accessible without auth, should log out
   '/friends': Friends,

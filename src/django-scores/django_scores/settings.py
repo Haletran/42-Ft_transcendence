@@ -147,7 +147,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-# SESSION_COOKIE_DOMAIN = ".chat.com"
 
 # cache configuration
 

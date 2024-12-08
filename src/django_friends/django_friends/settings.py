@@ -83,6 +83,7 @@ DATABASES = {
         'USER': 'user',
         'PASSWORD': 'password',
         'HOST': 'friends-database',
+        'PORT': '5433',
     },
     'credentials': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -90,6 +91,7 @@ DATABASES = {
         'USER': 'credentials_user',
         'PASSWORD': 'credentials_password',
         'HOST': 'credentials-database',
+        'PORT': '5432',
     }
 }
 

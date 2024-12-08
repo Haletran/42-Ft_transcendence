@@ -26,9 +26,6 @@ export class Monopoly extends Page {
                     <li>
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
-                    <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/chat" data-link="/chat" >Logout</a>
-                    </li>
                 </ul>
             </div>
         </nav>
