@@ -131,7 +131,6 @@ export class Friends extends Page {
             const currentUserName = currentUserData.username;
             //const currentPic = currentUserData.profile_picture;
             fetchMinInfo();
-            console.log('HELLO');
             //updateProfilePicture(currentPic);
             super.render();// Call the parent render method
 
@@ -281,7 +280,6 @@ async function getCurrentUserInfo() {
     if (!response.ok) {
         throw new Error('Failed to fetch user info');
     }
-
     return await response.json();
 }
 

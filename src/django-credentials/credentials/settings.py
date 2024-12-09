@@ -18,7 +18,7 @@ from hvac import Client
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Vault configurations
-VAULT_ADDR = os.getenv('VAULT_ADDR', 'http://localhost:8200')  # Vault service name in Docker Compose
+VAULT_ADDR = os.getenv('VAULT_ADDR')  # Vault service name in Docker Compose
 VAULT_TOKEN = os.getenv('VAULT_TOKEN', None)
 
 # Create a client for Vault
@@ -26,10 +26,12 @@ client = Client(url=VAULT_ADDR, token=VAULT_TOKEN)
 
 try:
     # Attempt to fetch the secret stored at the given path in Vault
-    secret = client.secrets.kv.v2.read_secret_version(path='data/django/secret_key')
+    secret = client.secrets.kv.v2.read_secret_version(path='data/django/db_credentials/')
+
+    print(secret)
     
     # Correct way to access the 'value' field from Vault response
-    SECRET_KEY = secret['data']['data']['SECRET_KEY']
+    SECRET_KEY = secret['data']['data']['secret_key']
 except Exception as e:
     raise RuntimeError(f"Unable to retrieve SECRET_KEY from Vault: {e}")
 

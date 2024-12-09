@@ -120,9 +120,9 @@ services:
     volumes:
       - friends_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: friends_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB_FRIENDS}
+      POSTGRES_USER: ${POSTGRES_USER_FRIENDS}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_FRIENDS}
     networks:
       - transcendence
 
@@ -148,9 +148,9 @@ services:
     volumes:
       - chat_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: chat_db
-      POSTGRES_USER: chat_user
-      POSTGRES_PASSWORD: chat_password
+      POSTGRES_DB: ${POSTGRES_DB_CHAT}
+      POSTGRES_USER: ${POSTGRES_USER_CHAT}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_CHAT}
     networks:
       - transcendence
 

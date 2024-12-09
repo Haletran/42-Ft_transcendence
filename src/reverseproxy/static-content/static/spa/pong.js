@@ -8,7 +8,7 @@ export class Pong extends Page {
     constructor() {
         super();
         this.template = `
-                    <div class="header">
+            <div class="header">
         <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand " href="/home" data-link="/home">
@@ -38,47 +38,48 @@ export class Pong extends Page {
     <div class="menu">
         <div class="container-fluid d-flex justify-content-center align-items-center center">
             <div id="menu" class="d-flex flex-column align-items-center gap-2">
-                <button class="btn btn-outline-light me-auto" href="/home" data-link="/home"><i
-                        class="bi bi-arrow-left"></i></button>
                 <div id="logo" style="display: flex; align-items: center">
-
                     <h1 id="menu" class="display-1 montserrat-bold fw-bold mx-auto">PONG</h1>
                 </div>
-                <article class="d-flex flex-column gap-2">
-                    <h2 id="menu" class="display-6 montserrat-bold">Choose your game mode</h2>
-                    <button id="start_button" value="pvp" class="btn btn-outline-light full-width btn-lg">1
-                        vs 1</button>
-                    <button id="start_button2" value="vsa" class="btn btn-outline-light full-width btn-lg">1
-                        vs AI</button>
-                    <button id="tournament_button" class="btn btn-light full-width btn-lg">Tournament</button>
-                    <article id="dropdown-tour" class="flex-column justify-content-center align-items-center gap-2">
-                        <div class="card w-100">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                How many players?
-                                <div>
-                                    <button id="add_player" class="btn btn-outline-light"><i
-                                            class="bi bi-plus-circle"></i></button>
-                                    <button id="rm_player" class="btn btn-outline-light"><i
-                                            class="bi bi-dash-circle"></i></button>
-                                </div>
+                <div class="d-flex flex-row gap-3">
+                    <div class="card" style="width: 18rem;">
+                      <div class="card-body">
+                        <h2 class="card-title">GameMode </h2>
+                        <div class="d-flex flex-column gap-2">
+                            <button id="start_button" value="pvp" class="btn btn-outline-light full-width">1
+                                vs 1</button>
+                            <button id="start_button2" value="vsa" class="btn btn-outline-light full-width">1
+                                vs AI</button>
+                            <button id="tournament_button" class="btn btn-light full-width">Tournament</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card" style="width: 18rem;">
+                      <div class="card-body">
+                        <h2 class="card-title"><i class="bi bi-gear settings"></i> Options</h2>
+                        <div class="d-flex flex-column gap-2 mt-3">
+                            <div class="d-flex flex-row gap-2">
+                                <p class="text-muted">Volume</p>
+                                <i class="bi bi-volume-up"></i>
+                                <input type="range" class="form-range" id="volume" min="0" max="100" value="50">
                             </div>
-                            <ul class="list-group list-group-flush ">
+                            <div class="d-flex flex-row gap-2">
+                            <p class="text-muted">Select the difficulty</p>
 
-                                <li class="list-group-item bg-grey">
-                                    <i class="bi bi-person"></i> bapasqui
-                                </li>
-                                    <i class="bi bi-robot"></i> AI
-                                </li>
-                            </ul>
+                            <select class="form-select" id="difficulty">
+                                    <option value="easy">Easy</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+                            <div class="d-flex flex-row gap-2">
+                                <p class="text-muted">Paddle color</p>
+                            <input type="color" id="paddle_color" value="#ffffff">
+                            </div>
                         </div>
-                                <li class="list-group-item">
-                                    <i class="bi bi-robot"></i> AI
-                                </li>
-                            </ul>
-                        </div>
-                        <p id="error_msg" class="text-danger"></p>
-                    </article>
-                </article>
+                      </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -119,19 +120,6 @@ export class Pong extends Page {
                 }
             });
         };
-
-        // ['start_button', 'start_button2'].forEach(buttonId => {
-        //     const button = document.getElementById(buttonId);
-        //     if (button) {
-        //         button.addEventListener('click', function () {
-        //             hideElementsByClass('menu');
-        //             showElementsByClass('game', 'flex');
-        //             addClassToElementsByClass('game', 'center');
-        //             document.getElementById('pong_canvas').style.display = 'block';
-        //             game(this.value);
-        //         });
-        //     }
-        // });
 
         if (!document.getElementById('pong_game_script')) {
             return new Promise((resolve) => {

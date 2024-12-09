@@ -33,7 +33,7 @@ export class LoginPage extends Page {
             logoutUser();
             //super.render();
         }
-    
+
         // Fallback UI rendering
         super.render();
     }
