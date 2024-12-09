@@ -266,3 +266,11 @@ img.main-logo {
     color: #212529 !important;
     background-color: white !important;
 }
+
+.online {
+    color: #43e92f;
+}
+
+.offline {
+    color: #e9322f;
+}

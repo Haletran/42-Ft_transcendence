@@ -452,7 +452,8 @@ async function fetchAcceptedFriendships(currentUserId) {
                     <div class="card">
                       <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
-                          <div class="d-flex align-items-center gap-3">
+                          <div id="${friendship.friend_username}" class="d-flex align-items-center gap-3">
+                            <i class="bi bi-circle-fill"></i>
                             <img src="${friendData.profile_picture}" alt="friend_profile_picture" class="cover-fit rounded-circle" width="50" height="50">
                             <div class="d-flex flex-column g-1">
                               <h5 class="card-title">${friendship.friend_username}</h5>
@@ -467,6 +468,7 @@ async function fetchAcceptedFriendships(currentUserId) {
                 `;
                 console.log(friendship.friend_profile_picture);
                 friendshipList.appendChild(listItem);
+                isOnline(friendship.friend_username);
             });
         }
     } catch (error) {
@@ -489,4 +491,10 @@ async function getCurrentFriendInfo(username) {
     }
 
     return await response.json();
+}
+
+async function isOnline(username) {
+    // fetch API
+    document.getElementById(username).querySelector('.bi-circle-fill').classList.add('online');
+    document.getElementById(username).querySelector('.bi-circle-fill').classList.add('offline');
 }
