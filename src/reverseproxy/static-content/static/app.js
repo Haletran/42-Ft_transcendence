@@ -10,7 +10,6 @@ import { Friends } from './spa/friends.js';
 import { initializeCSRFToken } from './src/csrf.js';
 import { loginBasePage } from './spa/login_base.js';
 import { logoutUser } from './src/logout.js';
-import { Chat } from './spa/chat.js';
 // import { ChatPage } from './spa/login_chat.js';
 
 const routes = {
@@ -20,7 +19,6 @@ const routes = {
   '/pong': Pong,
   '/profile': Profile,
   '/settings': Settings,
-  '/chat': Chat,
   '/monopoly': Monopoly,
   '/login_base': loginBasePage, // accessible without auth, should log out
   '/friends': Friends,
@@ -83,6 +81,19 @@ export async function isUserLoggedIn() {
   } catch (error) {
     console.error('Error checking user authentication:', error);
     return false;
+  }
+  return false;
+}
+
+export async function get42() {
+  try {
+    const response = await fetch('/api/credentials/get42-info', { method: 'GET' });
+    if (response.ok) {
+      const data = await response.json();
+      return data.url;
+    }
+  } catch (error) {
+    console.error('Error fetching 42 info:', error);
   }
   return false;
 }

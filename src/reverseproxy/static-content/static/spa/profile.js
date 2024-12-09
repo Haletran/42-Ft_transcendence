@@ -39,15 +39,13 @@ export class Profile extends Page {
             <div class="col-md-4">
                 <div class="list-group">
                     <a id="choose_param"  href="/profile" data-link="/profile"
-                        class="list-group-item list-group-item-action active" aria-current="true">
+                        class="list-group-item list-group-item-action active-menu" aria-current="true">
                         Profile
                     </a>
                     <a id="choose_param" data-link="/settings" 
                         class="list-group-item list-group-item-action">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
-                    <a id="choose_param" href="/chat" data-link="/chat"
-                        class="list-group-item list-group-item-action">Messages</a>
                 </div>
             </div>
             <div class="col">

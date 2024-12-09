@@ -47,9 +47,7 @@ export class Friends extends Page {
                     <a id="choose_param" data-link="/settings" 
                         class="list-group-item list-group-item-action">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
-                        class="list-group-item list-group-item-action active">Friends</a>
-                    <a id="choose_param" href="/chat" data-link="/chat"
-                        class="list-group-item list-group-item-action">Messages</a>
+                        class="list-group-item list-group-item-action active-menu">Friends</a>
                 </div>
             </div>
             <div class="col">
@@ -65,14 +63,17 @@ export class Friends extends Page {
                     </div>
                 </div>
             </div>
-            <div class="col mt-4">
+            <div class="d-flex flex-column mt-4 gap-2">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title">
                             <h2 class="title">My Friends</h2>
-                                <div id="friends-list" class="row row-cols-2 g-2 mt-2"></div>
+                            <div id="friends-list" class="row row-cols-2 g-2 mt-2"></div>
                         </div>
-                        <hr>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
                         <div class="card-title">
                             <h2 class="title" >Friends request</h2>
                             <p class="text-muted">Manage your incoming and outgoing friend requests</p>
@@ -89,12 +90,12 @@ export class Friends extends Page {
                                 <div class="tab-content" id="requestTabsContent">
                                     <!-- Incoming Requests Tab -->
                                     <div class="tab-pane fade show active" id="incoming" role="tabpanel" aria-labelledby="incoming-tab">
-                                        <ul id="incoming-invitations-list" class="list-group mt-3">
+                                        <ul id="incoming-invitations-list" class="list-group mt-3 max-width-inherit">
                                         </ul>
                                     </div>
                                     <!-- Outgoing Requests Tab -->
                                     <div class="tab-pane fade" id="outgoing" role="tabpanel" aria-labelledby="outgoing-tab">
-                                        <ul id="pending-invitations-list" class="list-group mt-3">
+                                        <ul id="pending-invitations-list" class="list-group mt-3 max-width-inherit">
                                         </ul>
                                     </div>
                                 </div>
@@ -305,12 +306,17 @@ async function fetchPendingConfirmations(currentUserId) {
         confirmationList.innerHTML = '';
 
         if (data.pending_confirmations.length === 0) {
-            confirmationList.textContent = 'No pending confirmations.';
+            confirmationList.innerHTML = `
+            <div class="d-flex flex-column justify-content-center align-items-center" style="font-size: 1.2rem;">
+                <i class="bi bi-person-dash-fill text-gray-400" style="font-size: 2rem;"></i>
+                No outgoing requests.
+                <p class="text-muted" style="font-size: 1rem;">You haven't sent any friend requests.</p>
+            </div>`;
         } else {
             data.pending_confirmations.forEach(confirmation => {
 
                 const listItem = document.createElement('li');
-                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center max-width-inherit';
                 listItem.innerHTML = `<p class="mt-3" >Pending confirmation to: <strong>${confirmation.receiver_username}</strong></p>`;
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'btn-container';
@@ -350,11 +356,17 @@ async function getIncomingInvitations(currentUserId) {
         confirmationList.innerHTML = '';
 
         if (data.pending_confirmations.length === 0) {
-            confirmationList.textContent = 'No incoming invitations.';
+            confirmationList.innerHTML = `
+                <div class="d-flex flex-column justify-content-center align-items-center" style="font-size: 1.2rem;">
+                    <i class="bi bi-person-plus-fill text-gray-400 " style="font-size: 2rem;"></i>
+                    No incoming requests.
+                    <p class="text-muted" style="font-size: 1rem;">You don't have any pending friend requests.</p>
+                </div>
+            `;
         } else {
             data.pending_confirmations.forEach(confirmation => {
                 const listItem = document.createElement('li');
-                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center max-width-inherit';
                 listItem.innerHTML = `<p class="mt-3" >Friend request from <strong>${confirmation.sender_username}</strong></p>`;
 
                 const btnContainer = document.createElement('div');
@@ -446,14 +458,16 @@ async function fetchAcceptedFriendships(currentUserId) {
 
         if (data.accepted_friendships.length === 0) {
             friendshipList.className = 'text-muted';
-            friendshipList.textContent = 'No accepted friendships.';
+            friendshipList.textContent = 'No friends yet.';
+            friendshipList.innerHTML = `
+                <div class="d-flex flex-column justify-content-start">
+                    <p class="text-muted">When you add friends, they'll appear here. Start connecting with others!</p>
+                </div>
+            `;
         } else {
             data.accepted_friendships.forEach(async (friendship) => {
-                console.log('Friendship:', friendship);
                 const listItem = document.createElement('div');
-                console.log('here');
                 const friendData = await getCurrentFriendInfo(friendship.friend_username);
-                console.log(friendData);
                 listItem.className = 'col-sm-6';
                 listItem.innerHTML = `
                     <div class="card">
@@ -462,19 +476,14 @@ async function fetchAcceptedFriendships(currentUserId) {
                           <div class="d-flex align-items-center gap-3">
                             <img src="${friendData.profile_picture}" alt="friend_profile_picture" class="cover-fit rounded-circle" width="50" height="50">
                             <div class="d-flex flex-column g-1">
-                              <h5 class="card-title">${friendData.username}
+                              <h5 class="card-title">${friendship.friend_username}</h5>
                               ${friendData.is_online === true ? '<span class="online-dot bg-success"></span>' : ''}
-                              </h5>
                             </div>
-                          </div>
-                          <div>
-                            <button class="btn btn-outline-light"><i class="bi bi-chat"></i></button>
                           </div>
                         </div>
                       </div>
                     </div>
                 `;
-                //console.log(friendship.friend_profile_picture);
                 friendshipList.appendChild(listItem);
             });
         }

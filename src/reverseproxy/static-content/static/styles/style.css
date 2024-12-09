@@ -26,9 +26,10 @@ body {}
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    border: 2px solid white; /* Optional: Border to match the image background */
+    border: 2px solid white;
+    /* Optional: Border to match the image background */
 }
-  
+
 
 img.main-logo {
     filter: invert(1);
@@ -257,4 +258,23 @@ img.main-logo {
 
 [aria-selected="false"] {
     color: #6c757d !important;
+}
+
+.text-gray-400 {
+    color: #cbd5e0;
+    /* This is a Tailwind CSS gray-400 color equivalent */
+}
+
+.custom-size {
+    height: 48px;
+    width: 48px;
+}
+
+.max-width-inherit {
+    max-width: 100%;
+}
+
+.active-menu {
+    color: #212529 !important;
+    background-color: white !important;
 }
