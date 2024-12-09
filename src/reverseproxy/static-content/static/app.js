@@ -10,6 +10,7 @@ import { Friends } from './spa/friends.js';
 import { initializeCSRFToken } from './src/csrf.js';
 import { loginBasePage } from './spa/login_base.js';
 import { logoutUser } from './src/logout.js';
+import { Privacy } from './spa/privacy.js'
 
 const routes = {
   '/': LoginPage, // accessible without auth, should log out
@@ -21,7 +22,7 @@ const routes = {
   '/monopoly': Monopoly,
   '/login_base': loginBasePage, // accessible without auth, should log out
   '/friends': Friends,
-  '/logout': logoutUser,
+  '/privacy': Privacy,
 };
 
 export const router = new Router(routes);

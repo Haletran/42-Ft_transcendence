@@ -31,6 +31,9 @@ export class HomePage extends Page {
                         <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
                     </li>
                     <li>
+                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
+                    </li>
+                    <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>

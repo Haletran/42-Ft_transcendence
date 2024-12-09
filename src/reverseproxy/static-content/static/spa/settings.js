@@ -34,6 +34,9 @@ export class Settings extends Page {
                         <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
                     </li>
                     <li>
+                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
+                    </li>
+                    <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>
@@ -52,6 +55,8 @@ export class Settings extends Page {
                         class="list-group-item list-group-item-action  active">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
+                    <a id="choose_param" href="/privacy" data-link="/privacy"
+                        class="list-group-item list-group-item-action">Privacy</a>
                 </div>
             </div>
             <div class="col">

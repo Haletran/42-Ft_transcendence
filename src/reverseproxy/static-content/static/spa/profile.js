@@ -31,6 +31,9 @@ export class Profile extends Page {
                         <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
                     </li>
                     <li>
+                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
+                    </li>
+                    <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
                     </li>
                 </ul>
@@ -49,6 +52,8 @@ export class Profile extends Page {
                         class="list-group-item list-group-item-action">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
+                    <a id="choose_param" href="/privacy" data-link="/privacy"
+                        class="list-group-item list-group-item-action">Privacy</a>
                 </div>
             </div>
             <div class="col">
