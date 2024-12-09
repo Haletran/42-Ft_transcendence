@@ -7,6 +7,8 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_exempt
 from django.db import models
 from django.http import JsonResponse
+from django.db import transaction
+import json
 
 @ensure_csrf_cookie
 
@@ -88,6 +90,29 @@ def get_friends_usernames(request):
         return Response({
             "error": "No friends found for the given user ID"
         }, status=404)
+
+def update_friend_username(request):
+    print('zouzouz')
+    if request.method == 'POST':
+        print('here')
+        try:
+            data = json.loads(request.body)
+            oldusername = data.get('oldusername')
+            newusername = data.get('newusername')
+            print(oldusername)
+            with transaction.atomic():
+                Friend.objects.filter(name_friend1=oldusername).update(name_friend1=newusername)
+                Friend.objects.filter(name_friend2=oldusername).update(name_friend2=newusername)
+            
+            return JsonResponse({'status': 'success', 'message': 'Username updated successfully.'})
+
+        except Friend.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Old username not found.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+            
 
 @api_view(['GET'])
 # @csrf_exempt

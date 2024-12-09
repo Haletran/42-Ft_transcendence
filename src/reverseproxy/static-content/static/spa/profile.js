@@ -1,7 +1,7 @@
 import { fetchProfileInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
-import { startWebSocket } from './login_base.js';
 import { fetchMatchHistory, fetchStatistics } from '../src/scoreTable.js';
+import { isUserOnline } from './home.js';
 
 export class Profile extends Page {
     constructor() {
@@ -26,6 +26,9 @@ export class Profile extends Page {
                     </li>
                     <li>
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
                     </li>
                     <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
@@ -100,7 +103,7 @@ export class Profile extends Page {
         fetchProfileInfo();
         fetchStatistics();
         fetchMatchHistory();
-        startWebSocket();
+        isUserOnline();
         super.render(); // Call the parent render method
         //this.render_chart();
     }

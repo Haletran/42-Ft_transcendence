@@ -171,6 +171,7 @@ export class RegisterPage extends Page {
 				if (response.ok) {
 					const result = await response.json();
 					console.log('Registration successful:', result);
+					startWebSocket();
 					// Optionally, redirect to login or home page
 					router.goTo('/home');
 				} else {

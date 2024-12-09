@@ -68,7 +68,6 @@ INSTALLED_APPS = [
     'my_auth',
     'corsheaders',
     'channels',
-    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -191,17 +190,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # for storage
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': 'redis://redis:6379/1',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        },
-        'TIMEOUT': None,
     }
 }

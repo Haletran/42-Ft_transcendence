@@ -7,8 +7,6 @@ djangorestframework
 djangorestframework-simplejwt
 Pillow
 django-redis==5.4.0
-celery
-django-celery-beat
 channels
 channels-redis
 daphne

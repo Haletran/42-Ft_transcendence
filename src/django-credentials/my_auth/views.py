@@ -20,8 +20,12 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
-
+import redis
 from .utils import is_user_active
+
+HOST = 'redis'
+PORT = 6379
+redis_client = redis.StrictRedis(host=HOST, port=PORT, db=0)
 
 @ensure_csrf_cookie
 def set_csrf_token(request):
@@ -149,9 +153,7 @@ def update_profile_view(request):
     if request.method == 'POST':
         try:
             username = request.POST.get('username')
-            print(username)
             email = request.POST.get('email')
-            print(email)
             password = request.POST.get('password')
             uploaded_file = request.FILES.get('profile_picture')
             with transaction.atomic():
@@ -160,7 +162,28 @@ def update_profile_view(request):
             if email:
                 user.email = email
             if username:
+                oldusername = user.username
                 user.username = username
+                # update the friend
+                try:
+                    csrf_token = get_token(request)
+                    friend_data = { 'oldusername': oldusername, 'newusername': username }
+                    session = requests.Session()
+                    session.headers.update({'Content-Type': 'application/json', 'X-CSRFToken': csrf_token})
+                    session.cookies.set('csrftoken', csrf_token)
+                    friend_response = session.post('http://django-friends:9001/api/friends/update_friend_username/',
+                        data=json.dumps(friend_data)
+                    )
+                    scores_response = session.post('http://django-scores:9003/api/scores/update_scores_username/',
+                        data=json.dumps(friend_data)
+                    )
+
+                    friend_response.raise_for_status()
+                    scores_response.raise_for_status()
+
+                except Exception as e:
+                    return JsonResponse({'status': 'error updating other dbs', 'message': str(e)})
+
             if password:
                 user.set_password(password)
             if uploaded_file:
@@ -289,3 +312,27 @@ def login_42(request):
         return redirect('https://localhost/home')
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def is_user_online(request):
+    try:
+        user = MyUser.objects.get(username=request.user.username)
+
+        friend_username = request.GET.get('user')
+        if not friend_username:
+            is_online = redis_client.sismember("online_users", user.id)
+        else:
+            try:
+                friend = MyUser.objects.get(username=friend_username)
+                is_online = redis_client.sismember("online_users", friend.id)
+            except MyUser.DoesNotExist:
+                return JsonResponse({'error': 'Friend not found'}, status=404)
+
+        return JsonResponse({'is_online': is_online})
+
+    except MyUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    except redis.exceptions.ConnectionError:
+        return JsonResponse({'error': 'Redis connection failed'}, status=500)
+    except Exception as e:
+        return JsonResponse({'error': 'Error fetching online status'}, status=400)

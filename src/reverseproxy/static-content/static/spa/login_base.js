@@ -134,6 +134,7 @@ export class loginBasePage extends Page {
 
 				if (response.ok) {
 					const result = await response.json();
+					startWebSocket();
 					console.log('Login successful:', result);
 					router.goTo('/home');
 				} else {
@@ -149,27 +150,30 @@ export class loginBasePage extends Page {
 	}
 }
 
+let StatusSocket;
+
+let reconnectInterval = 5000;
+
 export function startWebSocket() {
 	const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const StatusSocket = new WebSocket(protocol + window.location.host + "/ws/online-status/");
+    StatusSocket = new WebSocket(protocol + window.location.host + "/ws/online-status/");
 
 	StatusSocket.onopen = function (e) {
 		console.log("The connection for online status was setup successfully!");
+		// if (!e.wasClean) {
+        //     setTimeout(startWebSocket, reconnectInterval);
+        // }
 	};
-
-	StatusSocket.onmessage = (message) => {
-		console.log('Received from server:', message.data);
-	}
-
-	const intervalID = setInterval(() => {
-		if (StatusSocket.readyState === WebSocket.OPEN) {
-			console.log("Sending ping");
-			StatusSocket.send(JSON.stringify({ type: 'ping' }));
-		}
-	}, 5000);
 
 	StatusSocket.onclose = function () {
 		console.log('Websocket connection closed.');
-		clearInterval(intervalID);
+	}
+}
+
+export function closeWebSocket() {
+	if (StatusSocket.readyState === WebSocket.OPEN) {
+		StatusSocket.close();
+	} else {
+		console.log('Logging out: WebSocket connection is not open');
 	}
 }

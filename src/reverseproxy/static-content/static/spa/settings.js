@@ -3,8 +3,8 @@ import { Router } from '../src/router.js';
 import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { setupProfilePictureSelection } from '../js/event.js';
-import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
+import { isUserOnline } from './home.js';
 
 export class Settings extends Page {
     constructor() {
@@ -29,6 +29,9 @@ export class Settings extends Page {
                     </li>
                     <li>
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
                     </li>
                     <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
@@ -102,7 +105,7 @@ export class Settings extends Page {
     }
     render() {
         fetchSettingsInfo();
-        startWebSocket();
+        isUserOnline();
         super.render(); // Call the parent render method
         setupProfilePictureSelection();
         this.attachFormListener();
