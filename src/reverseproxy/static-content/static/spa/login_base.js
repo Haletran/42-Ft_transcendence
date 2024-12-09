@@ -1,6 +1,6 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
-import { router } from '../app.js';
+import { router, get42 } from '../app.js';
 import { logoutUser } from '../src/logout.js';
 import { getUserInfos } from '../src/fetchUser.js';
 import { isUserLoggedIn } from '../app.js';
@@ -97,7 +97,8 @@ export class loginBasePage extends Page {
 			document.querySelector('.loader').style.display = 'flex';
 			document.getElementById('app').style.display = 'none';
 			await new Promise(r => setTimeout(r, 200));
-			window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c&redirect_uri=https%3A%2F%2Flocalhost%2Fapi%2Fcredentials%2Fcallback&response_type=code';
+			const response = await get42();
+			window.location.href = response;
 		};
 	}
 
@@ -151,7 +152,7 @@ export class loginBasePage extends Page {
 
 export function startWebSocket() {
 	const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const StatusSocket = new WebSocket(protocol + window.location.host + "/ws/online-status/");
+	const StatusSocket = new WebSocket(protocol + window.location.host + "/ws/online-status/");
 
 	StatusSocket.onopen = function (e) {
 		console.log("The connection for online status was setup successfully!");
