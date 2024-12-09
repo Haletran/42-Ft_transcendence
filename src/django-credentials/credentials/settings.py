@@ -27,8 +27,6 @@ client = Client(url=VAULT_ADDR, token=VAULT_TOKEN)
 try:
     # Attempt to fetch the secret stored at the given path in Vault
     secret = client.secrets.kv.v2.read_secret_version(path='data/django/db_credentials/')
-
-    print(secret)
     
     # Correct way to access the 'value' field from Vault response
     SECRET_KEY = secret['data']['data']['secret_key']

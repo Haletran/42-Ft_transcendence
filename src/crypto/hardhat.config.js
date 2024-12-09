@@ -5,9 +5,9 @@ require('dotenv').config(); // Load environment variables from .env file
 
 function getVaultSecrets() {
   try {
-    const res = request('GET', 'http://localhost:8200/v1/secret/data/metamask', { // change this to vault_container for Docker
+    const res = request('GET', 'http://vault_container:8200/v1/secret/data/metamask', {
       headers: {
-        // 'X-Vault-Token': '' // Ensure VAULT_TOKEN is set in your environment
+        'X-Vault-Token': process.env.VAULT_TOKEN // Ensure VAULT_TOKEN is set in your environment
       }
     });
     const data = JSON.parse(res.getBody('utf8')).data.data;
@@ -35,9 +35,9 @@ const config = {
     hardhat: {},
     sepolia: {
       url: vaultSecrets.url,
-      accounts: vaultSecrets.accounts,
-      gasPrice: 1000000000, // 1 Gwei
-      gas: 3000000, // 3 million units of gas
+      accounts: [
+        '0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e'  // Correct format: array of private keys
+      ]
     }
   }
 };

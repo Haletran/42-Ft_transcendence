@@ -17,23 +17,25 @@ services:
       - django-credentials
     env_file:
       - .env
-    environment:
-      CLIENT_ID: "u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c"
-      CLIENT_SECRET: "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"
+    # environment:
+    #   CLIENT_ID: "u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c"
+    #   CLIENT_SECRET: "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"
 
-  # hardhat:
-  #   build:
-  #     context: ./src/crypto/.
-  #   container_name: hardhat
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "8545:8545"
-  #   volumes:
-  #     - ./src/crypto/.:/usr/src/app
-  #   networks:
-  #     - transcendence
-  #   command: npx hardhat node
+  hardhat:
+    build:
+      context: ./src/crypto/.
+    container_name: hardhat
+    env_file:
+      - .env
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./src/crypto/.:/usr/src/app
+    networks:
+      - transcendence
+    command: >
+      sh -c "sleep 3 && npx hardhat node"
+
 
   redis:
     image: redis:6
@@ -126,35 +128,35 @@ services:
 
   #CHAT
 
-  django-chat:
-    build: src/django_chat/.
-    container_name: django-chat
-    ports:
-      - "9002"
-    depends_on:
-      - chat-database
-    env_file:
-      - .env
-    networks:
-      - transcendence
-    command: >
-      sh -c "sleep 5 && python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9002 django_chat.asgi:application"
+  # django-chat:
+  #   build: src/django_chat/.
+  #   container_name: django-chat
+  #   ports:
+  #     - "9002"
+  #   depends_on:
+  #     - chat-database
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - transcendence
+  #   command: >
+  #     sh -c "sleep 5 && python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9002 django_chat.asgi:application"
 
-  chat-database:
-    image: postgres:latest
-    container_name: chat-database
-    ports:
-      - "5434"
-    volumes:
-      - chat_data:/var/lib/postgresql/data
-    env_file:
-      - .env
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB_CHAT}
-      POSTGRES_USER: ${POSTGRES_USER_CHAT}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_CHAT}
-    networks:
-      - transcendence
+  # chat-database:
+  #   image: postgres:latest
+  #   container_name: chat-database
+  #   ports:
+  #     - "5434"
+  #   volumes:
+  #     - chat_data:/var/lib/postgresql/data
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB_CHAT}
+  #     POSTGRES_USER: ${POSTGRES_USER_CHAT}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_CHAT}
+  #   networks:
+  #     - transcendence
 
 volumes:
   dblogins:
