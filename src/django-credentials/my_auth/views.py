@@ -109,9 +109,6 @@ def user_info(request):
             'email': user.email,
             'username': user.username,
             'profile_picture': profile_picture_url,
-            'is_online': user.is_online,
-            'last_active': user.last_active,
-            'is_active' : is_user_active(user)
         })
     except ObjectDoesNotExist:
         return JsonResponse({
@@ -135,9 +132,7 @@ def userid_info(request):
             'id': user.id,
             'email': user.email,
             'username': user.username,
-            'profile_picture': profile_picture_url,
-            'is_online': user.is_online,
-            'is_active' : is_user_active(user)
+            'profile_picture': profile_picture_url
         })
 
     except ObjectDoesNotExist:
