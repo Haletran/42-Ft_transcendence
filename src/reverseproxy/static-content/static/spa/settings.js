@@ -3,8 +3,8 @@ import { Router } from '../src/router.js';
 import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { setupProfilePictureSelection } from '../js/event.js';
-import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
+import { isUserOnline } from './home.js';
 
 export class Settings extends Page {
     constructor() {
@@ -31,6 +31,12 @@ export class Settings extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
+                        <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
+                    </li>
+                    <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>
@@ -49,6 +55,8 @@ export class Settings extends Page {
                         class="list-group-item list-group-item-action  active-menu">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
+                    <a id="choose_param" href="/privacy" data-link="/privacy"
+                        class="list-group-item list-group-item-action">Privacy</a>
                 </div>
             </div>
             <div class="col">
@@ -102,7 +110,7 @@ export class Settings extends Page {
     }
     render() {
         fetchSettingsInfo();
-        startWebSocket();
+        isUserOnline();
         super.render(); // Call the parent render method
         setupProfilePictureSelection();
         this.attachFormListener();
@@ -136,15 +144,16 @@ export class Settings extends Page {
             formData.append('email', email);
             formData.append('password', password);
 
+
             if (profileInput.files[0]) {
                 formData.append('profile_picture', profileInput.files[0]);
                 console.log(profileInput.files[0]);
             }
 
+            console.log('In update profile, data to send: ', formData);
+
             try {
 
-                // get CSRF token
-                console.log('CSRF Token:', getCSRFToken('csrftoken'));
                 const csrfToken = getCSRFToken('csrftoken');
                 if (!csrfToken) {
                     console.error('CSRF token is missing!');
@@ -166,19 +175,19 @@ export class Settings extends Page {
                     const result = await response.json();
                     console.log('Edit successful:', result);
                     this.render();
-                    document.querySelector(".toast-body").textContent = "Profile updated successfully!";
-                    document.querySelector(".toast").classList.add("show");
-                    setTimeout(() => {
-                        document.querySelector(".toast").classList.remove("show");
-                    }, 3000);
+                    // document.querySelector(".toast-body").textContent = "Profile updated successfully!";
+                    // document.querySelector(".toast").classList.add("show");
+                    // setTimeout(() => {
+                    //     document.querySelector(".toast").classList.remove("show");
+                    // }, 3000);
                 } else {
                     const error = await response.json();
                     console.error('Edit failed:', error);
-                    document.querySelector(".toast-body").textContent = "Edit failed: " + error.message;
-                    document.querySelector(".toast").classList.add("show");
-                    setTimeout(() => {
-                        document.querySelector(".toast").classList.remove("show");
-                    }, 3000);
+                    // document.querySelector(".toast-body").textContent = "Edit failed: " + error.message;
+                    // document.querySelector(".toast").classList.add("show");
+                    // setTimeout(() => {
+                    //     document.querySelector(".toast").classList.remove("show");
+                    // }, 3000);
                 }
             } catch (error) {
                 console.error('Error:', error);

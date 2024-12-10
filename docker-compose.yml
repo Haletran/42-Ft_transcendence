@@ -64,7 +64,7 @@ services:
   django-credentials:
     build: src/django-credentials/.
     container_name: django-credentials
-    ports:
+    expose:
       - "9000"
     volumes:
       - ./src/django-credentials/ssl/django-credentials.key:/etc/ssl/private/django.key
@@ -90,9 +90,10 @@ services:
     env_file:
       - .env
     ports:
-      - "5432"
+      - "5432:5432"
     volumes:
       - credentials_data:/var/lib/postgresql/data
+      - ./src/database/postgresql.conf:/etc/postgresql/postgresql.conf
     networks:
       - transcendence
 
@@ -101,7 +102,7 @@ services:
   django-friends:
     build: src/django_friends/.
     container_name: django-friends
-    ports:
+    expose:
       - "9001"
     env_file:
       - .env
@@ -115,7 +116,7 @@ services:
   friends-database:
     image: postgres:latest
     container_name: friends-database
-    ports:
+    expose:
       - "5433"
     volumes:
       - friends_data:/var/lib/postgresql/data
@@ -132,7 +133,7 @@ services:
   django-scores:
     build: src/django-scores/.
     container_name: django-scores
-    ports:
+    expose:
       - "9003"
     depends_on:
       - scores-database
@@ -144,8 +145,8 @@ services:
   scores-database:
     image: postgres:latest
     container_name: scores-database
-    ports:
-      - "5435:5435"
+    expose:
+      - "5435"
     volumes:
       - scores_data:/var/lib/postgresql/data
       - ./src/scores-database/postgresql.conf:/etc/postgresql/postgresql.conf

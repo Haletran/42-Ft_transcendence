@@ -2,8 +2,10 @@ import { fetchMinInfo } from '../src/fetchUser.js';
 import { updateProfilePicture } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
-import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
+
+import { fetchFriendHistory, fetchFriendStatistics } from '../src/scoreTable.js';
+import { isFriendOnline, isUserOnline } from './home.js';
 
 export class Friends extends Page {
     constructor() {
@@ -30,6 +32,12 @@ export class Friends extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
+                        <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
+                    </li>
+                    <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>
@@ -47,7 +55,9 @@ export class Friends extends Page {
                     <a id="choose_param" data-link="/settings" 
                         class="list-group-item list-group-item-action">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
-                        class="list-group-item list-group-item-action active-menu">Friends</a>
+                        class="list-group-item list-group-item-action active">Friends</a>
+                    <a id="choose_param" href="/privacy" data-link="/privacy"
+                        class="list-group-item list-group-item-action">Privacy</a>
                 </div>
             </div>
             <div class="col">
@@ -117,9 +127,7 @@ export class Friends extends Page {
  `;
     }
     async render() {
-        startWebSocket();
-
-
+        isUserOnline();
 
         try {
             const currentUserData = await getCurrentUserInfo();
@@ -462,7 +470,10 @@ async function fetchAcceptedFriendships(currentUserId) {
         } else {
             data.accepted_friendships.forEach(async (friendship) => {
                 const listItem = document.createElement('div');
+                console.log('Searching for friend: ', friendship.firend_username);
                 const friendData = await getCurrentFriendInfo(friendship.friend_username);
+                const onlineStatus = await isFriendOnline(friendship.friend_username);
+                console.log(onlineStatus);
                 listItem.className = 'col-sm-6';
                 listItem.innerHTML = `
                     <div class="card">
@@ -471,14 +482,74 @@ async function fetchAcceptedFriendships(currentUserId) {
                           <div class="d-flex align-items-center gap-3">
                             <img src="${friendData.profile_picture}" alt="friend_profile_picture" class="cover-fit rounded-circle" width="50" height="50">
                             <div class="d-flex flex-column g-1">
-                              <h5 class="card-title">${friendship.friend_username}</h5>
-                              ${friendData.is_online === true ? '<span class="online-dot bg-success"></span>' : ''}
+                              <h5 class="card-title" id="friendUser">${friendData.username}
+                              ${onlineStatus === 1 ? '<span class="online-dot bg-success"></span>' : ''}
+                              </h5>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
                 `;
+                const profileBox = document.createElement('div');
+                profileBox.className = 'profile-box';
+                profileBox.style.position = 'absolute';
+                profileBox.style.border = '1px solid gray';
+                profileBox.style.padding = '30px';
+                profileBox.style.backgroundColor = 'grey';
+                profileBox.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                profileBox.style.opacity = '0';
+                profileBox.style.transition = 'opacity 0.3s ease';
+                profileBox.style.pointerEvents = 'none';
+                profileBox.style.display = 'none';
+                //profileBox.textContent = `Profile of ${friend.friend_username}`;
+                document.body.appendChild(profileBox);
+                const friendName = listItem.querySelector('#friendUser');
+                friendName.addEventListener('mouseover', async (e) => {
+                    profileBox.style.display = 'block';
+                    profileBox.style.opacity = '1';
+                    profileBox.style.pointerEvents = 'auto';
+                    profileBox.textContent = '';
+
+                    const rect = friendName.getBoundingClientRect();
+                    profileBox.style.top = `${rect.bottom + 5}px`;
+                    profileBox.style.left = `${rect.left}px`;
+
+                    try {
+                        const friendinfo = await getCurrentFriendInfo(friendship.friend_username);
+                        const profileSection = document.createElement('div');
+                        profileSection.style.marginBottom = '10px';
+                        profileSection.innerHTML = `
+                            <strong>Profile Info:</strong><br>
+                            ${friendinfo.username || 'N/A'}<br>
+                            ${friendinfo.email || 'N/A'}<br>
+                        `;
+                        profileBox.appendChild(profileSection);
+
+                        const statinfo = await fetchFriendStatistics(friendship.friend_username);
+                        const statSection = document.createElement('div');
+                        statSection.style.marginBottom = '10px';
+                        statSection.innerHTML = statinfo;
+                        profileBox.appendChild(statSection);
+                        
+
+                        const matchhistory = await fetchFriendHistory(friendship.friend_username);
+                        const matchSection = document.createElement('div');
+                        matchSection.style.marginBottom = '10px';
+                        matchSection.innerHTML = matchhistory;
+                        profileBox.appendChild(matchSection);
+
+                    }
+                    catch(error) {
+                        console.error(error);
+                        profileBox.textContent = 'Failed to load profile info';
+                    }
+                });
+                friendName.addEventListener('mouseout', () => {
+                    profileBox.style.opacity = '0';
+                    profileBox.style.pointerEvents = 'none';
+                });
+                //console.log(friendship.friend_profile_picture);
                 friendshipList.appendChild(listItem);
             });
         }

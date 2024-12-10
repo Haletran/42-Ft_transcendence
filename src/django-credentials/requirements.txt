@@ -6,7 +6,7 @@ django-cors-headers
 djangorestframework
 djangorestframework-simplejwt
 Pillow
-django-redis
+django-redis==5.4.0
 channels
 channels-redis
 daphne

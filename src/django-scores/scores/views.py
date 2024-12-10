@@ -2,7 +2,8 @@ from django.shortcuts import render
 from .models import Game
 import requests, json
 from django.http import JsonResponse
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.db import transaction
 
 # Create your views here.
 
@@ -83,3 +84,22 @@ def statistics(request):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+def update_scores_username(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            oldusername = data.get('oldusername')
+            newusername = data.get('newusername')
+
+            with transaction.atomic():
+                Game.objects.filter(user_origin=oldusername).update(user_origin=newusername)
+            
+            return JsonResponse({'status': 'success', 'message': 'Username updated successfully.'})
+
+        except Game.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Old username not found.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)

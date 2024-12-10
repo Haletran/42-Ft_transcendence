@@ -1,4 +1,5 @@
 import { getCSRFToken } from './csrf.js';
+import { closeWebSocket } from '../spa/login_base.js';
 
 export function logoutUser() {
 
@@ -19,6 +20,7 @@ export function logoutUser() {
     })
         .then((response) => {
             if (response.ok) {
+                closeWebSocket();
                 console.log('Successfully logged out');
             } else {
                 console.error('Logout failed');

@@ -1,8 +1,8 @@
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
-import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
+import { isUserOnline } from './home.js';
 
 export class Pong extends Page {
     constructor() {
@@ -27,6 +27,12 @@ export class Pong extends Page {
                     </li>
                     <li>
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
                     </li>
                     <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt" >Logout</a>
@@ -90,7 +96,7 @@ export class Pong extends Page {
 
     render() {
         fetchMinInfo();
-        startWebSocket();
+        isUserOnline();
         super.render();
 
         const logoutButton = document.getElementById('logout-butt');
