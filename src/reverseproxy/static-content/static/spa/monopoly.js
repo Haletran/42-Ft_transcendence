@@ -1,6 +1,6 @@
 import { fetchMonopInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
-import { startWebSocket } from './login_base.js';
+import { isUserOnline } from './home.js';
 
 export class Monopoly extends Page {
     constructor() {
@@ -25,9 +25,6 @@ export class Monopoly extends Page {
                     </li>
                     <li>
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/chat" data-link="/chat" >Logout</a>
                     </li>
                 </ul>
             </div>
@@ -73,7 +70,7 @@ export class Monopoly extends Page {
     }
     render() {
         fetchMonopInfo();
-        startWebSocket();
+        isUserOnline();
         super.render(); // Call the parent render method
     }
 }

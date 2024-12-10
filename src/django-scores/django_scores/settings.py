@@ -10,16 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from hvac import Client
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Vault configurations
+VAULT_ADDR = os.getenv('VAULT_ADDR')
+VAULT_TOKEN = os.getenv('VAULT_TOKEN', None)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
+client = Client(url=VAULT_ADDR, token=VAULT_TOKEN)
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-rmz$j5%o_bv0wad1o6*mc$l28w%ax@!2)eul-x-4wn+r721oqz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -147,7 +150,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-# SESSION_COOKIE_DOMAIN = ".chat.com"
 
 # cache configuration
 

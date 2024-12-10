@@ -1,7 +1,7 @@
 import { Page } from '../src/pages.js';
 import { fetchMinInfo } from '../src/fetchUser.js';
-import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
+import { startWebSocket } from './login_base.js';
 
 export class HomePage extends Page {
     constructor() {
@@ -26,6 +26,12 @@ export class HomePage extends Page {
                     </li>
                     <li>
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
                     </li>
                     <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
@@ -54,7 +60,7 @@ export class HomePage extends Page {
     
     render() {
         fetchMinInfo(); // will go fetch ONLY the profile pic
-        startWebSocket();
+        isUserOnline();
         super.render();
         
         const logoutButton = document.getElementById('logout-butt');
@@ -65,4 +71,45 @@ export class HomePage extends Page {
             });
         }
     }
+}
+
+
+// function that returns true or false, the same will be used in friends, kind of
+export async function isUserOnline() {
+    try {
+        const response = await fetch('/api/credentials/is_online/', {
+            method: 'GET',
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const data = await response.json();
+            if (data.is_online == true)
+                console.log('User already online')
+            else
+                startWebSocket();
+        }
+        else {
+            startWebSocket();
+        }
+    } catch (error) {
+        console.error("Error fetching online status");
+    }
+
+}
+
+export async function isFriendOnline(username) {
+    try {
+        const response = await fetch(`/api/credentials/is_online/?user=${username}`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.is_online;
+        }
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+
 }

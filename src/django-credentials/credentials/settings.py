@@ -18,7 +18,7 @@ from hvac import Client
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Vault configurations
-VAULT_ADDR = os.getenv('VAULT_ADDR')  # Vault service name in Docker Compose
+VAULT_ADDR = os.getenv('VAULT_ADDR')
 VAULT_TOKEN = os.getenv('VAULT_TOKEN', None)
 
 # Create a client for Vault
@@ -120,6 +120,7 @@ DATABASES = {
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': os.getenv('POSTGRES_PORT'),
+        'ATOMIC_REQUEST': True,
     }
 }
 
@@ -193,9 +194,5 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': 'redis://redis:6379/1',
-        # 'OPTIONS': {
-        #     'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        # },
-        # 'TIMEOUT': None,
     }
 }
