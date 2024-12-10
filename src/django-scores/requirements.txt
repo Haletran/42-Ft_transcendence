@@ -1,0 +1,9 @@
+Django==4.0.5
+gunicorn
+hvac
+psycopg2-binary
+django-cors-headers
+djangorestframework
+djangorestframework-simplejwt
+daphne
+django-redis

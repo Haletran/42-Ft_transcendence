@@ -1,6 +1,7 @@
 import { fetchProfileInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { startWebSocket } from './login_base.js';
+import { fetchMatchHistory, fetchStatistics } from '../src/scoreTable.js';
 
 export class Profile extends Page {
     constructor() {
@@ -38,15 +39,13 @@ export class Profile extends Page {
             <div class="col-md-4">
                 <div class="list-group">
                     <a id="choose_param"  href="/profile" data-link="/profile"
-                        class="list-group-item list-group-item-action active" aria-current="true">
+                        class="list-group-item list-group-item-action active-menu" aria-current="true">
                         Profile
                     </a>
                     <a id="choose_param" data-link="/settings" 
                         class="list-group-item list-group-item-action">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
-                    <a id="choose_param" href="/chat" data-link="/chat"
-                        class="list-group-item list-group-item-action">Messages</a>
                 </div>
             </div>
             <div class="col">
@@ -61,26 +60,34 @@ export class Profile extends Page {
                             <label for="profileInput">Email address</label>
                             <p id="email" class="form-control-plaintext"></p>
                         </div>
-                        <br>
+                        <h5 class="card-title">Statistics (against AI)</h5>
                         <div class="d-flex flex-column gap-2">
                             <div class="d-flex flex-row gap-3">
+                                <div class="card border-light mb-3">
+                                    <div class="card-body">
+                                        <p id="total" class="card-text"><strong></strong></p>
+                                    </div>
+                                </div>
                                 <div class="card text-bg-success mb-3">
                                     <div class="card-body">
-                                        <p class="card-text">WINS : <strong>7</strong></p>
+                                        <p id="wins" class="card-text"><strong></strong></p>
                                     </div>
                                 </div>
                                 <div class="card text-bg-danger mb-3">
                                     <div class="card-body">
-                                        <p class="card-text">LOSE : <strong>6</strong></p>
+                                        <p id="losses" class="card-text"><strong></strong></p>
                                     </div>
                                 </div>
                                 <div class="card border-light mb-3">
                                     <div class="card-body">
-                                        <p class="card-text"><strong>53%</strong></p>
+                                        <p id="rate" class="card-text"><strong></strong></p>
                                     </div>
                                 </div>
                             </div>
-                            <canvas id="myChart"></canvas>
+                        </div>
+                        <h5 class="card-title">Match History</h5>
+                        <div id="match-history-list" class="list-group">
+                            <!-- Dynamic content will be added here -->
                         </div>
                     </div>
                 </div>
@@ -91,71 +98,73 @@ export class Profile extends Page {
     }
     render() {
         fetchProfileInfo();
+        fetchStatistics();
+        fetchMatchHistory();
         startWebSocket();
         super.render(); // Call the parent render method
-        this.render_chart();
+        //this.render_chart();
     }
 
-    render_chart() {
-        const ctx = document.getElementById('myChart');
+    // render_chart() {
+    //     const ctx = document.getElementById('myChart');
 
-        const DATA_COUNT = 7;
-        const NUMBER_CFG = { count: DATA_COUNT, min: -100, max: 100 };
+    //     const DATA_COUNT = 7;
+    //     const NUMBER_CFG = { count: DATA_COUNT, min: -100, max: 100 };
 
-        const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-        const data = {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Win',
-                    data: [10, 20, 30, 10, 50, -60, 70],
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    yAxisID: 'y',
-                },
-                {
-                    label: 'Lose',
-                    data: [100, 20, -30, 10, 50, 20],
-                    borderColor: 'rgb(54, 162, 235)',
-                    backgroundColor: 'rgb(54, 162, 235)',
-                    yAxisID: 'y1',
-                }
-            ]
-        };
+    //     const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+    //     const data = {
+    //         labels: labels,
+    //         datasets: [
+    //             {
+    //                 label: 'Win',
+    //                 data: [10, 20, 30, 10, 50, -60, 70],
+    //                 borderColor: 'rgb(255, 99, 132)',
+    //                 backgroundColor: 'rgb(255, 99, 132)',
+    //                 yAxisID: 'y',
+    //             },
+    //             {
+    //                 label: 'Lose',
+    //                 data: [100, 20, -30, 10, 50, 20],
+    //                 borderColor: 'rgb(54, 162, 235)',
+    //                 backgroundColor: 'rgb(54, 162, 235)',
+    //                 yAxisID: 'y1',
+    //             }
+    //         ]
+    //     };
 
-        new Chart(ctx, {
-            type: 'line',
-            data: data,
-            options: {
-                responsive: true,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                stacked: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom', // Move the label to the bottom
-                    },
-                },
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
+    //     new Chart(ctx, {
+    //         type: 'line',
+    //         data: data,
+    //         options: {
+    //             responsive: true,
+    //             interaction: {
+    //                 mode: 'index',
+    //                 intersect: false,
+    //             },
+    //             stacked: false,
+    //             plugins: {
+    //                 legend: {
+    //                     position: 'bottom', // Move the label to the bottom
+    //                 },
+    //             },
+    //             scales: {
+    //                 y: {
+    //                     type: 'linear',
+    //                     display: true,
+    //                     position: 'left',
+    //                 },
+    //                 y1: {
+    //                     type: 'linear',
+    //                     display: true,
+    //                     position: 'right',
 
-                        // grid line settings
-                        grid: {
-                            drawOnChartArea: false, // only want the grid lines for one axis to show up
-                        },
-                    },
-                }
-            },
-        });
-    }
+    //                     // grid line settings
+    //                     grid: {
+    //                         drawOnChartArea: false, // only want the grid lines for one axis to show up
+    //                     },
+    //                 },
+    //             }
+    //         },
+    //     });
+    // }
 }

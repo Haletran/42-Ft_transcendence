@@ -4,6 +4,7 @@ import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { setupProfilePictureSelection } from '../js/event.js';
 import { startWebSocket } from './login_base.js';
+import { logoutUser } from '../src/logout.js';
 
 export class Settings extends Page {
     constructor() {
@@ -30,7 +31,7 @@ export class Settings extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -45,11 +46,9 @@ export class Settings extends Page {
                         Profile
                     </a>
                     <a id="choose_param" data-link="/settings" 
-                        class="list-group-item list-group-item-action  active">Settings</a>
+                        class="list-group-item list-group-item-action  active-menu">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
-                    <a id="choose_param" href="/chat" data-link="/chat"
-                        class="list-group-item list-group-item-action">Messages</a>
                 </div>
             </div>
             <div class="col">
@@ -83,7 +82,7 @@ export class Settings extends Page {
                         </div>
                         <br>
     			        <input type="file" id="customProfilePicture" name="customProfilePicture" accept="image/*" class="form-control">
-                        <button id="update_info" type="submit" class="btn btn-primary mt-3">Update</button>
+                        <button id="update_info" type="submit" class="btn btn-light mt-3">Update</button>
                         </form>
                     </div>
                 </div>
@@ -107,6 +106,13 @@ export class Settings extends Page {
         super.render(); // Call the parent render method
         setupProfilePictureSelection();
         this.attachFormListener();
+        const logoutButton = document.getElementById('logout-butt');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function (event) {
+                //event.preventDefault();
+                logoutUser();
+            });
+        }
     }
 
     attachFormListener() {

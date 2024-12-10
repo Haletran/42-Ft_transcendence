@@ -1,8 +1,7 @@
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { logoutUser } from '../src/logout.js';
-import { isUserLoggedIn } from '../app.js';
-import { router } from '../app.js';
+import { isUserLoggedIn, router } from '../app.js';
 
 export class LoginPage extends Page {
     constructor() {
@@ -22,12 +21,20 @@ export class LoginPage extends Page {
           `;
     }
 
-    render() {
-        // if (isUserLoggedIn())
-        //     router.goTo('/home');
-        // else {
+    async render() {
+        try {
+            const loggedIn = await isUserLoggedIn();
+            if (loggedIn != false) {
+                router.goTo('/home');
+                return;
+            }
+        } catch (error) {
+            console.error('User not logged in:', error);
             logoutUser();
-            super.render();
+            //super.render();
         }
+    
+        // Fallback UI rendering
+        super.render();
     }
 // }

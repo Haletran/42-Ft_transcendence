@@ -154,6 +154,7 @@ export async function getUserInfos() {
         });
         if (response.ok) {
             const userData = await response.json();
+            return userData;
         }
         else {
             console.log(response.status);
