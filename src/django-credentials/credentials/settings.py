@@ -18,7 +18,7 @@ from hvac import Client
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Vault configurations
-VAULT_ADDR = os.getenv('VAULT_ADDR')  # Vault service name in Docker Compose
+VAULT_ADDR = os.getenv('VAULT_ADDR')
 VAULT_TOKEN = os.getenv('VAULT_TOKEN', None)
 
 # Create a client for Vault

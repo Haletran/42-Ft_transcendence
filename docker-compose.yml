@@ -120,12 +120,14 @@ services:
       - "5433"
     volumes:
       - friends_data:/var/lib/postgresql/data
+      - ./src/friends-database/postgresql.conf:/etc/postgresql/postgresql.conf
     env_file:
       - .env
     environment:
       POSTGRES_DB: ${POSTGRES_DB_FRIENDS}
       POSTGRES_USER: ${POSTGRES_USER_FRIENDS}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_FRIENDS}
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     networks:
       - transcendence
 
