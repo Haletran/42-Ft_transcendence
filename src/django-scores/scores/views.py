@@ -103,3 +103,21 @@ def update_scores_username(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+
+def clear_match_history(request):
+    if request.method == 'POST':
+        try:
+            username = request.user.username
+
+            print(username)
+
+            with transaction.atomic():
+                Game.objects.filter(user_origin=username).delete()
+            return JsonResponse({'status': 'success', 'message': 'Match History cleared.'})
+        
+        except Game.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Old username not found.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)

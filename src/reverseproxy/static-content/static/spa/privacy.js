@@ -1,7 +1,9 @@
-import { fetchMinInfo } from "../src/fetchUser.js";
+import { fetchMinInfo, getUserInfos } from "../src/fetchUser.js";
 import { isUserOnline } from "./home.js";
 import { Page } from '../src/pages.js';
 import { logoutUser } from "../src/logout.js";
+import { getCSRFToken } from "../src/csrf.js";
+import { Router } from '../src/router.js';
 
 export class Privacy extends Page {
     constructor() {
@@ -62,8 +64,8 @@ export class Privacy extends Page {
                         <h5 class="card-title">EU's General Data Protection Regulation (GDPR)</h5>
                         <h5 class="card-title">What we do with your data</h5>
                         <h5 class="card-title">Privacy options</h5>
-                            <button type="button" class="btn btn-danger">Delete profile picture</button>
-                            <button type="button" class="btn btn-danger">Delete match history</button><br>
+                            <button type="button" class="btn btn-danger" id="propic-btn">Delete profile picture</button>
+                            <button type="button" class="btn btn-danger" id="match-btn">Delete match history</button><br>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="check1" name="track-match" value="something" not-checked>
                                 <label class="form-check-label">Do not keep track of my match history</label>
@@ -91,6 +93,90 @@ export class Privacy extends Page {
             logoutButton.addEventListener('click', function (event) {
                 //event.preventDefault();
                 logoutUser();
+            });
+        }
+
+        const ProfilePictureButton = document.getElementById('propic-btn');
+        if (ProfilePictureButton) {
+            ProfilePictureButton.addEventListener('click', async (event) => {
+                event.preventDefault();
+                const formData = new FormData();
+
+                let defaultFileBlob = null;
+                
+                try {
+
+                    const responseBlob = await fetch('/static/imgs/gaston.jpg');
+                    const blob = await responseBlob.blob();
+                    defaultFileBlob = new File([blob], 'default-profile.jpg', { type: blob.type });
+                    formData.append('profile_picture', defaultFileBlob);
+
+                    console.log('In update profile, data to send: ', formData);
+
+
+                    const csrfToken = getCSRFToken('csrftoken');
+                    if (!csrfToken) {
+                        console.error('CSRF token is missing!');
+                    }
+    
+                    // Send data to the backend
+                    console.log('about to go back to default profile picture');
+                    const response = await fetch('/api/credentials/update_profile/', {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': csrfToken, },
+                        credentials: 'include',
+                        body: formData,
+                    });
+    
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Edit successful:', result);
+                        this.render();
+                    } else {
+                        const error = await response.json();
+                        console.error('Edit failed:', error);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred: ' + error.message);
+                }
+            });
+        }
+
+        const deleteMatch = document.getElementById('match-btn');
+        if (deleteMatch) {
+            deleteMatch.addEventListener('click', async (event) => {
+                event.preventDefault();
+
+                const userData = await getUserInfos();
+                const username = userData.username;
+
+                try {
+
+                    const csrfToken = getCSRFToken('csrftoken');
+                    if (!csrfToken) {
+                        console.error('CSRF token is missing!');
+                    }
+
+                    const response = await fetch(`/api/scores/clear_match_history/`, {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': csrfToken, },
+                        credentials: 'include',
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        console.log("Match history cleared");
+                    }
+                    else {
+                        console.error('Error when clearing history:', data);
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred: ' + error.message);
+                }
+
             });
         }
 

@@ -116,7 +116,7 @@ services:
   friends-database:
     image: postgres:latest
     container_name: friends-database
-    expose:
+    ports:
       - "5433"
     volumes:
       - friends_data:/var/lib/postgresql/data
@@ -147,8 +147,8 @@ services:
   scores-database:
     image: postgres:latest
     container_name: scores-database
-    expose:
-      - "5435"
+    ports:
+      - "5435:5435"
     volumes:
       - scores_data:/var/lib/postgresql/data
       - ./src/scores-database/postgresql.conf:/etc/postgresql/postgresql.conf
