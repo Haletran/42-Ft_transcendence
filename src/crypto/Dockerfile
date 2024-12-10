@@ -4,20 +4,17 @@ FROM node:18
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json first to leverage Docker cache
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install project dependencies (including hardhat-related packages)
-RUN npm install --legacy-peer-deps
-
-# Copy the rest of your project files into the container
-COPY . .
+# Install project dependencies
+RUN npm install ethers axios sync-request dotenv --legacy-peer-deps
 
 # Create the Hardhat config directory and set permissions
 RUN mkdir -p /root/.config/hardhat-nodejs && chmod -R 777 /root/.config
 
-# Expose a port for Hardhat's local blockchain
+# Expose a port if your Hardhat project requires one
 EXPOSE 8545
 
-# Command to start Hardhat (use npx to run Hardhat)
+# Command to start Hardhat (e.g., start a local blockchain)
 CMD ["npx", "hardhat", "node"]

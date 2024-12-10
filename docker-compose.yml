@@ -31,7 +31,7 @@ services:
     networks:
       - transcendence
     command: >
-      sh -c "sleep 8 && npx hardhat node"
+      sh -c "sleep 3 && npx hardhat node"
 
 
   redis:
@@ -46,7 +46,7 @@ services:
     image: hashicorp/vault:latest
     container_name: vault_container
     ports:
-      - "8200"
+      - "8200:8200"
     volumes:
       - ./src/vault/config:/vault/config
       #- ./vault/policies:/vault/policies
@@ -82,7 +82,7 @@ services:
     networks:
       - transcendence
     command: >
-      sh -c "sleep 8 && python3 manage.py makemigrations && python manage.py makemigrations my_auth && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9000 credentials.asgi:application"
+      sh -c "sleep 5 && python3 manage.py makemigrations && python manage.py makemigrations my_auth && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9000 credentials.asgi:application"
 
   database:
     image: postgres:latest
@@ -111,7 +111,7 @@ services:
     networks:
       - transcendence
     command: >
-      sh -c "sleep 8 && python3 manage.py makemigrations && python manage.py makemigrations friends && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9001 django_friends.wsgi:application"
+      sh -c "sleep 5 && python3 manage.py makemigrations && python manage.py makemigrations friends && python3 manage.py migrate && gunicorn --bind 0.0.0.0:9001 django_friends.wsgi:application"
 
   friends-database:
     image: postgres:latest

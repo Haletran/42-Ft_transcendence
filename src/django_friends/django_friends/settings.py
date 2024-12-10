@@ -18,11 +18,11 @@ from hvac import Client
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Vault configurations
-VAULT_ADDR = os.getenv('http://vault_container:8200')
+VAULT_ADDR = os.getenv('VAULT_ADDR')  # Vault service name in Docker Compose
 VAULT_TOKEN = os.getenv('VAULT_TOKEN', None)
 
 # Create a client for Vault
-client = Client(url='http://vault_container:8200', token=VAULT_TOKEN)
+client = Client(url=VAULT_ADDR, token=VAULT_TOKEN)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/

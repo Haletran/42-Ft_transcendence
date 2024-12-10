@@ -107,14 +107,18 @@ def update_scores_username(request):
 def clear_match_history(request):
     if request.method == 'POST':
         try:
-            username = request.user.username
+            username = request.POST.get('username')
 
-            print(username)
+            print(f"Deleting match history for user: {username}")
 
             with transaction.atomic():
-                Game.objects.filter(user_origin=username).delete()
-            return JsonResponse({'status': 'success', 'message': 'Match History cleared.'})
-        
+                deleted_count, _ = Game.objects.filter(user_origin=username).delete()
+
+            if deleted_count > 0:
+                return JsonResponse({'status': 'success', 'message': 'Match History cleared.'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'No records found matching the condition.'})
+
         except Game.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Old username not found.'}, status=400)
         except Exception as e:

@@ -151,6 +151,11 @@ export class Privacy extends Page {
                 const userData = await getUserInfos();
                 const username = userData.username;
 
+                console.log(username);
+
+                const formData = new FormData();
+                formData.append('username', username);
+
                 try {
 
                     const csrfToken = getCSRFToken('csrftoken');
@@ -162,6 +167,7 @@ export class Privacy extends Page {
                         method: 'POST',
                         headers: { 'X-CSRFToken': csrfToken, },
                         credentials: 'include',
+                        body: formData,
                     });
 
                     const data = await response.json();

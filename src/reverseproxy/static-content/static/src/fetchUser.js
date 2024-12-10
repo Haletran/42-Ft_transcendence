@@ -55,7 +55,7 @@ function updateProfileUsername(Username) {
 
 export async function getProfileName() {
     try {
-        const response = await fetch('er-info/', {
+        const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
             credentials: 'include',
         });
