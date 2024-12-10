@@ -37,4 +37,4 @@ export class LoginPage extends Page {
         // Fallback UI rendering
         super.render();
     }
-// }
+}
