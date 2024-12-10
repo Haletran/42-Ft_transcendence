@@ -2,6 +2,7 @@ import { fetchProfileInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { fetchMatchHistory, fetchStatistics } from '../src/scoreTable.js';
 import { isUserOnline } from './home.js';
+import { logoutUser } from '../src/logout.js';
 
 export class Profile extends Page {
     constructor() {
@@ -34,7 +35,7 @@ export class Profile extends Page {
                         <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" >Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -109,7 +110,20 @@ export class Profile extends Page {
         fetchStatistics();
         fetchMatchHistory();
         isUserOnline();
+        
         super.render(); // Call the parent render method
+        
+        const logoutButton = document.getElementById('logout-butt');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function (event) {
+                // event.preventDefault();
+                console.log("ABOUT TO LOG OUT");
+                logoutUser();
+            });
+        }
+        
+
+
         //this.render_chart();
     }
 
