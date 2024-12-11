@@ -71,6 +71,6 @@ export class Monopoly extends Page {
     render() {
         fetchMonopInfo();
         isUserOnline();
-        super.render(); // Call the parent render method
+        super.render();
     }
 }

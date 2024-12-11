@@ -125,7 +125,7 @@ export async function fetchMinInfo() {
 
 export async function fetchMonopInfo() {
     try {
-        const response = await fetch('er-info/', {
+        const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
             credentials: 'include',
         });

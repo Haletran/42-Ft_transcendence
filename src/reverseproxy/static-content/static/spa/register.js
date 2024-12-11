@@ -169,6 +169,38 @@ export class RegisterPage extends Page {
 			console.log("Uploaded file:", profileInput.files[0]);
 		});
 
+		// monitor checkboxes (will be added to data sent)
+		let matchHistoryBOOL = true;
+		let friendsBOOL = true;
+		let agreeBOOL = false;
+
+		const matchHistory = document.getElementById('matchHistory');
+		matchHistory.addEventListener('change', function() {
+			if (this.checked) {
+				matchHistoryBOOL = false;
+			} else {
+				matchHistoryBOOL = true;
+			}
+		});
+
+		const displayFriends = document.getElementById('displayFriends');
+		displayFriends.addEventListener('change', function() {
+			if (this.checked) {
+				friendsBOOL = false;
+			} else {
+				friendsBOOL = true;
+			}
+		});
+
+		const agree = document.getElementById('conditions');
+		agree.addEventListener('change', function() {
+			if (this.checked) {
+				agreeBOOL = true;
+			} else {
+				agreeBOOL = false;
+			}
+		});
+
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
 
@@ -176,31 +208,18 @@ export class RegisterPage extends Page {
 			const email = document.getElementById('registerEmail').value;
 			const password = document.getElementById('registerPassword').value;
 
-			// monitor checkboxes (will be added to data sent)
-			let matchHistoryBOOL = true;
-			let friendsBOOL = true;
-
-			var matchHistory = document.getElementById('matchHistory');
-			matchHistory.addEventListener('change', function() {
-				if (this.checked) {
-					matchHistoryBOOL = true;
-					console.log(matchHistoryBOOL);
-				} else {
-					matchHistoryBOOL = false;
-					console.log(matchHistoryBOOL);
-				}
-			});
-			//var agreement
-			//var friends
-
 			// Prepare the data to send
-			
 			const formData = new FormData();
 			formData.append('username', username);
 			formData.append('email', email);
 			formData.append('password', password);
 			formData.append('matchHistory', matchHistoryBOOL);
 			formData.append('friendsDisplay', friendsBOOL);
+
+			if (agreeBOOL === false) {
+				alert("Please agree to terms and conditions.");
+				return ;
+			}
 
 			if (profileInput.files[0]) {
 				formData.append('profile_picture', profileInput.files[0]);
@@ -223,23 +242,19 @@ export class RegisterPage extends Page {
 				}
 
 				// Send data to the backend
-
 				const response = await fetch('/api/credentials/register/', {
 					method: 'POST',
 					headers: {
-						//'Content-Type': 'application/json',
 						'X-CSRFToken': csrfToken,
 					},
 					credentials: 'include',
-					//body: JSON.stringify(data),
 					body: formData,
 				});
 
 				if (response.ok) {
 					const result = await response.json();
 					console.log('Registration successful:', result);
-					startWebSocket();
-					// Optionally, redirect to login or home page
+					// startWebSocket();
 					router.goTo('/home');
 				} else {
 					const error = await response.json();

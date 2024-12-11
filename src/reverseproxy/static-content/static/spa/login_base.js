@@ -135,7 +135,7 @@ export class loginBasePage extends Page {
 
 				if (response.ok) {
 					const result = await response.json();
-					startWebSocket();
+					// startWebSocket();
 					console.log('Login successful:', result);
 					router.goTo('/home');
 				} else {

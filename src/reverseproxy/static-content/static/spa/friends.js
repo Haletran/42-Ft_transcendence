@@ -488,6 +488,8 @@ async function fetchAcceptedFriendships(currentUserId) {
                       </div>
                     </div>
                 `;
+                console.log(friendData.display_friends);
+                if (friendData.display_friends === true) {
                 const profileBox = document.createElement('div');
                 profileBox.className = 'profile-box';
                 profileBox.style.position = 'absolute';
@@ -545,7 +547,7 @@ async function fetchAcceptedFriendships(currentUserId) {
                     profileBox.style.opacity = '0';
                     profileBox.style.pointerEvents = 'none';
                 });
-                //console.log(friendship.friend_profile_picture);
+                }
                 friendshipList.appendChild(listItem);
             });
         }
