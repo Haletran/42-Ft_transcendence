@@ -306,7 +306,7 @@ def login_42(request):
                 user.profile_picture = file_path
             user.save()
         login(request, user)
-        return redirect('https://192.168.122.131/home')
+        return redirect('https://localhost/home')
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
