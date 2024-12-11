@@ -50,34 +50,19 @@ export class Pong extends Page {
                         vs 1</button>
                     <button id="start_button2" value="vsa" class="btn btn-outline-light full-width btn-lg">1
                         vs AI</button>
-                    <button id="tournament_button" class="btn btn-light full-width btn-lg">Tournament</button>
-                    <article id="dropdown-tour" class="flex-column justify-content-center align-items-center gap-2">
-                        <div class="card w-100">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                How many players?
-                                <div>
-                                    <button id="add_player" class="btn btn-outline-light"><i
-                                            class="bi bi-plus-circle"></i></button>
-                                    <button id="rm_player" class="btn btn-outline-light"><i
-                                            class="bi bi-dash-circle"></i></button>
-                                </div>
-                            </div>
-                            <ul class="list-group list-group-flush ">
-
-                                <li class="list-group-item bg-grey">
-                                    <i class="bi bi-person"></i> bapasqui
-                                </li>
-                                    <i class="bi bi-robot"></i> AI
-                                </li>
-                            </ul>
+                    <hr>
+                    <div class="d-flex flex-column gap-2">
+                        <h2 id="menu" class="display-6 montserrat-bold">Tournament</h2>
+                        <label for="customRange1" class="form-label">How many players ?</label>
+                        <input type="range" class="form-range" min="2" max="6" step="2" id="customRange1">
+                        <div class="user_name d-flex flex-column gap-2">
+                            <input type="text" class="form-control" id="player_1" placeholder="Player 1">
+                            <input type="text" class="form-control" id="player_2" placeholder="Player 2">
+                            <input type="text" class="form-control" id="player_2" placeholder="Player 3">
+                            <input type="text" class="form-control" id="player_2" placeholder="Player 4">
                         </div>
-                                <li class="list-group-item">
-                                    <i class="bi bi-robot"></i> AI
-                                </li>
-                            </ul>
-                        </div>
-                        <p id="error_msg" class="text-danger"></p>
-                    </article>
+                    </div>
+                    <button id="tournament_button" value="tour" class="btn btn-light">Start Tournament</button>
                 </article>
             </div>
         </div>
@@ -102,7 +87,22 @@ export class Pong extends Page {
             });
         }
 
-        ['start_button', 'start_button2'].forEach(buttonId => {
+        document.getElementById('customRange1').addEventListener('input', function () {
+            const range = document.getElementById('customRange1');
+            const userNameContainer = document.querySelector('.user_name');
+            userNameContainer.innerHTML = '';
+            for (let i = 1; i <= range.value; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'form-control';
+                input.id = `player_${i}`;
+                input.placeholder = `Player ${i}`;
+                userNameContainer.appendChild(input);
+            }
+        });
+
+
+        ['start_button', 'start_button2', 'tournament_button'].forEach(buttonId => {
             const button = document.getElementById(buttonId);
             if (button) {
                 button.addEventListener('click', async function () {
@@ -116,7 +116,23 @@ export class Pong extends Page {
                     try {
                         // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
                         const module = await import(`/static/spa/pong_game.js?timestamp=${new Date().getTime()}`);
-                        await module.startGame();
+                        if (buttonId === 'tournament_button') {
+                            let player_name = [];
+                            const range = document.getElementById('customRange1');
+                            for (let i = 1; i <= range.value; i++) {
+                                const player = document.getElementById(`player_${i}`);
+                                if (player) {
+                                    if (player.value == "") {
+                                        player_name.push(`Player ${i}`);
+                                    } else 
+                                        player_name.push(player.value);
+                                }
+                            }
+                            module.startGame(button.value, player_name);
+                        }
+                        else {
+                            await module.startGame(button.value);
+                        }
                     } catch (err) {
                         console.error('Error loading game:', err);
                     }

@@ -55,7 +55,7 @@ export class Privacy extends Page {
                     <a id="choose_param" href="/friends" data-link="/friends"
                         class="list-group-item list-group-item-action">Friends</a>
                     <a id="choose_param" href="/privacy" data-link="/privacy"
-                        class="list-group-item list-group-item-action active" aria-current="true">Privacy</a>
+                        class="list-group-item list-group-item-action active-menu" aria-current="true">Privacy</a>
                 </div>
             </div>
             <div class="col">
@@ -87,7 +87,7 @@ export class Privacy extends Page {
         fetchMinInfo();
 
         super.render();
-        
+
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {
@@ -103,7 +103,7 @@ export class Privacy extends Page {
                 const formData = new FormData();
 
                 let defaultFileBlob = null;
-                
+
                 try {
 
                     const responseBlob = await fetch('/static/imgs/gaston.jpg');
@@ -118,7 +118,7 @@ export class Privacy extends Page {
                     if (!csrfToken) {
                         console.error('CSRF token is missing!');
                     }
-    
+
                     // Send data to the backend
                     console.log('about to go back to default profile picture');
                     const response = await fetch('/api/credentials/update_profile/', {
@@ -127,7 +127,7 @@ export class Privacy extends Page {
                         credentials: 'include',
                         body: formData,
                     });
-    
+
                     if (response.ok) {
                         const result = await response.json();
                         console.log('Edit successful:', result);
