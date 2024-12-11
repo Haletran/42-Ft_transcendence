@@ -79,14 +79,13 @@ export class RegisterPage extends Page {
 
 			<div class="mb-3 form-check">
 			  <input type="checkbox" class="form-check-input" id="matchHistory" />
-			  <label class="form-check-label" for="stayConnected"
-				>Allow match history</label
-			  >
+			  <label class="form-check-label" for="matchHistory">
+			  	I don't want you to keep track of my match history</label>
 			</div>
 			<div class="mb-3 form-check">
 			  <input type="checkbox" class="form-check-input" id="displayFriends" />
-			  <label class="form-check-label" for="stayConnected"
-				>Allow friends to see your profile</label
+			  <label class="form-check-label" for="displayFriends"
+				>I don't want my friends to be able to see my profile</label
 			  >
 			</div>
 			<div class="mb-3 form-check">
@@ -98,7 +97,24 @@ export class RegisterPage extends Page {
 			<div id="terms-modal" class="terms-modal">
 			  <div>
 			    <h2>Terms and Conditions</h2>
-			    <p>Your terms and conditions go here...</p>
+			    <p>Effective date: december 2025<br><br>
+					Welcome to ft_transcendence. These terms and conditions govern your use of our Website, services, and any related content. By accessing or using ft_transcendence, you agree to comply with a be bound by these Terms.<br>
+					To access the website, play the two games available, send friend requests and see your results history, you are required to create an account.<
+					To do so, you need to agree to provide a username and an email (no emails will be sent), and optionally a profile picture. Other users will be able to send you friend request either using your username or your email.
+					Additionally, all your game results might be collected by us to provide statistics and a record of the games you played. Please note that this data might be accessible to your friends.<br>
+					<br><strong>These terms are construed in accordance with the General Data Protection Regulation (GDPR)</strong>, that guarantees that all data is processed by us in accordance with the principles edicted in the article 5.1-2:<br><br>
+					"Lawfulness, fairness and transparency — Processing must be lawful, fair, and transparent to the data subject.<br>
+    					Purpose limitation — You must process data for the legitimate purposes specified explicitly to the data subject when you collected it.<br>
+    					Data minimization — You should collect and process only as much data as absolutely necessary for the purposes specified.<br>
+    					Accuracy — You must keep personal data accurate and up to date.<br>
+    					Storage limitation — You may only store personally identifying data for as long as necessary for the specified purpose.<br>
+    					Integrity and confidentiality — Processing must be done in such a way as to ensure appropriate security, integrity, and confidentiality (e.g. by using encryption).<br>
+    					Accountability — The data controller is responsible for being able to demonstrate GDPR compliance with all of these principles."<br>
+						<br>
+					If you wish to learn more about the GDPR, please follow this <a href="https://gdpr-info.eu/" target="_blank" id="gdpr-link">link.</a><br>
+					<strong>At anytime, you will find those terms and condition, in addition to privacy settings to monitor our use of your data, under the Privacy section.<br>
+					We will not share your data with any third-party, and if you wish to delete your match history, or delete your account, this data will be permanently erased from our databases.</strong><br>
+				</p>
 			    <button id="close-modal" type="button">Close</button>
 			  </div>
 			</div>
@@ -154,20 +170,37 @@ export class RegisterPage extends Page {
 		});
 
 		form.addEventListener('submit', async (e) => {
-			e.preventDefault(); // Prevent the default form submission
+			e.preventDefault();
 
 			const username = document.getElementById('registerUsername').value;
-			console.log(username);
 			const email = document.getElementById('registerEmail').value;
 			const password = document.getElementById('registerPassword').value;
 
+			// monitor checkboxes (will be added to data sent)
+			let matchHistoryBOOL = true;
+			let friendsBOOL = true;
 
+			var matchHistory = document.getElementById('matchHistory');
+			matchHistory.addEventListener('change', function() {
+				if (this.checked) {
+					matchHistoryBOOL = true;
+					console.log(matchHistoryBOOL);
+				} else {
+					matchHistoryBOOL = false;
+					console.log(matchHistoryBOOL);
+				}
+			});
+			//var agreement
+			//var friends
 
 			// Prepare the data to send
+			
 			const formData = new FormData();
 			formData.append('username', username);
 			formData.append('email', email);
 			formData.append('password', password);
+			formData.append('matchHistory', matchHistoryBOOL);
+			formData.append('friendsDisplay', friendsBOOL);
 
 			if (profileInput.files[0]) {
 				formData.append('profile_picture', profileInput.files[0]);
