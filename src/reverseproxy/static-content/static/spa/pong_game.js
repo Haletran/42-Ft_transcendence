@@ -42,6 +42,11 @@ class Player {
         ctx.fillStyle = this.color
         ctx.fill()
     }
+
+    setName(name) {
+        this.name = name
+    }
+
     update() {
         movePlayers()
         this.draw()
@@ -117,8 +122,9 @@ class Table {
 }
 
 class Pong {
-    constructor() {
+    constructor(gamemode) {
         this.game = initGame();
+        this.gameMode = gamemode;
     }
 }
 
@@ -128,7 +134,7 @@ function initGame() {
     // depends on the responsivess
     const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1')
     const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'player2')
-    const ball = new Ball(x, y, 10, 'red', { x: 2, y: 2 }, 2)
+    const ball = new Ball(x, y, 10, 'red', { x: 2, y: 2 }, 4)
     const table = new Table(0, 0, canvas.width, canvas.height, 'black')
     return { player1, player2, ball, table }
 }
@@ -201,25 +207,65 @@ function GameEnd() {
         game.player1.reset()
         game.player2.reset()
         game.ball.reset()
+        keys = {};
         return true
     }
 }
 
-function animate(pong) {
+function getWinner(p1, p2) {
+    if (p1.score === 5) {
+        return p1.name
+    } else if (p2.score === 5) {
+        return p2.name
+    } else {
+        return null
+    }
+}
+
+async function versus(p1, p2, pong, playerNames) {
+    const winner = getWinner(p1, p2);
+    if (winner != null) {
+        alert(winner + " won");
+        GameEnd();
+        return winner;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    game.table.update()
+    p1.update()
+    p2.update()
+    game.ball.update()
+    animationFrameId = requestAnimationFrame(() => animate(pong, playerNames))
+}
+
+
+async function animate(pong, playerNames) {
     if (GameEnd()) {
         clearCanvas();
         hideElementsByClass('game');
         showElementsByClass('menu', 'flex');
         addClassToElementsByClass('menu', 'center');
         cancelAnimationFrame(animationFrameId);
-        keys = {};
-    } else {
+    }
+
+    if (pong.gameMode === 'pvp') {
+        console.log("PVP MODE")
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         game.table.update()
         game.player1.update()
         game.player2.update()
         game.ball.update()
-        animationFrameId = requestAnimationFrame(animate)
+        animationFrameId = requestAnimationFrame(() => animate(pong, playerNames))
+    }
+    if (pong.gameMode === 'tour') {
+        // TOURNAMENT MODE
+        // MANY ERRORS HERE WHY
+        let players = [];
+        for (let i = 0; i < playerNames.length; i++) {
+            players.push(new Player(30, y, 'white', 10, 100, 5, playerNames[i]));
+        }
+        const winner1 = await versus(players[0], players[1], pong);
+        const winner2 = await versus(players[2], players[3], pong);
+        await versus(winner1, winner2, pong);
     }
     console.log("SCORE : ", game.player1.score, game.player2.score)
     console.log("BALL : ", game.ball.x, game.ball.y, game.ball.velocity)
@@ -240,9 +286,12 @@ function checkKeyUp(e) {
 window.addEventListener('keydown', checkKeyDown, false);
 window.addEventListener('keyup', checkKeyUp, false);
 
-export function startGame() {
-    const pong = new Pong();
-    animate(pong);
+export function startGame(gamemode, playerNames) {
+    if (gamemode === 'tour') {
+        for (let i = 0; i < playerNames.length; i++) {
+            console.log("Players :", i, " ", playerNames[i]);
+        }
+    }
+    const pong = new Pong(gamemode);
+    animate(pong, playerNames);
 }
-
-startGame();

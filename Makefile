@@ -10,9 +10,9 @@ build:
 		stty -echo && read PASSWORD && stty echo; \
 		echo $$PASSWORD | openssl enc -aes-256-cbc -d -pbkdf2 -in encrypt.env.enc -out .env || (echo "Decryption failed. Exiting."; exit 1); \
 	fi
-	@if [ ! -f /src/crypto/node_modules ]; then \
+	@if [ ! -d /src/crypto/node_modules ]; then \
 		cd src/crypto ;\
-		npm install --legacy-peer-deps;\
+		npm install --legacy-peer-deps > /dev/null;\
 	fi
 	@docker compose -f ${COMPOSE_FILE} up --build --remove-orphans
 

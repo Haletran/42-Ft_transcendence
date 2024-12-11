@@ -50,34 +50,13 @@ export class Pong extends Page {
                         vs 1</button>
                     <button id="start_button2" value="vsa" class="btn btn-outline-light full-width btn-lg">1
                         vs AI</button>
-                    <button id="tournament_button" class="btn btn-light full-width btn-lg">Tournament</button>
-                    <article id="dropdown-tour" class="flex-column justify-content-center align-items-center gap-2">
-                        <div class="card w-100">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                How many players?
-                                <div>
-                                    <button id="add_player" class="btn btn-outline-light"><i
-                                            class="bi bi-plus-circle"></i></button>
-                                    <button id="rm_player" class="btn btn-outline-light"><i
-                                            class="bi bi-dash-circle"></i></button>
-                                </div>
-                            </div>
-                            <ul class="list-group list-group-flush ">
-
-                                <li class="list-group-item bg-grey">
-                                    <i class="bi bi-person"></i> bapasqui
-                                </li>
-                                    <i class="bi bi-robot"></i> AI
-                                </li>
-                            </ul>
-                        </div>
-                                <li class="list-group-item">
-                                    <i class="bi bi-robot"></i> AI
-                                </li>
-                            </ul>
-                        </div>
-                        <p id="error_msg" class="text-danger"></p>
-                    </article>
+                    <div class="d-flex flex-row gap-2">
+                        <input type="text" class="form-control" id="player_1" placeholder="Player 1">
+                        <input type="text" class="form-control" id="player_2" placeholder="Player 2">
+                        <input type="text" class="form-control" id="player_3" placeholder="Player 3">
+                        <input type="text" class="form-control" id="player_4" placeholder="Player 4">
+                        <button id="tournament_button" value="tour" class="btn btn-outline-light">Tournament</button>
+                    </div>
                 </article>
             </div>
         </div>
@@ -102,7 +81,7 @@ export class Pong extends Page {
             });
         }
 
-        ['start_button', 'start_button2'].forEach(buttonId => {
+        ['start_button', 'start_button2', 'tournament_button'].forEach(buttonId => {
             const button = document.getElementById(buttonId);
             if (button) {
                 button.addEventListener('click', async function () {
@@ -116,7 +95,19 @@ export class Pong extends Page {
                     try {
                         // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
                         const module = await import(`/static/spa/pong_game.js?timestamp=${new Date().getTime()}`);
-                        await module.startGame();
+                        if (buttonId === 'tournament_button') {
+                            let player_name = [];
+                            for (let i = 1; i <= 4; i++) {
+                                const player = document.getElementById(`player_${i}`);
+                                if (player) {
+                                    player_name.push(player.value);
+                                }
+                            }
+                            module.startGame(button.value, player_name);
+                        }
+                        else {
+                            await module.startGame(button.value);
+                        }
                     } catch (err) {
                         console.error('Error loading game:', err);
                     }
