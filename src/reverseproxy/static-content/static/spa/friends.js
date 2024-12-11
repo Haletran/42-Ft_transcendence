@@ -262,11 +262,8 @@ export class Friends extends Page {
                 }
             });
             fetchPendingConfirmations(currentUserId);
-            console.log('AFTER FETCH PENDING CONFIRMATIONS');
             getIncomingInvitations(currentUserId);
-            console.log('AFTER GET INCOMING INVITATIONS');
             fetchAcceptedFriendships(currentUserId);
-            console.log('AFTER FETCH ACCEPTED FRIENDSHIPS');
         } catch (error) {
             console.error('Error fetching user info:', error);
         }
@@ -502,7 +499,6 @@ async function fetchAcceptedFriendships(currentUserId) {
                 profileBox.style.transition = 'opacity 0.3s ease';
                 profileBox.style.pointerEvents = 'none';
                 profileBox.style.display = 'none';
-                //profileBox.textContent = `Profile of ${friend.friend_username}`;
                 document.body.appendChild(profileBox);
                 const friendName = listItem.querySelector('#friendUser');
                 friendName.addEventListener('mouseover', async (e) => {

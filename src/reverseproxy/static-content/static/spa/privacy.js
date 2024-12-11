@@ -71,7 +71,7 @@ export class Privacy extends Page {
                                 <label class="form-check-label">Do not keep track of my match history</label>
                             </div> 
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check1" name="track-match" value="something" not-checked>
+                                <input class="form-check-input" type="checkbox" id="check2" name="track-match" value="something" not-checked>
                                 <label class="form-check-label">Do not display my profile informations to my friends</label>
                             </div>
                             <button type="button" class="btn btn-danger">Delete my account</button>

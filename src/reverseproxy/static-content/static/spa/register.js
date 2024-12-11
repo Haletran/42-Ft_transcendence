@@ -78,10 +78,29 @@ export class RegisterPage extends Page {
     		</div>
 
 			<div class="mb-3 form-check">
-			  <input type="checkbox" class="form-check-input" id="stayConnected" />
+			  <input type="checkbox" class="form-check-input" id="matchHistory" />
 			  <label class="form-check-label" for="stayConnected"
-				>Stay Connected</label
+				>Allow match history</label
 			  >
+			</div>
+			<div class="mb-3 form-check">
+			  <input type="checkbox" class="form-check-input" id="displayFriends" />
+			  <label class="form-check-label" for="stayConnected"
+				>Allow friends to see your profile</label
+			  >
+			</div>
+			<div class="mb-3 form-check">
+			  <input type="checkbox" class="form-check-input" id="conditions" />
+			  <label class="terms-check-label" for="conditions"
+				>I have read and agree to the <a href="#" id="terms-link">terms and conditions</a></label
+			  >
+			</div>
+			<div id="terms-modal" class="terms-modal">
+			  <div>
+			    <h2>Terms and Conditions</h2>
+			    <p>Your terms and conditions go here...</p>
+			    <button id="close-modal" type="button">Close</button>
+			  </div>
 			</div>
              <div class="d-flex justify-content-between flex-column gap-2">
                 <button id="register_button" 
@@ -96,12 +115,27 @@ export class RegisterPage extends Page {
 
 	render() {
 		logoutUser();
+		
 		super.render();
+
 		this.attachFormListener();
 	}
-
+	
 	attachFormListener() {
 		const form = document.getElementById('register_form');
+
+		const termLinks = document.getElementById("terms-link");
+		const termModals = document.getElementById("terms-modal");
+		const closeModalButton = document.getElementById("close-modal");
+
+		termLinks.addEventListener('click', function (event) {
+			event.preventDefault();
+			termModals.classList.add('visible');
+			});
+
+		closeModalButton.addEventListener('click', function (event) {
+			termModals.classList.remove('visible');
+		});
 
 		const defaultPic = '/static/imgs/gaston.jpg';
 		let defaultFileBlob = null;
