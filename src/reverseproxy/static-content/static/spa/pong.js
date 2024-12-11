@@ -1,8 +1,8 @@
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
+import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
-import { isUserOnline } from './home.js';
 
 export class Pong extends Page {
     constructor() {
@@ -27,12 +27,6 @@ export class Pong extends Page {
                     </li>
                     <li>
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
                     </li>
                     <li>
                         <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt" >Logout</a>
@@ -88,69 +82,46 @@ export class Pong extends Page {
             </div>
         </div>
     </div>
-    <div class="game justify-content-center align-items-center">
-        <canvas id="pong_canvas" style="display: none;"></canvas>
+    <div id="test" class="game justify-content-center align-items-center">
     </div>
         `;
     }
 
     render() {
         fetchMinInfo();
-        isUserOnline();
+        startWebSocket();
         super.render();
+        this.eventListeners();
+    }
 
+    eventListeners() {
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {
-                //event.preventDefault();
                 logoutUser();
             });
         }
-        const setupEventListeners = () => {
-            const buttons = ['start_button', 'start_button2', 'tournament_button'];
-            buttons.forEach(buttonId => {
-                const button = document.getElementById(buttonId);
-                if (button) {
-                    button.replaceWith(button.cloneNode(true));
-                    document.getElementById(buttonId).addEventListener('click', () => {
-                        const canvas = document.getElementById('pong_canvas');
-                        if (canvas && this.game) {
-                            showElementsByClass('game', 'flex');
-                            hideElementsByClass('menu');
-                            addClassToElementsByClass('game', 'center');
-                            document.getElementById('pong_canvas').style.display = 'block';
-                            this.game(button.value);
-                        }
-                    });
-                }
-            });
-        };
 
-        // ['start_button', 'start_button2'].forEach(buttonId => {
-        //     const button = document.getElementById(buttonId);
-        //     if (button) {
-        //         button.addEventListener('click', function () {
-        //             hideElementsByClass('menu');
-        //             showElementsByClass('game', 'flex');
-        //             addClassToElementsByClass('game', 'center');
-        //             document.getElementById('pong_canvas').style.display = 'block';
-        //             game(this.value);
-        //         });
-        //     }
-        // });
-
-        if (!document.getElementById('pong_game_script')) {
-            return new Promise((resolve) => {
-                import('/static/spa/pong_game.js')
-                    .then(module => {
-                        this.game = module.game;
-                        setupEventListeners();
-                        resolve();
-                    })
-                    .catch(err => console.error('Error loading game:', err));
-            });
-        } else {
-            setupEventListeners();
-        }
+        ['start_button', 'start_button2'].forEach(buttonId => {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.addEventListener('click', async function () {
+                    const existingCanvas = document.querySelector('#pong_canvas');
+                    if (existingCanvas) {
+                        existingCanvas.remove();
+                    }
+                    hideElementsByClass('menu');
+                    showElementsByClass('game', 'flex');
+                    addClassToElementsByClass('game', 'center');
+                    try {
+                        // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
+                        const module = await import(`/static/spa/pong_game.js?timestamp=${new Date().getTime()}`);
+                        await module.startGame();
+                    } catch (err) {
+                        console.error('Error loading game:', err);
+                    }
+                });
+            }
+        });
     }
 }
