@@ -9,9 +9,9 @@ export class Monopoly extends Page {
     constructor() {
         super();
         this.template = `
-                    <div class="header">
-        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
-            <div class="container-fluid">
+            <div class="header">
+            <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+                <div class="container-fluid">
                 <a class="navbar-brand " href="/home" data-link="/home">
                     <img src="/static/imgs/logo.png" alt="" width="25" class="d-inline-block align-text-top invert">
                     <p class="d-inline montserrat-bold">Ft_transcendence</p>
@@ -44,10 +44,10 @@ export class Monopoly extends Page {
                 <div class="d-flex flex-column gap-2">
                     <label for="customRange1" class="form-label">How many players ?</label>
                     <input type="range" class="form-range" min="2" max="6" step="2" id="customRange1">
-                        <div class="user_name d-flex flex-column gap-2">
-                            <input type="text" class="form-control" id="player_1" placeholder="Player 1">
-                            <input type="text" class="form-control" id="player_2" placeholder="Player 2">
-                        </div>
+                    <div class="user_name d-grid gap-2">
+                        <input type="text" class="form-control g-col-2" id="player_1" placeholder="Player 1">
+                        <input type="text" class="form-control g-col-2" id="player_2" placeholder="Player 2">
+                    </div>
                 </div>
                 <button id="start_button_m" value="tour" class="btn btn-light">Play</button>
             </div>
