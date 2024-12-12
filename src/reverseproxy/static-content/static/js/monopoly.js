@@ -2,7 +2,7 @@ let canvas = document.querySelector('canvas');
 if (!canvas) {
     const gameDiv = document.querySelector('.game');
     canvas = document.createElement('canvas');
-    canvas.id = 'monopoly_canvass';
+    canvas.id = 'monopoly_canvas';
     gameDiv.appendChild(canvas);
 }
 const ctx = canvas.getContext("2d");
