@@ -237,3 +237,24 @@ def get_accepted_friendships(request):
         return Response({
             "error": str(e)
         }, status=500)
+
+def clear_friends(request):
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('username')
+            print(username)
+            with transaction.atomic():
+                deleted_count1, _ = Friend.objects.filter(name_friend1=username).delete()
+                deleted_count2, _ = Friend.objects.filter(name_friend2=username).delete()
+            
+            if deleted_count1 > 0 or deleted_count2 > 0:
+                return JsonResponse({'status': 'success', 'message': 'Friendships deleted.'})
+            else:
+                return JsonResponse({'status': 'success', 'message': 'No friendships found matching the condition.'})
+    
+        except Friend.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'username not found.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)

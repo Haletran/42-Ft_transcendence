@@ -3,6 +3,7 @@ import { getCSRFToken } from '../src/csrf.js';
 import { router } from '../app.js';
 import { logoutUser } from '../src/logout.js';
 import { startWebSocket } from './login_base.js';
+import { isUserLoggedIn } from '../app.js';
 
 export class RegisterPage extends Page {
 	constructor() {
@@ -78,10 +79,45 @@ export class RegisterPage extends Page {
     		</div>
 
 			<div class="mb-3 form-check">
-			  <input type="checkbox" class="form-check-input" id="stayConnected" />
-			  <label class="form-check-label" for="stayConnected"
-				>Stay Connected</label
+			  <input type="checkbox" class="form-check-input" id="matchHistory" />
+			  <label class="form-check-label" for="matchHistory">
+			  	Do not keep track of my match history</label>
+			</div>
+			<div class="mb-3 form-check">
+			  <input type="checkbox" class="form-check-input" id="displayFriends" />
+			  <label class="form-check-label" for="displayFriends"
+				>Do not display my profile informations to my friends</label
 			  >
+			</div>
+			<div class="mb-3 form-check">
+			  <input type="checkbox" class="form-check-input" id="conditions" />
+			  <label class="terms-check-label" for="conditions"
+				>I have read and agree to the <a href="#" id="terms-link">terms and conditions</a></label
+			  >
+			</div>
+			<div id="terms-modal" class="terms-modal">
+			  <div>
+			    <h2>Terms and Conditions</h2>
+			    <p>Effective date: december 2025<br><br>
+					Welcome to ft_transcendence. These terms and conditions govern your use of our Website, services, and any related content. By accessing or using ft_transcendence, you agree to comply with a be bound by these Terms.<br>
+					To access the website, play the two games available, send friend requests and see your results history, you are required to create an account.<
+					To do so, you need to agree to provide a username and an email (no emails will be sent), and optionally a profile picture. Other users will be able to send you friend request either using your username or your email.
+					Additionally, all your game results might be collected by us to provide statistics and a record of the games you played. Please note that this data might be accessible to your friends.<br>
+					<br><strong>These terms are construed in accordance with the General Data Protection Regulation (GDPR)</strong>, that guarantees that all data is processed by us in accordance with the principles edicted in the article 5.1-2:<br><br>
+					"Lawfulness, fairness and transparency — Processing must be lawful, fair, and transparent to the data subject.<br>
+    					Purpose limitation — You must process data for the legitimate purposes specified explicitly to the data subject when you collected it.<br>
+    					Data minimization — You should collect and process only as much data as absolutely necessary for the purposes specified.<br>
+    					Accuracy — You must keep personal data accurate and up to date.<br>
+    					Storage limitation — You may only store personally identifying data for as long as necessary for the specified purpose.<br>
+    					Integrity and confidentiality — Processing must be done in such a way as to ensure appropriate security, integrity, and confidentiality (e.g. by using encryption).<br>
+    					Accountability — The data controller is responsible for being able to demonstrate GDPR compliance with all of these principles."<br>
+						<br>
+					If you wish to learn more about the GDPR, please follow this <a href="https://gdpr-info.eu/" target="_blank" id="gdpr-link">link.</a><br>
+					<strong>At anytime, you will find those terms and condition, in addition to privacy settings to monitor our use of your data, under the Privacy section.<br>
+					We will not share your data with any third-party, and if you wish to delete your match history, or delete your account, this data will be permanently erased from our databases.</strong><br>
+				</p>
+			    <button id="close-modal" type="button">Close</button>
+			  </div>
 			</div>
              <div class="d-flex justify-content-between flex-column gap-2">
                 <button id="register_button" 
@@ -94,14 +130,31 @@ export class RegisterPage extends Page {
 	  `;
 	}
 
-	render() {
-		logoutUser();
+	async render() {
+		const logBOOL = isUserLoggedIn();
+		if (logBOOL == true)
+			logoutUser();
+		
 		super.render();
+
 		this.attachFormListener();
 	}
-
+	
 	attachFormListener() {
 		const form = document.getElementById('register_form');
+
+		const termLinks = document.getElementById("terms-link");
+		const termModals = document.getElementById("terms-modal");
+		const closeModalButton = document.getElementById("close-modal");
+
+		termLinks.addEventListener('click', function (event) {
+			event.preventDefault();
+			termModals.classList.add('visible');
+			});
+
+		closeModalButton.addEventListener('click', function (event) {
+			termModals.classList.remove('visible');
+		});
 
 		const defaultPic = '/static/imgs/gaston.jpg';
 		let defaultFileBlob = null;
@@ -115,25 +168,60 @@ export class RegisterPage extends Page {
 
 		const profileInput = document.getElementById('customProfilePicture');
 		profileInput.addEventListener('change', () => {
-			imageURL = null;
 			console.log("Uploaded file:", profileInput.files[0]);
 		});
 
+		// monitor checkboxes (will be added to data sent)
+		let matchHistoryBOOL = true;
+		let friendsBOOL = true;
+		let agreeBOOL = false;
+
+		const matchHistory = document.getElementById('matchHistory');
+		matchHistory.addEventListener('change', function() {
+			if (this.checked) {
+				matchHistoryBOOL = false;
+			} else {
+				matchHistoryBOOL = true;
+			}
+		});
+
+		const displayFriends = document.getElementById('displayFriends');
+		displayFriends.addEventListener('change', function() {
+			if (this.checked) {
+				friendsBOOL = false;
+			} else {
+				friendsBOOL = true;
+			}
+		});
+
+		const agree = document.getElementById('conditions');
+		agree.addEventListener('change', function() {
+			if (this.checked) {
+				agreeBOOL = true;
+			} else {
+				agreeBOOL = false;
+			}
+		});
+
 		form.addEventListener('submit', async (e) => {
-			e.preventDefault(); // Prevent the default form submission
+			e.preventDefault();
 
 			const username = document.getElementById('registerUsername').value;
-			console.log(username);
 			const email = document.getElementById('registerEmail').value;
 			const password = document.getElementById('registerPassword').value;
-
-
 
 			// Prepare the data to send
 			const formData = new FormData();
 			formData.append('username', username);
 			formData.append('email', email);
 			formData.append('password', password);
+			formData.append('matchHistory', matchHistoryBOOL);
+			formData.append('friendsDisplay', friendsBOOL);
+
+			if (agreeBOOL === false) {
+				alert("Please agree to terms and conditions.");
+				return ;
+			}
 
 			if (profileInput.files[0]) {
 				formData.append('profile_picture', profileInput.files[0]);
@@ -156,23 +244,19 @@ export class RegisterPage extends Page {
 				}
 
 				// Send data to the backend
-
 				const response = await fetch('/api/credentials/register/', {
 					method: 'POST',
 					headers: {
-						//'Content-Type': 'application/json',
 						'X-CSRFToken': csrfToken,
 					},
 					credentials: 'include',
-					//body: JSON.stringify(data),
 					body: formData,
 				});
 
 				if (response.ok) {
 					const result = await response.json();
 					console.log('Registration successful:', result);
-					startWebSocket();
-					// Optionally, redirect to login or home page
+					// startWebSocket();
 					router.goTo('/home');
 				} else {
 					const error = await response.json();

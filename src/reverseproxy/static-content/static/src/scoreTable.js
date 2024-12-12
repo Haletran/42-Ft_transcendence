@@ -4,13 +4,16 @@ import { getCSRFToken } from "./csrf.js";
 
 export async function set1v1victory(player1, player2, is_ai, is_tournament) {
     const userData = await getUserInfos();
+    if (userData.match_history === false) {
+        console.log("User does not want to keep match history")
+        return ;
+    }
     const formData = new FormData();
     formData.append('user_origin', userData.username);
     formData.append('player1_username', player1.name);
     formData.append('player2_username', player2.name);
     player1.score < player2.score ? formData.append('result', player2.name) : formData.append('result', player1.name);
     formData.append('player1_score', player1.score);
-    console.log(player1.score);
     formData.append('player2_score', player2.score);
     formData.append('is_ai', is_ai);
     formData.append('is_tournament', is_tournament);

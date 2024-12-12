@@ -85,8 +85,10 @@ export class loginBasePage extends Page {
 		</div>
 	  `;
 	}
-	render() {
-		logoutUser();
+	async render() {
+		const logBOOL = isUserLoggedIn();
+		if (logBOOL == true)
+			logoutUser();
 		super.render(); // Call the parent render method
 		this.attachFormLoginListener(); // Now attach the listener here
 		this.loading_42();
@@ -135,7 +137,7 @@ export class loginBasePage extends Page {
 
 				if (response.ok) {
 					const result = await response.json();
-					startWebSocket();
+					// startWebSocket();
 					console.log('Login successful:', result);
 					router.goTo('/home');
 				} else {

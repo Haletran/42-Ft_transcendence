@@ -89,7 +89,8 @@ export async function isUserOnline() {
                 startWebSocket();
         }
         else {
-            startWebSocket();
+            //startWebSocket();
+            console.log('Not an user: not online')
         }
     } catch (error) {
         console.error("Error fetching online status");

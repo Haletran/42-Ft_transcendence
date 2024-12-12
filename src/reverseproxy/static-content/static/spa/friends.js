@@ -262,11 +262,8 @@ export class Friends extends Page {
                 }
             });
             fetchPendingConfirmations(currentUserId);
-            console.log('AFTER FETCH PENDING CONFIRMATIONS');
             getIncomingInvitations(currentUserId);
-            console.log('AFTER GET INCOMING INVITATIONS');
             fetchAcceptedFriendships(currentUserId);
-            console.log('AFTER FETCH ACCEPTED FRIENDSHIPS');
         } catch (error) {
             console.error('Error fetching user info:', error);
         }
@@ -470,7 +467,7 @@ async function fetchAcceptedFriendships(currentUserId) {
         } else {
             data.accepted_friendships.forEach(async (friendship) => {
                 const listItem = document.createElement('div');
-                console.log('Searching for friend: ', friendship.firend_username);
+                console.log('Searching for friend: ', friendship.friend_username);
                 const friendData = await getCurrentFriendInfo(friendship.friend_username);
                 const onlineStatus = await isFriendOnline(friendship.friend_username);
                 console.log(onlineStatus);
@@ -491,6 +488,8 @@ async function fetchAcceptedFriendships(currentUserId) {
                       </div>
                     </div>
                 `;
+                console.log(friendData.display_friends);
+                if (friendData.display_friends === true) {
                 const profileBox = document.createElement('div');
                 profileBox.className = 'profile-box';
                 profileBox.style.position = 'absolute';
@@ -502,7 +501,6 @@ async function fetchAcceptedFriendships(currentUserId) {
                 profileBox.style.transition = 'opacity 0.3s ease';
                 profileBox.style.pointerEvents = 'none';
                 profileBox.style.display = 'none';
-                //profileBox.textContent = `Profile of ${friend.friend_username}`;
                 document.body.appendChild(profileBox);
                 const friendName = listItem.querySelector('#friendUser');
                 friendName.addEventListener('mouseover', async (e) => {
@@ -549,7 +547,7 @@ async function fetchAcceptedFriendships(currentUserId) {
                     profileBox.style.opacity = '0';
                     profileBox.style.pointerEvents = 'none';
                 });
-                //console.log(friendship.friend_profile_picture);
+                }
                 friendshipList.appendChild(listItem);
             });
         }
