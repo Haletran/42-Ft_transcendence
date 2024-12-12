@@ -54,17 +54,19 @@ export class Pong extends Page {
                         <div class="accordion-item text-align-center">
                           <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                <h3 id="menu" ><i class="bi bi-trophy-fill"></i> Tournament</h3>
+                            <h3 id="menu" ><i class="bi bi-trophy-fill"></i> Tournament</h3>
                             </button>
                           </h2>
                           <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="d-flex flex-column gap-2">
                                     <label for="customRange1" class="form-label">How many players ?</label>
-                                    <input type="range" class="form-range" min="2" max="6" step="2" id="customRange1">
+                                    <input type="range" class="form-range" min="4" max="8" step="4" id="customRange1">
                                         <div class="user_name d-flex flex-column gap-2">
                                             <input type="text" class="form-control" id="player_1" placeholder="Player 1">
                                             <input type="text" class="form-control" id="player_2" placeholder="Player 2">
+                                            <input type="text" class="form-control" id="player_2" placeholder="Player 2">
+                                            <input type="text" class="form-control" id="player_2" placeholder="Player 4">
                                         </div>
                                     <button id="tournament_button" value="tour" class="btn btn-light">Start Tournament</button>
                                 </div>
@@ -114,7 +116,7 @@ export class Pong extends Page {
         document.querySelectorAll('.accordion-button').forEach(button => {
             button.addEventListener('click', function () {
                 const rangeInput = document.getElementById('customRange1');
-                rangeInput.value = 2;
+                rangeInput.value = 4;
                 rangeInput.focus();
             });
         });
