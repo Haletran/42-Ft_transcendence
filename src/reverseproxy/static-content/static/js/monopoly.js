@@ -1,11 +1,17 @@
-canvas = document.getElementById("monopoly_canvas");
-ctx = canvas.getContext("2d");
+let canvas = document.querySelector('canvas');
+if (!canvas) {
+    const gameDiv = document.querySelector('.game');
+    canvas = document.createElement('canvas');
+    canvas.id = 'monopoly_canvas';
+    gameDiv.appendChild(canvas);
+}
+const ctx = canvas.getContext("2d");
 
 let isPurchaseWindowOpen = false;
 let currentPlayerIndex = 0; // Start with player 1
-
+canvas.width = innerWidth - 100
+canvas.height = innerHeight - 100
 // PLAYERS RELATED
-
 
 const actionMessages = [];
 
@@ -678,10 +684,6 @@ function closePurchaseWindow() {
 
 
 
-
-
-
-
 // CANVAS RELATED
 
 function clearCanvas() {
@@ -698,7 +700,7 @@ function resizeCanvas() {
 
 const players = [];
 
-function init_monopoly_game(value) {
+export function init_monopoly_game(value) {
 
     if (players == 0) {
         // Initialize players based on playerCount
@@ -726,7 +728,6 @@ function monopoly_game() {
 }
 
 window.addEventListener('resize', resizeCanvas, false);
-resizeCanvas();
 
 canvas.addEventListener('mousemove', (event) => {
     if (isPurchaseWindowOpen) return;

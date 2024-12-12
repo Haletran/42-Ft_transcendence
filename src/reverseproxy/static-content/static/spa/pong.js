@@ -50,34 +50,30 @@ export class Pong extends Page {
                         vs 1</button>
                     <button id="start_button2" value="vsa" class="btn btn-outline-light full-width btn-lg">1
                         vs AI</button>
-                    <button id="tournament_button" class="btn btn-light full-width btn-lg">Tournament</button>
-                    <article id="dropdown-tour" class="flex-column justify-content-center align-items-center gap-2">
-                        <div class="card w-100">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                How many players?
-                                <div>
-                                    <button id="add_player" class="btn btn-outline-light"><i
-                                            class="bi bi-plus-circle"></i></button>
-                                    <button id="rm_player" class="btn btn-outline-light"><i
-                                            class="bi bi-dash-circle"></i></button>
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item text-align-center">
+                          <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <h3 id="menu" ><i class="bi bi-trophy-fill"></i> Tournament</h3>
+                            </button>
+                          </h2>
+                          <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="d-flex flex-column gap-2">
+                                    <label for="customRange1" class="form-label">How many players ?</label>
+                                    <input type="range" class="form-range" min="4" max="8" step="4" id="customRange1">
+                                        <div class="user_name d-flex flex-column gap-2">
+                                            <input type="text" class="form-control" id="player_1" placeholder="Player 1">
+                                            <input type="text" class="form-control" id="player_2" placeholder="Player 2">
+                                            <input type="text" class="form-control" id="player_2" placeholder="Player 2">
+                                            <input type="text" class="form-control" id="player_2" placeholder="Player 4">
+                                        </div>
+                                    <button id="tournament_button" value="tour" class="btn btn-light">Start Tournament</button>
                                 </div>
                             </div>
-                            <ul class="list-group list-group-flush ">
-
-                                <li class="list-group-item bg-grey">
-                                    <i class="bi bi-person"></i> bapasqui
-                                </li>
-                                    <i class="bi bi-robot"></i> AI
-                                </li>
-                            </ul>
+                          </div>
                         </div>
-                                <li class="list-group-item">
-                                    <i class="bi bi-robot"></i> AI
-                                </li>
-                            </ul>
-                        </div>
-                        <p id="error_msg" class="text-danger"></p>
-                    </article>
+                    </div>
                 </article>
             </div>
         </div>
@@ -102,7 +98,32 @@ export class Pong extends Page {
             });
         }
 
-        ['start_button', 'start_button2'].forEach(buttonId => {
+        document.getElementById('customRange1').addEventListener('input', function () {
+            const range = document.getElementById('customRange1');
+            const userNameContainer = document.querySelector('.user_name');
+            userNameContainer.innerHTML = '';
+            for (let i = 1; i <= range.value; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'form-control';
+                input.id = `player_${i}`;
+                input.placeholder = `Player ${i}`;
+                userNameContainer.appendChild(input);
+            }
+        });
+
+
+        document.querySelectorAll('.accordion-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const rangeInput = document.getElementById('customRange1');
+                rangeInput.value = 4;
+                rangeInput.focus();
+            });
+        });
+
+
+
+        ['start_button', 'start_button2', 'tournament_button'].forEach(buttonId => {
             const button = document.getElementById(buttonId);
             if (button) {
                 button.addEventListener('click', async function () {
@@ -114,9 +135,30 @@ export class Pong extends Page {
                     showElementsByClass('game', 'flex');
                     addClassToElementsByClass('game', 'center');
                     try {
+                        let winner = 0;
                         // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
                         const module = await import(`/static/spa/pong_game.js?timestamp=${new Date().getTime()}`);
-                        await module.startGame();
+                        if (buttonId === 'tournament_button') {
+                            let player_name = [];
+                            const range = document.getElementById('customRange1');
+                            for (let i = 1; i <= range.value; i++) {
+                                const player = document.getElementById(`player_${i}`);
+                                if (player) {
+                                    if (player.value == "") {
+                                        player_name.push(`Player ${i}`);
+                                    } else
+                                        player_name.push(player.value);
+                                }
+                            }
+                            // GET THE WINNER NAME HERE IF NEEDED
+                            winner = await module.startGame(button.value, player_name);
+                            console.log("WINNER tournament: ", winner);
+                        }
+                        else {
+                            // GET THE WINNER NAME HERE IF NEEDED
+                            winner = await module.startGame(button.value);
+                            console.log("WINNER 1v1: ", winner);
+                        }
                     } catch (err) {
                         console.error('Error loading game:', err);
                     }

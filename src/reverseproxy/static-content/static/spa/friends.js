@@ -55,7 +55,7 @@ export class Friends extends Page {
                     <a id="choose_param" data-link="/settings" 
                         class="list-group-item list-group-item-action">Settings</a>
                     <a id="choose_param" href="/friends" data-link="/friends"
-                        class="list-group-item list-group-item-action active">Friends</a>
+                        class="list-group-item list-group-item-action active-menu">Friends</a>
                     <a id="choose_param" href="/privacy" data-link="/privacy"
                         class="list-group-item list-group-item-action">Privacy</a>
                 </div>
@@ -529,7 +529,7 @@ async function fetchAcceptedFriendships(currentUserId) {
                         statSection.style.marginBottom = '10px';
                         statSection.innerHTML = statinfo;
                         profileBox.appendChild(statSection);
-                        
+
 
                         const matchhistory = await fetchFriendHistory(friendship.friend_username);
                         const matchSection = document.createElement('div');
@@ -538,7 +538,7 @@ async function fetchAcceptedFriendships(currentUserId) {
                         profileBox.appendChild(matchSection);
 
                     }
-                    catch(error) {
+                    catch (error) {
                         console.error(error);
                         profileBox.textContent = 'Failed to load profile info';
                     }

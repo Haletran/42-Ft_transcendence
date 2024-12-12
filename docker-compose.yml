@@ -33,7 +33,6 @@ services:
     command: >
       sh -c "sleep 3 && npx hardhat node"
 
-
   redis:
     image: redis:6
     container_name: redis
