@@ -117,7 +117,7 @@ services:
     image: postgres:latest
     container_name: friends-database
     ports:
-      - "5433"
+      - "5433:5433"
     volumes:
       - friends_data:/var/lib/postgresql/data
       - ./src/friends-database/postgresql.conf:/etc/postgresql/postgresql.conf

@@ -73,7 +73,7 @@ export async function isUserLoggedIn() {
     if (response.ok) {
       const userData = await response.json();
       return userData != null;
-    } else if (response.status === 401) {
+    } else if (response.status === 404) {
       // User is unauthenticated
       console.warn('User is not logged in.');
       return false;

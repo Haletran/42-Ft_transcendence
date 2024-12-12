@@ -4,6 +4,7 @@ import { Page } from '../src/pages.js';
 import { logoutUser } from "../src/logout.js";
 import { getCSRFToken } from "../src/csrf.js";
 import { Router } from '../src/router.js';
+import { deleteAccount } from "../src/logout.js";
 
 export class Privacy extends Page {
     constructor() {
@@ -77,7 +78,7 @@ export class Privacy extends Page {
                             </div>
                             <button id="update_privacy" type="submit" class="btn btn-light mt-3">Update privacy settings</button>
                             </form><br>
-                            <button type="button" class="btn btn-danger">Delete my account</button>
+                            <button type="button" class="btn btn-danger" id="delete_button">Delete my account</button>
                     </div>
                 </div>
             </div>
@@ -196,8 +197,8 @@ export class Privacy extends Page {
         }
 
 
-        let matchHistoryBOOL = null
-        let friendsBOOL = null;
+        let matchHistoryBOOL = userData.match_history;
+        let friendsBOOL = userData.display_friends;
 
         const matchHistory = document.getElementById('matchHistory');
         matchHistory.addEventListener('change', function() {
@@ -227,9 +228,9 @@ export class Privacy extends Page {
             e.preventDefault();
 
             const formData = new FormData();
+            // console.log('display_friends: ', userData.display_friends, ' match_history: ', userData.match_history);
             formData.append('matchHistory', matchHistoryBOOL);
 			formData.append('friendsDisplay', friendsBOOL);
-
             try {
 
                 const csrfToken = getCSRFToken('csrftoken');
@@ -257,6 +258,11 @@ export class Privacy extends Page {
                 console.error('Error:', error);
                 alert('An error occurred: ' + error.message);
             }
+        });
+
+        const deleteButton = document.getElementById('delete_button');
+        deleteButton.addEventListener('click', async (e) => {
+            deleteAccount();
         });
 
     }

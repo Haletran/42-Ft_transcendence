@@ -120,7 +120,7 @@ def clear_match_history(request):
                 return JsonResponse({'status': 'error', 'message': 'No records found matching the condition.'})
 
         except Game.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Old username not found.'}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'username not found.'}, status=400)
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
             

@@ -153,69 +153,67 @@ def update_profile_view(request):
             with transaction.atomic():
                 user = MyUser.objects.select_for_update().get(username=request.user.username)
             
-            if match_history is not None:
-                match_history_input = match_history.lower() == 'true'
-                user.match_history = match_history_input
-                if user.match_history == False:
+                if match_history is not None:
+                    match_history_input = match_history.lower() == 'true'
+                    print(match_history_input)
+                    user.match_history = match_history_input
+                    if not match_history_input:
+                        try:
+                            csrf_token = get_token(request)
+                            session = requests.Session()
+                            session.headers.update({'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf_token})
+                            session.cookies.set('csrftoken', csrf_token)
+                            delete_data = { 'username': request.user.username }
+                            delete_response = session.post('http://django-scores:9003/api/scores/clear_match_history/', data=delete_data)
+                            delete_response.raise_for_status()
+                        except Exception as e:
+                            return JsonResponse({'status': 'error clearing match history', 'message': str(e)})
+
+                if display_friends is not None:
+                    display_friends_input = display_friends.lower() == 'true'
+                    user.display_friends = display_friends_input
+                if email:
+                    user.email = email
+                if username:
+                    oldusername = user.username
+                    user.username = username
+                    # update the friend
                     try:
                         csrf_token = get_token(request)
+                        friend_data = { 'oldusername': oldusername, 'newusername': username }
                         session = requests.Session()
                         session.headers.update({'Content-Type': 'application/json', 'X-CSRFToken': csrf_token})
                         session.cookies.set('csrftoken', csrf_token)
-                        delete_data = { 'username': username }
-                        delete_response = session.post('http://django-scores:9003/api/scores/clear_match_history/',
-                            data=json.dumps(delete_data)
+                        friend_response = session.post('http://django-friends:9001/api/friends/update_friend_username/',
+                            data=json.dumps(friend_data)
                         )
-                        delete_response.raise_for_status()
+                        scores_response = session.post('http://django-scores:9003/api/scores/update_scores_username/',
+                            data=json.dumps(friend_data)
+                        )
+
+                        friend_response.raise_for_status()
+                        scores_response.raise_for_status()
+
                     except Exception as e:
-                        return JsonResponse({'status': 'error clearing match history', 'message': str(e)})
+                        return JsonResponse({'status': 'error updating other dbs', 'message': str(e)})
 
-            if display_friends is not None:
-                display_friends_input = display_friends.lower() == 'true'
-                user.display_friends = display_friends_input
-            if email:
-                user.email = email
-            if username:
-                oldusername = user.username
-                user.username = username
-                # update the friend
-                try:
-                    csrf_token = get_token(request)
-                    friend_data = { 'oldusername': oldusername, 'newusername': username }
-                    session = requests.Session()
-                    session.headers.update({'Content-Type': 'application/json', 'X-CSRFToken': csrf_token})
-                    session.cookies.set('csrftoken', csrf_token)
-                    friend_response = session.post('http://django-friends:9001/api/friends/update_friend_username/',
-                        data=json.dumps(friend_data)
-                    )
-                    scores_response = session.post('http://django-scores:9003/api/scores/update_scores_username/',
-                        data=json.dumps(friend_data)
-                    )
+                if password:
+                    user.set_password(password)
+                if uploaded_file:
+                    print(f"Received file: {uploaded_file.name}")
+                    user.profile_picture = uploaded_file
+                    print(f"File saved: {user.profile_picture.url}")
+                user.save()
+                update_session_auth_hash(request, user)
+                cache.delete(f"user_{user.pk}")
 
-                    friend_response.raise_for_status()
-                    scores_response.raise_for_status()
+                user_data = {
+                    'username': user.username,
+                    'email': user.email,
+                    'profile_picture': user.profile_picture.url if user.profile_picture else None,
+                }
 
-                except Exception as e:
-                    return JsonResponse({'status': 'error updating other dbs', 'message': str(e)})
-
-            if password:
-                user.set_password(password)
-            if uploaded_file:
-                print(f"Received file: {uploaded_file.name}")
-                user.profile_picture = uploaded_file
-                print(f"File saved: {user.profile_picture.url}")
-            user.save()
-            update_session_auth_hash(request, user)
-            cache.delete(f"user_{user.pk}")
-            # update_session_auth_hash(request, user)
-
-            user_data = {
-                'username': user.username,
-                'email': user.email,
-                'profile_picture': user.profile_picture.url if user.profile_picture else None,
-            }
-
-            return JsonResponse({'status': 'success', 'message': 'Profile successfully updated', 'user': user_data})
+                return JsonResponse({'status': 'success', 'message': 'Profile successfully updated', 'user': user_data})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     
@@ -357,3 +355,51 @@ def is_user_online(request):
         return JsonResponse({'error': 'Redis connection failed'}, status=500)
     except Exception as e:
         return JsonResponse({'error': 'Error fetching online status'}, status=400)
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        try:
+            username_res = request.user.username
+            with transaction.atomic():
+                deleted_count, _ = MyUser.objects.get(username=username_res).delete()
+            if deleted_count > 0:
+                # csrf_token = get_token(request)
+                # session = requests.Session()
+                # session.headers.update({'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf_token})
+                # session.cookies.set('csrftoken', csrf_token)
+                # delete_data = { 'username': username_res }
+
+                # clear match history
+                try:
+                    csrf_token = get_token(request)
+                    session = requests.Session()
+                    session.headers.update({'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf_token})
+                    session.cookies.set('csrftoken', csrf_token)
+                    delete_data = { 'username': username_res }
+                    delete_response = session.post('http://django-scores:9003/api/scores/clear_match_history/', data=delete_data)
+                    delete_response.raise_for_status()
+                except Exception as e:
+                    return JsonResponse({'status': 'error clearing match history', 'message': str(e)})
+                
+                # clear friends
+                try:
+                    csrf_token = get_token(request)
+                    session = requests.Session()
+                    session.headers.update({'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf_token})
+                    session.cookies.set('csrftoken', csrf_token)
+                    delete_friend_data = { 'username': username_res }
+                    delete_friend_response = session.post('http://django-friends:9001/api/friends/clear_friends/', data=delete_friend_data)
+                    delete_friend_response.raise_for_status()
+                except Exception as e:
+                    return JsonResponse({'status': 'error clearing friends', 'message': str(e)})
+            # delete csrf token ????
+                logout(request)
+                return JsonResponse({'status': 'success', 'message': 'Account deleted.'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'No records found matching the condition.'})
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)

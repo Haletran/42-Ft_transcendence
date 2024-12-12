@@ -3,6 +3,7 @@ import { getCSRFToken } from '../src/csrf.js';
 import { router } from '../app.js';
 import { logoutUser } from '../src/logout.js';
 import { startWebSocket } from './login_base.js';
+import { isUserLoggedIn } from '../app.js';
 
 export class RegisterPage extends Page {
 	constructor() {
@@ -80,12 +81,12 @@ export class RegisterPage extends Page {
 			<div class="mb-3 form-check">
 			  <input type="checkbox" class="form-check-input" id="matchHistory" />
 			  <label class="form-check-label" for="matchHistory">
-			  	I don't want you to keep track of my match history</label>
+			  	Do not keep track of my match history</label>
 			</div>
 			<div class="mb-3 form-check">
 			  <input type="checkbox" class="form-check-input" id="displayFriends" />
 			  <label class="form-check-label" for="displayFriends"
-				>I don't want my friends to be able to see my profile</label
+				>Do not display my profile informations to my friends</label
 			  >
 			</div>
 			<div class="mb-3 form-check">
@@ -129,8 +130,10 @@ export class RegisterPage extends Page {
 	  `;
 	}
 
-	render() {
-		logoutUser();
+	async render() {
+		const logBOOL = isUserLoggedIn();
+		if (logBOOL == true)
+			logoutUser();
 		
 		super.render();
 
@@ -165,7 +168,6 @@ export class RegisterPage extends Page {
 
 		const profileInput = document.getElementById('customProfilePicture');
 		profileInput.addEventListener('change', () => {
-			imageURL = null;
 			console.log("Uploaded file:", profileInput.files[0]);
 		});
 
