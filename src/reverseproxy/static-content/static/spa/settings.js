@@ -164,7 +164,6 @@ export class Settings extends Page {
                 const response = await fetch('/api/credentials/update_profile/', {
                     method: 'POST',
                     headers: {
-                        //'Content-Type': 'application/json',
                         'X-CSRFToken': csrfToken,
                     },
                     credentials: 'include',
@@ -175,19 +174,9 @@ export class Settings extends Page {
                     const result = await response.json();
                     console.log('Edit successful:', result);
                     this.render();
-                    // document.querySelector(".toast-body").textContent = "Profile updated successfully!";
-                    // document.querySelector(".toast").classList.add("show");
-                    // setTimeout(() => {
-                    //     document.querySelector(".toast").classList.remove("show");
-                    // }, 3000);
                 } else {
                     const error = await response.json();
                     console.error('Edit failed:', error);
-                    // document.querySelector(".toast-body").textContent = "Edit failed: " + error.message;
-                    // document.querySelector(".toast").classList.add("show");
-                    // setTimeout(() => {
-                    //     document.querySelector(".toast").classList.remove("show");
-                    // }, 3000);
                 }
             } catch (error) {
                 console.error('Error:', error);

@@ -63,17 +63,20 @@ export class Privacy extends Page {
                     <div class="card-body">
                         <h5 class="card-title">EU's General Data Protection Regulation (GDPR)</h5>
                         <h5 class="card-title">What we do with your data</h5>
-                        <h5 class="card-title">Privacy options</h5>
+                        <h5 class="card-title">Privacy options</h5><br>
                             <button type="button" class="btn btn-danger" id="propic-btn">Delete profile picture</button>
                             <button type="button" class="btn btn-danger" id="match-btn">Delete match history</button><br>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check1" name="track-match" value="something" not-checked>
-                                <label class="form-check-label">Do not keep track of my match history</label>
-                            </div> 
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check2" name="track-match" value="something" not-checked>
-                                <label class="form-check-label">Do not display my profile informations to my friends</label>
+                            <br><form id="privacy_form">
+                            <div class="mb3 form-check">
+                                <input class="form-check-input" type="checkbox" id="matchHistory">
+                                <label class="form-check-label" for="matchHistory">Do not keep track of my match history</label>
+                            </div> <br>
+                            <div class="mb3 form-check">
+                                <input class="form-check-input" type="checkbox" id="displayFriends">
+                                <label class="form-check-label" for="displayFriends">Do not display my profile informations to my friends</label>
                             </div>
+                            <button id="update_privacy" type="submit" class="btn btn-light mt-3">Update privacy settings</button>
+                            </form><br>
                             <button type="button" class="btn btn-danger">Delete my account</button>
                     </div>
                 </div>
@@ -82,11 +85,17 @@ export class Privacy extends Page {
     </div>
  `;
     }
-    render() {
+    async render() {
         isUserOnline();
         fetchMinInfo();
 
         super.render();
+
+        // update checkboxes value
+        const userData = await getUserInfos();
+        console.log('display_friends: ', userData.display_friends, ' match_history: ', userData.match_history);
+        userData.match_history == true ? document.getElementById('matchHistory').checked = false : document.getElementById('matchHistory').checked = true;
+        userData.display_friends == true ? document.getElementById('displayFriends').checked = false : document.getElementById('displayFriends').checked = true;
         
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
@@ -185,6 +194,70 @@ export class Privacy extends Page {
 
             });
         }
+
+
+        let matchHistoryBOOL = null
+        let friendsBOOL = null;
+
+        const matchHistory = document.getElementById('matchHistory');
+        matchHistory.addEventListener('change', function() {
+            if (this.checked) {
+                matchHistoryBOOL = false;
+                console.log(matchHistoryBOOL);
+            } else {
+                matchHistoryBOOL = true;
+                console.log(matchHistoryBOOL);
+            }
+        });
+
+        const displayFriends = document.getElementById('displayFriends');
+        displayFriends.addEventListener('change', function() {
+            if (this.checked) {
+                friendsBOOL = false;
+                console.log(friendsBOOL);
+            } else {
+                friendsBOOL = true;
+                console.log(friendsBOOL);
+            }
+        });
+
+        const form = document.getElementById('privacy_form');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('matchHistory', matchHistoryBOOL);
+			formData.append('friendsDisplay', friendsBOOL);
+
+            try {
+
+                const csrfToken = getCSRFToken('csrftoken');
+                if (!csrfToken) {
+                    console.error('CSRF token is missing!');
+                }
+                const response = await fetch('/api/credentials/update_profile/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
+                    credentials: 'include',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Privacy edit successful:', result);
+                    this.render();
+                } else {
+                    const error = await response.json();
+                    console.error('Privacy edit failed:', error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred: ' + error.message);
+            }
+        });
 
     }
 }

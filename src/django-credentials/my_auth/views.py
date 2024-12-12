@@ -148,9 +148,31 @@ def update_profile_view(request):
             email = request.POST.get('email')
             password = request.POST.get('password')
             uploaded_file = request.FILES.get('profile_picture')
+            match_history = request.POST.get('matchHistory') 
+            display_friends = request.POST.get('friendsDisplay')
             with transaction.atomic():
                 user = MyUser.objects.select_for_update().get(username=request.user.username)
             
+            if match_history is not None:
+                match_history_input = match_history.lower() == 'true'
+                user.match_history = match_history_input
+                if user.match_history == False:
+                    try:
+                        csrf_token = get_token(request)
+                        session = requests.Session()
+                        session.headers.update({'Content-Type': 'application/json', 'X-CSRFToken': csrf_token})
+                        session.cookies.set('csrftoken', csrf_token)
+                        delete_data = { 'username': username }
+                        delete_response = session.post('http://django-scores:9003/api/scores/clear_match_history/',
+                            data=json.dumps(delete_data)
+                        )
+                        delete_response.raise_for_status()
+                    except Exception as e:
+                        return JsonResponse({'status': 'error clearing match history', 'message': str(e)})
+
+            if display_friends is not None:
+                display_friends_input = display_friends.lower() == 'true'
+                user.display_friends = display_friends_input
             if email:
                 user.email = email
             if username:
