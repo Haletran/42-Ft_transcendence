@@ -364,13 +364,6 @@ def delete_account(request):
             with transaction.atomic():
                 deleted_count, _ = MyUser.objects.get(username=username_res).delete()
             if deleted_count > 0:
-                # csrf_token = get_token(request)
-                # session = requests.Session()
-                # session.headers.update({'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf_token})
-                # session.cookies.set('csrftoken', csrf_token)
-                # delete_data = { 'username': username_res }
-
-                # clear match history
                 try:
                     csrf_token = get_token(request)
                     session = requests.Session()
