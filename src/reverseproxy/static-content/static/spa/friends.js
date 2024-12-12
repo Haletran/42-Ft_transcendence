@@ -467,7 +467,7 @@ async function fetchAcceptedFriendships(currentUserId) {
         } else {
             data.accepted_friendships.forEach(async (friendship) => {
                 const listItem = document.createElement('div');
-                console.log('Searching for friend: ', friendship.firend_username);
+                console.log('Searching for friend: ', friendship.friend_username);
                 const friendData = await getCurrentFriendInfo(friendship.friend_username);
                 const onlineStatus = await isFriendOnline(friendship.friend_username);
                 console.log(onlineStatus);

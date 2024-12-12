@@ -85,8 +85,10 @@ export class loginBasePage extends Page {
 		</div>
 	  `;
 	}
-	render() {
-		logoutUser();
+	async render() {
+		const logBOOL = isUserLoggedIn();
+		if (logBOOL == true)
+			logoutUser();
 		super.render(); // Call the parent render method
 		this.attachFormLoginListener(); // Now attach the listener here
 		this.loading_42();
