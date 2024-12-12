@@ -50,7 +50,7 @@ class Player {
         movePlayers()
         this.draw()
     }
-    
+
     reset() {
         this.score = 0
         this.x = this.initialX
@@ -76,12 +76,12 @@ class Ball {
         ctx.fillStyle = this.color
         ctx.fill()
     }
-    
+
     update() {
         moveBall()
         this.draw()
     }
-    
+
     reset() {
         this.x = this.initialX
         this.y = this.initialY
@@ -117,7 +117,7 @@ class Table {
         ctx.fillText(game.player1.score, canvas.width / 2 - 100, 100);
         ctx.fillText(game.player2.score, canvas.width / 2 + 70, 100);
     }
-    
+
     update() {
         this.draw()
     }
@@ -132,11 +132,11 @@ class Tournament {
             const xPos = spacing * (index + 1);
             return new Player(
                 xPos - playerWidth / 2,
-                canvas.height / 2, 
-                'white', 
-                10, 
-                100, 
-                5, 
+                canvas.height / 2,
+                'white',
+                10,
+                100,
+                5,
                 name
             );
         });
@@ -171,28 +171,28 @@ class Tournament {
 
     async playMatch(player1, player2) {
         game.player1 = new Player(
-            30, 
-            canvas.height / 2, 
-            'white', 
-            10, 
-            100, 
-            5, 
+            30,
+            canvas.height / 2,
+            'white',
+            10,
+            100,
+            5,
             player1.name
         );
         game.player2 = new Player(
-            canvas.width - 30, 
-            canvas.height / 2, 
-            'white', 
-            10, 
-            100, 
-            5, 
+            canvas.width - 30,
+            canvas.height / 2,
+            'white',
+            10,
+            100,
+            5,
             player2.name
         );
-        
+
         game.ball.reset();
         game.player1.reset();
         game.player2.reset();
-    
+
         return new Promise((resolve) => {
             const matchLoop = () => {
                 if (GameEnd()) {
@@ -211,7 +211,7 @@ class Tournament {
         });
     }
 
-    async startTournament() {
+    async startTournament(resolve) {
         // Tournament progression
         while (this.currentRound < Math.log2(this.players.length)) {
             const roundMatchups = this.bracket.filter(match => match.winner === null);
@@ -219,7 +219,7 @@ class Tournament {
 
             for (const match of roundMatchups) {
                 const winner = await this.playMatch(match.player1, match.player2);
-                alert (`${winner.name} won!`);
+                alert(`${winner.name} won!`);
                 match.winner = winner;
                 roundWinners.push(winner);
             }
@@ -239,13 +239,13 @@ class Tournament {
             this.currentRound++;
         }
 
-        // CEST ICI QUE TU RECUPERES LE GAGNANT
         const tournamentWinner = this.bracket[0].winner;
         alert(`Tournament Winner: ${tournamentWinner.name}!`);
         clearCanvas();
         hideElementsByClass('game');
         showElementsByClass('menu', 'flex');
         addClassToElementsByClass('menu', 'center');
+        resolve(tournamentWinner.name);
     }
 }
 
@@ -330,9 +330,7 @@ function moveBall() {
 }
 
 function GameEnd() {
-    if (game.player1.score >= 5 || game.player2.score >=  5) {
-        game.player1.reset()
-        game.player2.reset()
+    if (game.player1.score >= 5 || game.player2.score >= 5) {
         game.ball.reset()
         keys = {};
         return true
@@ -341,7 +339,7 @@ function GameEnd() {
 }
 
 function getWinner(p1, p2) {
-    if (p1.score >= 5) {
+    if (p1.score >= 4) {
         return p1.name
     } else if (p2.score >= 5) {
         return p2.name
@@ -350,24 +348,25 @@ function getWinner(p1, p2) {
     }
 }
 
-async function animate(pong) {
+async function animate(pong, resolve) {
     if (pong.gameMode === 'pvp') {
         if (GameEnd()) {
-            console.log(game.player1.name);
             const winner = getWinner(game.player1, game.player2);
+            game.player1.reset()
+            game.player2.reset()
             alert(`${winner} won!`);
             clearCanvas();
             hideElementsByClass('game');
             showElementsByClass('menu', 'flex');
             addClassToElementsByClass('menu', 'center');
-            return;
+            resolve(winner);
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         game.table.update()
         game.player1.update()
         game.player2.update()
         game.ball.update()
-        animationFrameId = requestAnimationFrame(() => animate(pong))
+        animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
     }
 }
 
@@ -388,16 +387,19 @@ window.addEventListener('keydown', checkKeyDown, false);
 window.addEventListener('keyup', checkKeyUp, false);
 
 export function startGame(gamemode, playerNames) {
-    if (gamemode === 'pvp') {
-        const pong = new Pong(gamemode);
-        animate(pong);
-    } else if (gamemode === 'tour') {
-        startTournament(playerNames);
-    }
+    return new Promise((resolve) => {
+
+        if (gamemode === 'pvp') {
+            const pong = new Pong(gamemode);
+            animate(pong, resolve);
+        } else if (gamemode === 'tour') {
+            startTournament(playerNames, resolve);
+        }
+    });
 }
 
-export function startTournament(playerNames) {
+export function startTournament(playerNames, resolve) {
     // might need to check if there is the correct nb of players and if there have a name
     const tournament = new Tournament(playerNames);
-    tournament.startTournament();
+    tournament.startTournament(resolve);
 }
