@@ -20,6 +20,7 @@ class Player {
         this.id = id;
         this.money = 1000;
         this.position = 0;
+        this.isTurn = false;
         this.propertyOwned = [];
         this.inJail = 0;
         this.isActive = true;
@@ -35,13 +36,13 @@ class Player {
 
     getPlayerPng(color) {
         if (color === '#2DCC4A')
-            return '../imgs/pion_vert.svg';
+            return 'static/imgs/pion_vert.svg';
         if (color === '#3357FF')
-            return '../imgs/pion_bleu.svg';
+            return 'static/imgs/pion_bleu.svg';
         if (color === '#F1C40F')
-            return '../imgs/pion_violet.svg';
+            return 'static/imgs/pion_violet.svg';
         if (color === '#8E44AD')
-            return '../imgs/pion_rouge.svg';
+            return 'static/imgs/pion_rouge.svg';
     }
 
     draw(ctx, board) {
@@ -108,6 +109,11 @@ function drawPlayerInfo() {
         ctx.fillStyle = player.color; // Use the player's color
         ctx.fillRect(sidebarX + 20, infoY - 15, 100, 20); // Rectangle behind name
 
+        if (player.isTurn == true) {
+            ctx.fillStyle = "#FFF";
+            ctx.fillRect(sidebarX + 10, infoY - 15, 5, 50); // Draw a vertical line
+        }
+
         // Set text color and draw player's name on top of the color block
         ctx.fillStyle = "#FFF";
         ctx.fillText(`Player ${player.id}`, sidebarX + 20, infoY);
@@ -119,6 +125,7 @@ function drawPlayerInfo() {
         player.propertyOwned.forEach((property, index) => {
             ctx.fillText(`- ${property.name}`, sidebarX + 40, infoY + 90 + index * 20);
         });
+
 
     });
     ctx.font = "12px Arial"; // Smaller font for other details
@@ -299,11 +306,15 @@ function drawRoundedRect(x, y, width, height, radius, stroke, lineWidth) {
 function drawDiceButton() {
     const radius = 10; // Border radius
     ctx.fillStyle = "#212529"; // Button color
-    drawRoundedRect(diceButton.x, diceButton.y, diceButton.width, diceButton.height, radius, "white", 2); // Draw button
+    drawRoundedRect(diceButton.x, diceButton.y, diceButton.width + 30, diceButton.height, radius, "white", 2); // Draw button
 
     ctx.fillStyle = "#FFF"; // Text color
     ctx.font = "20px Arial"; // Font style
-    ctx.fillText("Roll Dice", diceButton.x + 10, diceButton.y + 30); // Draw button text
+
+    const diceImage = new Image();
+    diceImage.src = "static/imgs/dice_white.png"; // Replace with the actual path to your image
+    ctx.drawImage(diceImage, diceButton.x + 10, diceButton.y + 10, 30, 30); // Draw the dice image
+    ctx.fillText("Roll Dice", diceButton.x + 40, diceButton.y + 30); // Draw button text
     ctx.font = "12px Arial"; // Font style
 }
 
@@ -340,7 +351,7 @@ function rollDice() {
         if (player.inJail === 0) {
             addActionMessage(`Player ${player.id} is now released from jail!`);
         }
-        continueGame();
+        continueGame(player);
         return;
     }
 
@@ -367,7 +378,7 @@ function rollDice() {
 
     addActionMessage(`Player ${currentPlayerIndex + 1} rolled a ${diceValue}, and landed on ${landedTile.name}.`);
     if (player.price <= 0)
-        continueGame();
+        continueGame(player);
 
     console.log(`Player ${player.id} pos ${player.position}`);
 
@@ -389,7 +400,7 @@ function rollDice() {
 
         waitForPurchaseDecision(player, landedTile, function (decision) {
             closePurchaseWindow();
-            continueGame();  // Resume the game after handling the purchase decision
+            continueGame(player);  // Resume the game after handling the purchase decision
         });
         return;
     }
@@ -400,7 +411,7 @@ function rollDice() {
 
         waitForBuildDecision(player, landedTile, function (decision) {
             closePurchaseWindow();
-            continueGame();  // Resume the game after handling the build decision
+            continueGame(player);  // Resume the game after handling the build decision
         });
         return;
     }
@@ -425,11 +436,15 @@ function rollDice() {
     drawPlayers();
     drawActionDisplay();
     endTurn();
-    continueGame(); // Resume if no purchase was required
+    continueGame(player); // Resume if no purchase was required
 }
 
-function continueGame() {
+function continueGame(old_player) {
+    if (old_player)
+        old_player.isTurn = false;
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    let player = players[currentPlayerIndex];
+    player.isTurn = true;
     drawBoard();
     drawPlayers();
     drawActionDisplay();
@@ -530,8 +545,10 @@ function drawBoard() {
         const winner = players.find(player => player.isActive);
         alert(`Game over! Player ${winner.id} is the winner!`);
         resetGame();
+        return 0;
         // Additional logic to end the game, such as stopping turns or displaying a winner screen
     }
+
     if (tiles.length === 0) {
         const margin = 10; // Increased margin for inward positioning
         const boardSize = Math.min(canvas.width, canvas.height) - margin * 2;
@@ -573,10 +590,10 @@ function drawBoard() {
             new Tile("Go to Minishell", "jail", startX + tileSize * 7, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, cornerSize, "#ddd", 0, 0), // Tile 22
             new Tile("Tile 15", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 6 * tileSize, tileSize, cornerSize, "#fff", -350, -150), // Tile 23
             new Tile("Chance", "chance", startX + tileSize * 7, startY + boardSize - cornerSize - 5 * tileSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 24
-            new Tile("42 Angouleme", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 4 * tileSize, tileSize, cornerSize, "#fff", -350, -150, "/static/42_angouleme.jpg"), // Tile 25
+            new Tile("42 Angouleme", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 4 * tileSize, tileSize, cornerSize, "#fff", -350, -150, "/static/imgs/42_angouleme.jpg"), // Tile 25
             new Tile("Special Tile", "special", startX + tileSize * 7, startY + boardSize - cornerSize - 3 * tileSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 26
             new Tile("Event", "event", startX + tileSize * 7, startY + boardSize - cornerSize - 2 * tileSize, cornerSize, tileSize, "#ffcc00", 0, 0), // Tile 14
-            new Tile("42 Paris", 8, startX + tileSize * 7, startY + boardSize - cornerSize - tileSize, tileSize, cornerSize, "#fff", -400, -200, "/static/images_42.png"), // Tile 27
+            new Tile("42 Paris", 8, startX + tileSize * 7, startY + boardSize - cornerSize - tileSize, tileSize, cornerSize, "#fff", -400, -200, "/static/imgs/42.png"), // Tile 27
         );
     }
     // Draw all tiles
@@ -605,7 +622,7 @@ canvas.addEventListener("click", function (event) // EVENT FOR ROLL DICE
 function drawCurrentPlayerTurn() {
     ctx.fillStyle = "#FFF"; // Text color
     ctx.font = "24px Arial"; // Font style
-    ctx.fillText(`Current Player: ${currentPlayerIndex + 1}`, 960, 550); // Draw current player turn
+    ctx.fillText(`${currentPlayerIndex + 1} is playing...`, 350, 180); // Draw current player turn
     ctx.font = "12px Arial";
 }
 
@@ -792,29 +809,19 @@ function showTileInfo(tile) {
 function drawActionDisplay() {
     const x = 150;            // X-position of the display box
     const y = 200; // Y-position near the bottom of the canvas
-    const width = 550;       // Width of the display box
-    const height = 250;      // Height of the display box
 
-    // Draw white background box
-    ctx.fillStyle = "white";
-    ctx.fillRect(x, y, width, height);
-
-    // Draw border around the box
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x, y, width, height);
-
-    // Display each action message in the box
-    ctx.fillStyle = "black";
-    ctx.font = "14px Arial";
+    ctx.fillStyle = "rgba(206, 198, 225, 0.7)";
+    ctx.font = "12px Arial";
     let messageY = y + 20;
 
     for (let i = 0; i < actionMessages.length; i++) {
-        ctx.fillText(actionMessages[i], x + 10, messageY);
+        ctx.fillText(actionMessages[i], x + 150, messageY);
         messageY += 20;
     }
     ctx.font = "12px Arial";
 }
+
+
 
 // Function to add a new action message and redraw the display
 function addActionMessage(message) {

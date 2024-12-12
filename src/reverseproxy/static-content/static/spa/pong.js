@@ -1,6 +1,6 @@
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
-import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
+import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie } from '../js/utils.js';
 import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
 
@@ -88,6 +88,7 @@ export class Pong extends Page {
         startWebSocket();
         super.render();
         this.eventListeners();
+        setACookie('game_running', 'false', 1);
     }
 
     eventListeners() {
@@ -122,7 +123,6 @@ export class Pong extends Page {
         });
 
 
-
         ['start_button', 'start_button2', 'tournament_button'].forEach(buttonId => {
             const button = document.getElementById(buttonId);
             if (button) {
@@ -138,6 +138,7 @@ export class Pong extends Page {
                         let winner = 0;
                         // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
                         const module = await import(`/static/spa/pong_game.js?timestamp=${new Date().getTime()}`);
+                        setACookie('game_running', 'true', 1);
                         if (buttonId === 'tournament_button') {
                             let player_name = [];
                             const range = document.getElementById('customRange1');
@@ -153,11 +154,13 @@ export class Pong extends Page {
                             // GET THE WINNER NAME HERE IF NEEDED
                             winner = await module.startGame(button.value, player_name);
                             console.log("WINNER tournament: ", winner);
+                            setACookie('game_running', 'false', 1);
                         }
                         else {
                             // GET THE WINNER NAME HERE IF NEEDED
                             winner = await module.startGame(button.value);
                             console.log("WINNER 1v1: ", winner);
+                            setACookie('game_running', 'false', 1);
                         }
                     } catch (err) {
                         console.error('Error loading game:', err);

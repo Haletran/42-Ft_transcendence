@@ -1,5 +1,5 @@
 // SETUP CANVAS
-import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
+import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, getACookie } from '../js/utils.js';
 
 let canvas = document.querySelector('canvas');
 if (!canvas) {
@@ -213,6 +213,9 @@ class Tournament {
 
     async startTournament(resolve) {
         // Tournament progression
+        if (getACookie('game_running') === 'false') {
+            return;
+        }
         while (this.currentRound < Math.log2(this.players.length)) {
             const roundMatchups = this.bracket.filter(match => match.winner === null);
             const roundWinners = [];
@@ -349,17 +352,22 @@ function getWinner(p1, p2) {
 }
 
 async function animate(pong, resolve) {
+    if (getACookie('game_running') === 'false') {
+        return;
+    }
     if (pong.gameMode === 'pvp') {
         if (GameEnd()) {
             const winner = getWinner(game.player1, game.player2);
             game.player1.reset()
             game.player2.reset()
             alert(`${winner} won!`);
+            cancelAnimationFrame(animationFrameId);
             clearCanvas();
             hideElementsByClass('game');
             showElementsByClass('menu', 'flex');
             addClassToElementsByClass('menu', 'center');
             resolve(winner);
+            return;
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         game.table.update()
@@ -368,6 +376,7 @@ async function animate(pong, resolve) {
         game.ball.update()
         animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
     }
+    console.log("SCORE : ", game.player1.score, game.player2.score)
 }
 
 // UTILS
@@ -387,19 +396,25 @@ window.addEventListener('keydown', checkKeyDown, false);
 window.addEventListener('keyup', checkKeyUp, false);
 
 export function startGame(gamemode, playerNames) {
-    return new Promise((resolve) => {
+    if (getACookie('game_running') === 'true') {
+        return new Promise((resolve) => {
 
-        if (gamemode === 'pvp') {
-            const pong = new Pong(gamemode);
-            animate(pong, resolve);
-        } else if (gamemode === 'tour') {
-            startTournament(playerNames, resolve);
-        }
-    });
+            if (gamemode === 'pvp') {
+                const pong = new Pong(gamemode);
+                animate(pong, resolve);
+            } else if (gamemode === 'tour') {
+                startTournament(playerNames, resolve);
+            }
+        });
+    }
+    else {
+        resolve("Game already running")
+        return;
+    }
 }
 
 export function startTournament(playerNames, resolve) {
     // might need to check if there is the correct nb of players and if there have a name
     const tournament = new Tournament(playerNames);
-    tournament.startTournament(resolve);
+    const winner = tournament.startTournament(resolve);
 }
