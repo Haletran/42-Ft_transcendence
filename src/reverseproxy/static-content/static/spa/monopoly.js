@@ -1,6 +1,9 @@
-import { fetchMonopInfo } from '../src/fetchUser.js';
+import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
-import { isUserOnline } from './home.js';
+import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
+import { startWebSocket } from './login_base.js';
+import { logoutUser } from '../src/logout.js';
+
 
 export class Monopoly extends Page {
     constructor() {
@@ -65,12 +68,42 @@ export class Monopoly extends Page {
         </div>
     </div>
     <div class="game justify-content-center align-items-center">
-        <canvas id="monopoly_canvas" style="display: none;"></canvas>
+    </div>
         `;
     }
     render() {
-        fetchMonopInfo();
-        isUserOnline();
+        fetchMinInfo();
+        startWebSocket();
         super.render(); // Call the parent render method
+        this.eventListeners();
+    }
+
+    eventListeners() {
+        const logoutButton = document.getElementById('logout-butt');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function () {
+                logoutUser();
+            });
+        }
+
+        ['start_button_m'].forEach(buttonId => {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.addEventListener('click', async function () {
+                    hideElementsByClass('menu');
+                    showElementsByClass('game', 'flex');
+                    addClassToElementsByClass('game', 'center');
+                    try {
+                        // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
+                        let players = ["test", "test2"]
+                        const module = await import(`/static/js/monopoly.js?timestamp=${new Date().getTime()}`);
+                        await module.init_monopoly_game();
+                    }
+                    catch (error) {
+                        console.error('Error starting game:', error);
+                    }
+                });
+            }
+        });
     }
 }
