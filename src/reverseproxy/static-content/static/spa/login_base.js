@@ -86,7 +86,7 @@ export class loginBasePage extends Page {
 	  `;
 	}
 	async render() {
-		const logBOOL = isUserLoggedIn();
+		const logBOOL = await isUserLoggedIn();
 		if (logBOOL == true)
 			logoutUser();
 		super.render(); // Call the parent render method

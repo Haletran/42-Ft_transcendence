@@ -60,7 +60,6 @@ export class HomePage extends Page {
     
     render() {
         fetchMinInfo(); // will go fetch ONLY the profile pic
-        isUserOnline();
         super.render();
         
         const logoutButton = document.getElementById('logout-butt');

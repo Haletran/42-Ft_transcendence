@@ -2,18 +2,25 @@ import { checkUserAuthentification, isUserLoggedIn } from "../app.js";
 export class Router {
 
 	constructor(routes) {
+	  console.log('In router constructor');
 	  this.routes = routes;
 	  // Navigate to the initial path
-	  checkUserAuthentification(window.location.pathname)
-	  //this.navigate();
+	  //checkUserAuthentification(window.location.pathname)
+	  this.authPath = null;
 	  // Add event listener for navigation
 	  window.addEventListener('popstate', () => {
 		this.navigate(); // This will handle back/forward navigation
 	  });
 	}
   
-	navigate(path = window.location.pathname) {
-	  console.log('In navigate -> Navigating to:', path);
+	async initialize() {
+		const npath = window.location.pathname;
+		this.authPath = await checkUserAuthentification(npath);
+		this.navigate(this.authPath);
+	}
+	async navigate(path = this.authPath || window.location.pathname) {
+
+	  console.log('In navigate -> Navigating to:', this.path);
 	  const route = this.routes[path] || this.notFoundPage;
 	  console.log('In navigate -> Route found:', route.name);
   

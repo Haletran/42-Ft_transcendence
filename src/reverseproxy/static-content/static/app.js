@@ -51,20 +51,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   //console.log("BIND NAV", window.location.pathname);
   //checkUserAuthentification(window.location.pathname);
-  window.addEventListener('popstate', router.navigate.bind(router));
-  // router.navigate();
+  //window.addEventListener('popstate', router.navigate.bind(router));
+  ( async () => { await router.initialize();})()
 });
 
 export async function checkUserAuthentification(path) {
-  const isLogged = await isUserLoggedIn();
+  try {
+      const isLogged = await isUserLoggedIn();
 
-  console.log('inCheckUserAuth: ', isLogged);
-  if (isLogged || path === '/login_base' || path === '/register' || path === '/') {
-    console.log("going to the path");
-    router.goTo(path);
-  } else {
-    router.goTo('/login_base');
-  }
+      console.log('User Authenticated: ', isLogged);
+
+      const PublicPaths = ['/login_base', '/', '/register'];
+
+      if (isLogged || PublicPaths.includes(path)) {
+        return path;
+      } else {
+        return '/login_base';
+
+      }
+    } catch (error) {
+      console.error('Error checking user authentication:', error);
+      return '/login_base';
+    }
 }
 
 export async function isUserLoggedIn() {

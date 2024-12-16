@@ -199,3 +199,5 @@ CACHES = {
         # 'TIMEOUT': None,
     }
 }
+
+SECURE_BROWSER_XSS_FILTER = True
