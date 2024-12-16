@@ -1,20 +1,22 @@
 // SETUP CANVAS
-import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, getACookie } from '../js/utils.js';
+import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie, getACookie } from '../js/utils.js';
 
 let canvas = document.querySelector('canvas');
 if (!canvas) {
     const gameDiv = document.querySelector('.game');
     canvas = document.createElement('canvas');
     canvas.id = 'pong_canvas';
+    canvas.classList.add('position-absolute', 'top-50', 'start-50', 'translate-middle');
     gameDiv.appendChild(canvas);
 }
 const ctx = canvas.getContext("2d");
 
 // VARIABLES
-canvas.width = innerWidth - 100
-canvas.height = innerHeight - 100
+canvas.width = innerWidth - 400
+canvas.height = innerHeight - 200
 let keys = {};
 let animationFrameId;
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // CENTER THE THING ON THE SCREEN USE IT WITH THE BOARD
 const x = canvas.width / 2
@@ -112,8 +114,12 @@ class Table {
         ctx.lineTo(canvas.width / 2, 0);
         ctx.stroke();
 
-        ctx.font = "48px serif";
-        ctx.fillStyle = 'white';
+        ctx.font = "23px sans-serif";
+        ctx.fillStyle = 'grey';
+        ctx.fillText(game.player1.name, 50, 50);
+        ctx.fillText(game.player2.name, canvas.width - 150, 50);
+
+        ctx.font = "48px sans-serif";
         ctx.fillText(game.player1.score, canvas.width / 2 - 100, 100);
         ctx.fillText(game.player2.score, canvas.width / 2 + 70, 100);
     }
@@ -289,18 +295,30 @@ function movePlayers() {
     }
     if (keys['32']) { // SPACE
         // PRESS SPACE if you want to make a user won (debug purpose)
+        console.log("SPACE PRESSED")
         game.player1.score = 5
     }
 }
 
-function moveBall() {
+async function moveBall() {
+    const hitEffect = () => {
+        ctx.save();
+        ctx.fillStyle = 'red';
+        ctx.globalAlpha = 0.5;
+        ctx.beginPath();
+        ctx.arc(game.ball.x, game.ball.y, game.ball.radius * 2, 0, Math.PI * 2, false);
+        ctx.fill();
+        ctx.restore();
+    };
     if (game.ball.y + game.ball.radius > canvas.height || game.ball.y - game.ball.radius < 0) {
         game.ball.velocity.y = -game.ball.velocity.y
     }
     if (game.ball.x + game.ball.radius > canvas.width || game.ball.x - game.ball.radius < 0) {
         if (game.ball.x + game.ball.radius > game.player2.x) {
+            hitEffect();
             game.player1.score += 1
         } else if (game.ball.x - game.ball.radius < game.player1.x + game.player1.width) {
+            hitEffect();
             game.player2.score += 1
         }
         game.ball.x = game.ball.initialX
@@ -354,10 +372,31 @@ function getWinner(p1, p2) {
     }
 }
 
+function linkPause(pong, resolve) {
+    let value = 0;
+    const pauseButton = document.getElementById('pause_button')
+    const pause = document.querySelector('.bi-pause-fill');
+    pauseButton.addEventListener('click', () => {
+        console.log("PAUSE BUTTON CLICKED")
+        if (value % 2 == 0) {
+            pause.classList.remove('bi-pause-fill');
+            pause.classList.add('bi-play-fill');
+            cancelAnimationFrame(animationFrameId)
+        }
+        else {
+            pause.classList.remove('bi-play-fill');
+            pause.classList.add('bi-pause-fill');
+            animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
+        }
+        value += 1
+    })
+}
+
 async function animate(pong, resolve) {
     if (getACookie('game_running') === 'false') {
         return;
     }
+
     if (pong.gameMode === 'pvp') {
         if (GameEnd()) {
             const winner = getWinner(game.player1, game.player2);
@@ -395,29 +434,45 @@ function checkKeyUp(e) {
     keys[e.keyCode] = false;
 }
 
+async function pauseGame(value) {
+    setACookie('game_running', 'false', 1);
+    await sleep(value);
+    setACookie('game_running', 'true', 1);
+}
+
+
+
 window.addEventListener('keydown', checkKeyDown, false);
 window.addEventListener('keyup', checkKeyUp, false);
 
 export function startGame(gamemode, playerNames) {
     if (getACookie('game_running') === 'true') {
         return new Promise((resolve) => {
-
-            if (gamemode === 'pvp') {
-                const pong = new Pong(gamemode);
-                animate(pong, resolve);
-            } else if (gamemode === 'tour') {
-                startTournament(playerNames, resolve);
-            }
+            let count = 3;
+            const interval = setInterval(() => {
+                ctx.clearRect(canvas.width / 2 - 50, canvas.height / 2 - 100, 100, 150);
+                ctx.font = "50px Arial";
+                ctx.fillStyle = "white";
+                ctx.fillText(count, canvas.width / 2 - 20, canvas.height / 2);
+                count--;
+                if (count < 0) {
+                    clearInterval(interval);
+                    if (gamemode === 'pvp') {
+                        const pong = new Pong(gamemode);
+                        linkPause(pong, resolve);
+                        animate(pong, resolve);
+                    }
+                    else if (gamemode === 'tour') {
+                        startTournament(playerNames, resolve);
+                    }
+                }
+            }, 500);
         });
-    }
-    else {
-        resolve("Game already running")
-        return;
     }
 }
 
 export function startTournament(playerNames, resolve) {
     // might need to check if there is the correct nb of players and if there have a name
     const tournament = new Tournament(playerNames);
-    const winner = tournament.startTournament(resolve);
+    tournament.startTournament(resolve);
 }
