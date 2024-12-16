@@ -272,6 +272,9 @@ function initGame() {
 const game = initGame();
 
 function movePlayers() {
+    if (getACookie('game_running') === 'false') {
+        return;
+    }
     if (keys['38'] && game.player2.y > 0) { // UP
         game.player2.y -= game.player2.speed;
     }
@@ -376,7 +379,7 @@ async function animate(pong, resolve) {
         game.ball.update()
         animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
     }
-    console.log("SCORE : ", game.player1.score, game.player2.score)
+    console.log("Game is running, the SCORE is (1/2): ", game.player1.score, game.player2.score)
 }
 
 // UTILS

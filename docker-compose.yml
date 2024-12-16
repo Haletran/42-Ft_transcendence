@@ -106,7 +106,7 @@ services:
     env_file:
       - .env
     environment:
-      VAULT_ADDR: 'http://vault_container:8200' # Vault service name here
+      - VAULT_ADDR=http://vault_container:8200
     depends_on:
       - friends-database
     networks:
