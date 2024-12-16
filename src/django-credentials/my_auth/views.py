@@ -92,8 +92,12 @@ def logout_view(request):
         return response
     return JsonResponse({'error': 'Invalid request method (logging out)'}, status=405)
 
-@login_required
+# @login_required
 def user_info(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "error": "User is not authenticated."
+        }, status=401)
     try:
         user = request.user
         profile_picture_url = user.profile_picture.url if user.profile_picture else None
