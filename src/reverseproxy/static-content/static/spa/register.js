@@ -68,7 +68,9 @@ export class RegisterPage extends Page {
 				placeholder="Enter a password"
 			  />
 			  <div id="passwordHelpBlock" class="form-text text-white">
-				Your password must be 8-20 characters long.
+				Your password must be at least 12 characters long.
+				<br>It cannot contain your username.<br>
+				It cannot be only numeric characters.<br>
 			  </div>
 			</div>
 
