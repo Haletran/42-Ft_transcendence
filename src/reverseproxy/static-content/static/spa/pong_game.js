@@ -1,20 +1,32 @@
 // SETUP CANVAS
-import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, getACookie } from '../js/utils.js';
+import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie, getACookie } from '../js/utils.js';
 
 let canvas = document.querySelector('canvas');
 if (!canvas) {
     const gameDiv = document.querySelector('.game');
     canvas = document.createElement('canvas');
     canvas.id = 'pong_canvas';
+    canvas.classList.add('position-absolute', 'top-50', 'start-50', 'translate-middle');
     gameDiv.appendChild(canvas);
 }
 const ctx = canvas.getContext("2d");
+let game = 0;
 
 // VARIABLES
-canvas.width = innerWidth - 100
-canvas.height = innerHeight - 100
+canvas.width = innerWidth - 400
+canvas.height = innerHeight - 200
 let keys = {};
 let animationFrameId;
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const hitEffect = () => {
+    ctx.save();
+    ctx.fillStyle = 'red';
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.arc(game.ball.x, game.ball.y, game.ball.radius * 2, 0, Math.PI * 2, false);
+    ctx.fill();
+    ctx.restore();
+};
 
 // CENTER THE THING ON THE SCREEN USE IT WITH THE BOARD
 const x = canvas.width / 2
@@ -22,7 +34,7 @@ const y = canvas.height / 2
 
 // SETUP GAME CLASSES
 class Player {
-    constructor(x, y, color, width, height, speed, name) {
+    constructor(x, y, color, width, height, speed, name, isAi) {
         this.x = x
         this.y = y
         this.color = color
@@ -33,6 +45,7 @@ class Player {
         this.initialX = x
         this.initialY = y
         this.score = 0
+        this.isAi = isAi
     }
 
     draw() {
@@ -112,8 +125,12 @@ class Table {
         ctx.lineTo(canvas.width / 2, 0);
         ctx.stroke();
 
-        ctx.font = "48px serif";
-        ctx.fillStyle = 'white';
+        ctx.font = "23px sans-serif";
+        ctx.fillStyle = 'grey';
+        ctx.fillText(game.player1.name, 50, 50);
+        ctx.fillText(game.player2.name, canvas.width - 150, 50);
+
+        ctx.font = "48px sans-serif";
         ctx.fillText(game.player1.score, canvas.width / 2 - 100, 100);
         ctx.fillText(game.player2.score, canvas.width / 2 + 70, 100);
     }
@@ -254,24 +271,63 @@ class Tournament {
 
 class Pong {
     constructor(gamemode) {
-        this.game = initGame();
+        this.game = initGame(gamemode);
         this.gameMode = gamemode;
     }
 }
 
 // GAME RELATED FUNCTIONS
-function initGame() {
+function initGame(gamemode) {
     // depends on the responsivess
-    const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1')
-    const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'player2')
-    const ball = new Ball(x, y, 10, 'red', { x: 2, y: 2 }, 4)
-    const table = new Table(0, 0, canvas.width, canvas.height, 'black')
-    return { player1, player2, ball, table }
+    if (gamemode === 'pvp') {
+        const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1', false)
+        const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'player2', false)
+        const ball = new Ball(x, y, 10, 'red', { x: 2, y: 2 }, 4)
+        const table = new Table(0, 0, canvas.width, canvas.height, 'black')
+        return { player1, player2, ball, table }
+    }
+    else if (gamemode === 'vsa') {
+        const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1', false)
+        const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'AI', true)
+        const ball = new Ball(x, y, 10, 'red', { x: 2, y: 2 }, 4)
+        const table = new Table(0, 0, canvas.width, canvas.height, 'black')
+        return { player1, player2, ball, table }
+    }
 }
 
-const game = initGame();
-
 function movePlayers() {
+    if (getACookie('game_running') === 'false') {
+        return;
+    }
+
+    // AI MOVEMENT TO IMPROVE not working according to the subject
+    if (game.player2.isAi) {
+        if (game.ball.y > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
+            keys['40'] = true; // DOWN
+            keys['38'] = false; // UP
+        } else if (game.ball.y < game.player2.y + game.player2.height / 2 && game.player2.y > 0) {
+            keys['38'] = true; // UP
+            keys['40'] = false; // DOWN
+        } else {
+            keys['38'] = false; // UP
+            keys['40'] = false; // DOWN
+        }
+    }
+
+    if (game.player1.isAi) {
+        if (game.ball.y > game.player1.y + game.player1.height / 2 && game.player1.y < canvas.height - game.player1.height) {
+            keys['83'] = true; // S
+            keys['87'] = false; // W
+        } else if (game.ball.y < game.player1.y + game.player1.height / 2 && game.player1.y > 0) {
+            keys['87'] = true; // W
+            keys['83'] = false; // S
+        } else {
+            keys['87'] = false; // W
+            keys['83'] = false; // S
+        }
+    }
+
+
     if (keys['38'] && game.player2.y > 0) { // UP
         game.player2.y -= game.player2.speed;
     }
@@ -286,23 +342,35 @@ function movePlayers() {
     }
     if (keys['32']) { // SPACE
         // PRESS SPACE if you want to make a user won (debug purpose)
+        console.log("SPACE PRESSED")
         game.player1.score = 5
     }
 }
 
-function moveBall() {
+async function moveBall() {
     if (game.ball.y + game.ball.radius > canvas.height || game.ball.y - game.ball.radius < 0) {
         game.ball.velocity.y = -game.ball.velocity.y
     }
+    // have to fix the ball cone, not going in the cone
     if (game.ball.x + game.ball.radius > canvas.width || game.ball.x - game.ball.radius < 0) {
+        let player_win = 0;
         if (game.ball.x + game.ball.radius > game.player2.x) {
+            hitEffect();
+            player_win = 1;
             game.player1.score += 1
         } else if (game.ball.x - game.ball.radius < game.player1.x + game.player1.width) {
+            hitEffect();
+            player_win = 2;
             game.player2.score += 1
         }
-        game.ball.x = game.ball.initialX
-        game.ball.y = game.ball.initialY
-        game.ball.velocity.x = -game.ball.velocity.x
+        const angleRange = Math.PI / 2;
+        const baseAngle = player_win === 1 ? Math.PI : 0;
+        const randomAngle = baseAngle + (Math.random() * angleRange - angleRange / 2);
+        game.ball.x = canvas.width / 2;
+        game.ball.y = canvas.height / 2;
+        game.ball.velocity.x = 3 * Math.cos(randomAngle);
+        game.ball.velocity.y = 3 * Math.sin(randomAngle);
+        player_win = 0;
     }
 
     if (game.ball.x + game.ball.radius > game.player2.x && game.ball.y > game.player2.y && game.ball.y < game.player2.y + game.player2.height) {
@@ -351,32 +419,51 @@ function getWinner(p1, p2) {
     }
 }
 
+function linkPause(pong, resolve) {
+    let value = 0;
+    const pauseButton = document.getElementById('pause_button')
+    const pause = document.querySelector('.bi-pause-fill');
+    pauseButton.addEventListener('click', () => {
+        console.log("PAUSE BUTTON CLICKED")
+        if (value % 2 == 0) {
+            pause.classList.remove('bi-pause-fill');
+            pause.classList.add('bi-play-fill');
+            cancelAnimationFrame(animationFrameId)
+        }
+        else {
+            pause.classList.remove('bi-play-fill');
+            pause.classList.add('bi-pause-fill');
+            animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
+        }
+        value += 1
+    })
+}
+
 async function animate(pong, resolve) {
     if (getACookie('game_running') === 'false') {
         return;
     }
-    if (pong.gameMode === 'pvp') {
-        if (GameEnd()) {
-            const winner = getWinner(game.player1, game.player2);
-            game.player1.reset()
-            game.player2.reset()
-            alert(`${winner} won!`);
-            cancelAnimationFrame(animationFrameId);
-            clearCanvas();
-            hideElementsByClass('game');
-            showElementsByClass('menu', 'flex');
-            addClassToElementsByClass('menu', 'center');
-            resolve(winner);
-            return;
-        }
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        game.table.update()
-        game.player1.update()
-        game.player2.update()
-        game.ball.update()
-        animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
+
+    if (GameEnd()) {
+        const winner = getWinner(game.player1, game.player2);
+        game.player1.reset()
+        game.player2.reset()
+        alert(`${winner} won!`);
+        cancelAnimationFrame(animationFrameId);
+        clearCanvas();
+        hideElementsByClass('game');
+        showElementsByClass('menu', 'flex');
+        addClassToElementsByClass('menu', 'center');
+        resolve(winner);
+        return;
     }
-    console.log("SCORE : ", game.player1.score, game.player2.score)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    game.table.update()
+    game.player1.update()
+    game.player2.update()
+    game.ball.update()
+    animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
+    console.log("Game is running, the SCORE is (1/2): ", game.player1.score, game.player2.score)
 }
 
 // UTILS
@@ -392,29 +479,49 @@ function checkKeyUp(e) {
     keys[e.keyCode] = false;
 }
 
+async function pauseGame(value) {
+    setACookie('game_running', 'false', 1);
+    await sleep(value);
+    setACookie('game_running', 'true', 1);
+}
+
 window.addEventListener('keydown', checkKeyDown, false);
 window.addEventListener('keyup', checkKeyUp, false);
 
 export function startGame(gamemode, playerNames) {
     if (getACookie('game_running') === 'true') {
         return new Promise((resolve) => {
-
-            if (gamemode === 'pvp') {
-                const pong = new Pong(gamemode);
-                animate(pong, resolve);
-            } else if (gamemode === 'tour') {
-                startTournament(playerNames, resolve);
-            }
+            let count = 3;
+            const interval = setInterval(() => {
+                ctx.clearRect(canvas.width / 2 - 50, canvas.height / 2 - 100, 100, 150);
+                ctx.font = "50px Arial";
+                ctx.fillStyle = "white";
+                ctx.fillText(count, canvas.width / 2 - 20, canvas.height / 2);
+                count--;
+                if (count < 0) {
+                    clearInterval(interval);
+                    if (gamemode === 'pvp') {
+                        const pong = new Pong(gamemode);
+                        game = pong.game;
+                        linkPause(pong, resolve);
+                        animate(pong, resolve);
+                    }
+                    else if (gamemode === 'vsa') {
+                        const pong = new Pong(gamemode);
+                        game = pong.game;
+                        animate(pong, resolve);
+                    }
+                    else if (gamemode === 'tour') {
+                        startTournament(playerNames, resolve);
+                    }
+                }
+            }, 500);
         });
-    }
-    else {
-        resolve("Game already running")
-        return;
     }
 }
 
 export function startTournament(playerNames, resolve) {
     // might need to check if there is the correct nb of players and if there have a name
     const tournament = new Tournament(playerNames);
-    const winner = tournament.startTournament(resolve);
+    tournament.startTournament(resolve);
 }

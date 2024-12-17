@@ -1,6 +1,6 @@
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
-import { addClassToElementsByClass, hideElementsByClass, showElementsByClass } from '../js/utils.js';
+import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie } from '../js/utils.js';
 import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
 
@@ -10,7 +10,7 @@ export class Monopoly extends Page {
         super();
         this.template = `
                     <div class="header">
-        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <nav class="navbar bg-dark  border-body" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand " href="/home" data-link="/home">
                     <img src="/static/imgs/logo.png" alt="" width="25" class="d-inline-block align-text-top invert">
@@ -28,6 +28,15 @@ export class Monopoly extends Page {
                     </li>
                     <li>
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt"><i class="bi bi-box-arrow-left"></i> Logout</a>
                     </li>
                 </ul>
             </div>
@@ -64,6 +73,7 @@ export class Monopoly extends Page {
         startWebSocket();
         super.render(); // Call the parent render method
         this.eventListeners();
+        setACookie('game_running', 'false', 1);
     }
 
     eventListeners() {

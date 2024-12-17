@@ -2,13 +2,15 @@ import { Page } from '../src/pages.js';
 import { fetchMinInfo } from '../src/fetchUser.js';
 import { logoutUser } from '../src/logout.js';
 import { startWebSocket } from './login_base.js';
+import { setACookie } from '../js/utils.js';
+
 
 export class HomePage extends Page {
     constructor() {
         super();
         this.template = `
       <div class="header">
-        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <nav class="navbar bg-dark border-body" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand " href="/home" data-link="/home">
                     <img src="/static/imgs/logo.png" alt="" width="25" class="d-inline-block align-text-top invert">
@@ -34,7 +36,7 @@ export class HomePage extends Page {
                         <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt"><i class="bi bi-box-arrow-left"></i> Logout</a>
                     </li>
                 </ul>
             </div>
@@ -57,11 +59,13 @@ export class HomePage extends Page {
     </div>
 	  `;
     }
-    
+
     render() {
         fetchMinInfo(); // will go fetch ONLY the profile pic
         super.render();
-        
+        setACookie('game_running', 'false', 1);
+
+
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {

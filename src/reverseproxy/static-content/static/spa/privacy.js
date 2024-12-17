@@ -5,13 +5,15 @@ import { logoutUser } from "../src/logout.js";
 import { getCSRFToken } from "../src/csrf.js";
 import { Router } from '../src/router.js';
 import { deleteAccount } from "../src/logout.js";
+import { setACookie } from '../js/utils.js';
+
 
 export class Privacy extends Page {
     constructor() {
         super();
         this.template = `
             <div class="header">
-        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <nav class="navbar bg-dark  border-body" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand " href="/home" data-link="/home">
                     <img src="/static/imgs/logo.png" alt="" width="25" class="d-inline-block align-text-top invert">
@@ -37,7 +39,7 @@ export class Privacy extends Page {
                         <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt">Logout</a>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt"><i class="bi bi-box-arrow-left"></i> Logout</a>
                     </li>
                 </ul>
             </div>
@@ -121,6 +123,7 @@ export class Privacy extends Page {
  `;
     }
     async render() {
+        setACookie('game_running', 'false', 1);
         isUserOnline();
         fetchMinInfo();
 
@@ -131,7 +134,7 @@ export class Privacy extends Page {
         console.log('display_friends: ', userData.display_friends, ' match_history: ', userData.match_history);
         userData.match_history == true ? document.getElementById('matchHistory').checked = false : document.getElementById('matchHistory').checked = true;
         userData.display_friends == true ? document.getElementById('displayFriends').checked = false : document.getElementById('displayFriends').checked = true;
-        
+
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {
@@ -235,7 +238,7 @@ export class Privacy extends Page {
         let friendsBOOL = userData.display_friends;
 
         const matchHistory = document.getElementById('matchHistory');
-        matchHistory.addEventListener('change', function() {
+        matchHistory.addEventListener('change', function () {
             if (this.checked) {
                 matchHistoryBOOL = false;
                 console.log(matchHistoryBOOL);
@@ -246,7 +249,7 @@ export class Privacy extends Page {
         });
 
         const displayFriends = document.getElementById('displayFriends');
-        displayFriends.addEventListener('change', function() {
+        displayFriends.addEventListener('change', function () {
             if (this.checked) {
                 friendsBOOL = false;
                 console.log(friendsBOOL);
@@ -264,7 +267,7 @@ export class Privacy extends Page {
             const formData = new FormData();
             // console.log('display_friends: ', userData.display_friends, ' match_history: ', userData.match_history);
             formData.append('matchHistory', matchHistoryBOOL);
-			formData.append('friendsDisplay', friendsBOOL);
+            formData.append('friendsDisplay', friendsBOOL);
             try {
 
                 const csrfToken = getCSRFToken('csrftoken');
@@ -306,6 +309,6 @@ export class Privacy extends Page {
             const confirmationModal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
             confirmationModal.hide();
         });
-        
+
     }
 }

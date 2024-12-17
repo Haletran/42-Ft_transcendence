@@ -9,7 +9,7 @@ export class Pong extends Page {
         super();
         this.template = `
                     <div class="header">
-        <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <nav class="navbar bg-dark  border-body" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand " href="/home" data-link="/home">
                     <img src="/static/imgs/logo.png" alt="" width="25" class="d-inline-block align-text-top invert">
@@ -29,7 +29,13 @@ export class Pong extends Page {
                         <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt" >Logout</a>
+                        <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt"><i class="bi bi-box-arrow-left"></i> Logout</a>
                     </li>
                 </ul>
             </div>
@@ -78,7 +84,8 @@ export class Pong extends Page {
             </div>
         </div>
     </div>
-    <div id="test" class="game justify-content-center align-items-center">
+    <div id="test" class="game justify-content-center align-items-center position-relative">
+        <button id="pause_button" class="btn btn-outline-light position-absolute position-absolute top-0 start-50 translate-middle"><i class="bi bi-pause-fill"></i></button>
     </div>
         `;
     }
