@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_
 import json
 # from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from .models import MyUser
@@ -34,7 +35,6 @@ def set_csrf_token(request):
     csrf_token = get_token(request)
     response = JsonResponse({'message': 'CSRF token set'})
     response['X-CSRFToken'] = csrf_token
-    print(response)
     return response
 
 def register_view(request):
@@ -47,6 +47,11 @@ def register_view(request):
             match_history = request.POST.get('matchHistory') == 'true'
             display_friends = request.POST.get('friendsDisplay') == 'true'
         
+            # check password
+            try:
+                validate_password(password)
+            except ValidationError as e:
+                return JsonResponse({'message': 'Password doesn\'t match policy'}, status=400)
             # Create the user
             user = MyUser.objects.create_user(email=email, username=username, password=password, match_history=match_history, display_friends=display_friends)
             if uploaded_file:
@@ -92,8 +97,12 @@ def logout_view(request):
         return response
     return JsonResponse({'error': 'Invalid request method (logging out)'}, status=405)
 
-@login_required
+# @login_required
 def user_info(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "error": "User is not authenticated."
+        }, status=401)
     try:
         user = request.user
         profile_picture_url = user.profile_picture.url if user.profile_picture else None

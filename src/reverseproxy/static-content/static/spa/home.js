@@ -62,7 +62,6 @@ export class HomePage extends Page {
 
     render() {
         fetchMinInfo(); // will go fetch ONLY the profile pic
-        isUserOnline();
         super.render();
         setACookie('game_running', 'false', 1);
 
