@@ -65,57 +65,76 @@ export class Privacy extends Page {
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Terms and conditions</h5><br>
-                        <p class="card-text">Effective date: december 2025<br><br>
-					Welcome to ft_transcendence. These terms and conditions govern your use of our Website, services, and any related content. By accessing or using ft_transcendence, you agree to comply with a be bound by these Terms.<br>
-					To access the website, play the two games available, send friend requests and see your results history, you are required to create an account.<br>
-					To do so, you need to agree to provide a username and an email (no emails will be sent), and optionally a profile picture. Other users will be able to send you friend request either using your username or your email.
-					Additionally, all your game results might be collected by us to provide statistics and a record of the games you played. Please note that this data might be accessible to your friends.<br>
-					<br><strong>These terms are construed in accordance with the General Data Protection Regulation (GDPR)</strong>, that guarantees that all data is processed by us in accordance with the principles edicted in the article 5.1-2:<br><br>
-					"Lawfulness, fairness and transparency — Processing must be lawful, fair, and transparent to the data subject.<br>
-    					Purpose limitation — You must process data for the legitimate purposes specified explicitly to the data subject when you collected it.<br>
-    					Data minimization — You should collect and process only as much data as absolutely necessary for the purposes specified.<br>
-    					Accuracy — You must keep personal data accurate and up to date.<br>
-    					Storage limitation — You may only store personally identifying data for as long as necessary for the specified purpose.<br>
-    					Integrity and confidentiality — Processing must be done in such a way as to ensure appropriate security, integrity, and confidentiality (e.g. by using encryption).<br>
-    					Accountability — The data controller is responsible for being able to demonstrate GDPR compliance with all of these principles."<br>
-						<br>
-					If you wish to learn more about the GDPR, please follow this <a href="https://gdpr-info.eu/" target="_blank" id="gdpr-link">link.</a><br>
-					<strong>At anytime, you will find those terms and condition, in addition to privacy settings to monitor our use of your data, under the Privacy section.<br>
-					We will not share your data with any third-party, and if you wish to delete your match history, or delete your account, this data will be permanently erased from our databases.</strong><br>
+                        <h3 class="card-title">Terms and Conditions</h3>
+                        <p class="text-muted">Effective date: December 2025</p>
+                        <p class="card-text">
+                            Welcome to ft_transcendence. These terms and conditions govern your use of our website, services, and any related content. By accessing or using ft_transcendence, you agree to comply with and be bound by these terms.
                         </p>
-                        <h5 class="card-title">Privacy options</h5><br>
-                            <button type="button" class="btn btn-danger" id="propic-btn">Delete profile picture</button>
-                            <button type="button" class="btn btn-danger" id="match-btn">Delete match history</button><br>
-                            <br><form id="privacy_form">
+                        <p class="card-text">
+                            To access the website, play the two games available, send friend requests, and see your results history, you are required to create an account. To do so, you need to agree to provide a username and an email (no emails will be sent), and optionally a profile picture. Other users will be able to send you friend requests using either your username or your email.
+                        </p>
+                        <p class="card-text">
+                            Additionally, all your game results may be collected by us to provide statistics and a record of the games you played. Please note that this data may be accessible to your friends.
+                        </p>
+                        <p class="card-text">
+                            <strong>These terms are construed in accordance with the General Data Protection Regulation (GDPR)</strong>, which guarantees that all data is processed by us in accordance with the principles outlined in Article 5.1-2:
+                        </p>
+                        <ul>
+                            <li>Lawfulness, fairness, and transparency — Processing must be lawful, fair, and transparent to the data subject.</li>
+                            <li>Purpose limitation — You must process data for the legitimate purposes specified explicitly to the data subject when you collected it.</li>
+                            <li>Data minimization — You should collect and process only as much data as absolutely necessary for the specified purposes.</li>
+                            <li>Accuracy — You must keep personal data accurate and up to date.</li>
+                            <li>Storage limitation — You may only store personally identifying data for as long as necessary for the specified purpose.</li>
+                            <li>Integrity and confidentiality — Processing must be done in such a way as to ensure appropriate security, integrity, and confidentiality (e.g., by using encryption).</li>
+                            <li>Accountability — The data controller is responsible for being able to demonstrate GDPR compliance with all of these principles.</li>
+                        </ul>
+                        <p class="card-text">
+                            If you wish to learn more about the GDPR, please follow this <a href="https://gdpr-info.eu/" target="_blank" id="gdpr-link">link.</a>
+                        </p>
+                        <p class="card-text">
+                            <strong>At any time, you will find these terms and conditions, in addition to privacy settings to monitor our use of your data, under the Privacy section.</strong>
+                        </p>
+                        <p class="card-text">
+                            <strong>We will not share your data with any third party, and if you wish to delete your match history or delete your account, this data will be permanently erased from our databases.</strong>
+                        </p>
+                    </div>
+                </div>
+                <br>
+                <div class="card">
+                    <div class="card-body mt-2">
+                        <h3 class="card-title">Privacy options</h3>
+                        <p class="card-text text-muted">Here you can update your privacy settings.</p>
+                        <button type="button" class="btn btn-danger" id="propic-btn">Delete profile picture</button>
+                        <button type="button" class="btn btn-danger" id="match-btn">Delete match history</button>
+                        <form id="privacy_form">
                             <div class="mb3 form-check">
                                 <input class="form-check-input" type="checkbox" id="matchHistory">
                                 <label class="form-check-label" for="matchHistory">Do not keep track of my match history</label>
-                            </div> <br>
+                            </div>
                             <div class="mb3 form-check">
                                 <input class="form-check-input" type="checkbox" id="displayFriends">
                                 <label class="form-check-label" for="displayFriends">Do not display my profile informations to my friends</label>
                             </div>
                             <button id="update_privacy" type="submit" class="btn btn-light mt-3">Update privacy settings</button>
-                            </form><br>
-                            <button type="button" class="btn btn-danger" id="delete_button">Delete my account</button>
-                            <br><br><br><div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-                              <div class="modal-dialog">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="confirmationModalLabel">Confirm Account Deletion</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                  </div>
-                                  <div class="modal-body">
-                                    Are you sure you want to delete your account? This action cannot be undone.
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Yes, Delete</button>
-                                  </div>
-                                </div>
+                        </form>
+                        <button type="button" class="btn btn-danger" id="delete_button">Delete my account</button>
+                        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="confirmationModalLabel">Confirm Account Deletion</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                Are you sure you want to delete your account? This action cannot be undone.
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Yes, Delete</button>
                               </div>
                             </div>
+                          </div>
+                        </div>
                     </div>
                 </div>
             </div>

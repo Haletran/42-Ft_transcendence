@@ -1,7 +1,7 @@
 import { Page } from '../src/pages.js';
 import { logoutUser } from '../src/logout.js';
 import { startWebSocket } from './login_base.js';
-import { setACookie } from '../js/utils.js';
+import { getACookie, setACookie } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
@@ -61,9 +61,10 @@ export class HomePage extends Page {
     }
 
     render() {
-        fetchMinInfo();
-        super.render();
         setACookie('game_running', 'false', 1);
+        fetchMinInfo();
+        isUserOnline();
+        super.render();
         const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
@@ -73,6 +74,7 @@ export class HomePage extends Page {
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {
                 //event.preventDefault();
+                unsubscribe();
                 logoutUser();
             });
         }
