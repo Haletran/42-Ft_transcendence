@@ -279,17 +279,20 @@ class Pong {
 // GAME RELATED FUNCTIONS
 function initGame(gamemode) {
     // depends on the responsivess
+    const angleRange = Math.PI / 2;
+    const baseAngle = Math.random() < 0.5 ? Math.PI : 0;
+    const randomAngle = baseAngle + (Math.random() * angleRange - angleRange / 2);
     if (gamemode === 'pvp') {
         const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1', false)
         const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'player2', false)
-        const ball = new Ball(x, y, 10, 'red', { x: 2, y: 2 }, 4)
+        const ball = new Ball(x, y, 10, 'red', { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
         const table = new Table(0, 0, canvas.width, canvas.height, 'black')
         return { player1, player2, ball, table }
     }
     else if (gamemode === 'vsa') {
         const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1', false)
         const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'AI', true)
-        const ball = new Ball(x, y, 10, 'red', { x: 2, y: 2 }, 4)
+        const ball = new Ball(x, y, 10, 'red', { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
         const table = new Table(0, 0, canvas.width, canvas.height, 'black')
         return { player1, player2, ball, table }
     }
@@ -302,12 +305,18 @@ function movePlayers() {
 
     // AI MOVEMENT TO IMPROVE not working according to the subject
     if (game.player2.isAi) {
-        if (game.ball.y > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
-            keys['40'] = true; // DOWN
-            keys['38'] = false; // UP
-        } else if (game.ball.y < game.player2.y + game.player2.height / 2 && game.player2.y > 0) {
-            keys['38'] = true; // UP
-            keys['40'] = false; // DOWN
+        console.log("X / Y / playerx / playery : ", game.ball.x, game.ball.y, game.player2.x, game.player2.y)
+        if (game.ball.x > canvas.width / 2) {
+            if (game.ball.y > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
+                keys['40'] = true; // DOWN
+                keys['38'] = false; // UP
+            } else if (game.ball.y < game.player2.y + game.player2.height / 2 && game.player2.y > 0) {
+                keys['38'] = true; // UP
+                keys['40'] = false; // DOWN
+            } else {
+                keys['38'] = false; // UP
+                keys['40'] = false; // DOWN
+            }
         } else {
             keys['38'] = false; // UP
             keys['40'] = false; // DOWN
@@ -315,12 +324,17 @@ function movePlayers() {
     }
 
     if (game.player1.isAi) {
-        if (game.ball.y > game.player1.y + game.player1.height / 2 && game.player1.y < canvas.height - game.player1.height) {
-            keys['83'] = true; // S
-            keys['87'] = false; // W
-        } else if (game.ball.y < game.player1.y + game.player1.height / 2 && game.player1.y > 0) {
-            keys['87'] = true; // W
-            keys['83'] = false; // S
+        if (game.ball.x < canvas.width / 2) {
+            if (game.ball.y > game.player1.y + game.player1.height / 2 && game.player1.y < canvas.height - game.player1.height) {
+                keys['83'] = true; // S
+                keys['87'] = false; // W
+            } else if (game.ball.y < game.player1.y + game.player1.height / 2 && game.player1.y > 0) {
+                keys['87'] = true; // W
+                keys['83'] = false; // S
+            } else {
+                keys['87'] = false; // W
+                keys['83'] = false; // S
+            }
         } else {
             keys['87'] = false; // W
             keys['83'] = false; // S
@@ -351,7 +365,6 @@ async function moveBall() {
     if (game.ball.y + game.ball.radius > canvas.height || game.ball.y - game.ball.radius < 0) {
         game.ball.velocity.y = -game.ball.velocity.y
     }
-    // have to fix the ball cone, not going in the cone
     if (game.ball.x + game.ball.radius > canvas.width || game.ball.x - game.ball.radius < 0) {
         let player_win = 0;
         if (game.ball.x + game.ball.radius > game.player2.x) {
@@ -509,6 +522,7 @@ export function startGame(gamemode, playerNames) {
                     else if (gamemode === 'vsa') {
                         const pong = new Pong(gamemode);
                         game = pong.game;
+                        linkPause(pong, resolve);
                         animate(pong, resolve);
                     }
                     else if (gamemode === 'tour') {
