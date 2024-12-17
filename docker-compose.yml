@@ -73,8 +73,6 @@ services:
       - .env
     environment:
       VAULT_ADDR: 'http://vault_container:8200' # Vault service name here
-      CLIENT_ID: "u-s4t2ud-24552aea517bf1496668f819d1dabbc2c0eb6d12a3e9c5e75a16a6b41738819c"
-      CLIENT_SECRET: "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"
       REDIRECT_URI: "https://localhost/api/credentials/callback"
     depends_on:
       - database
