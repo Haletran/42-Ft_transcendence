@@ -6,6 +6,8 @@ import { setupProfilePictureSelection } from '../js/event.js';
 import { logoutUser } from '../src/logout.js';
 import { isUserOnline } from './home.js';
 import { setACookie } from '../js/utils.js';
+import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
+
 
 
 export class Settings extends Page {
@@ -111,12 +113,18 @@ export class Settings extends Page {
             ;
     }
     render() {
+        fetchMinInfo();
         setACookie('game_running', 'false', 1);
         fetchSettingsInfo();
         isUserOnline();
         super.render(); // Call the parent render method
         setupProfilePictureSelection();
         this.attachFormListener();
+
+        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+            const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
+            if (profilePic) profilePic.src = profilePictureUrl;
+        });
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {

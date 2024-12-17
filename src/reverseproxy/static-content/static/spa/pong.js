@@ -1,8 +1,10 @@
-import { fetchMinInfo } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie } from '../js/utils.js';
 import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
+import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
+
+
 
 export class Pong extends Page {
     constructor() {
@@ -95,7 +97,10 @@ export class Pong extends Page {
         startWebSocket();
         super.render();
         this.eventListeners();
-        setACookie('game_running', 'false', 1);
+        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+            const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
+            if (profilePic) profilePic.src = profilePictureUrl;
+        });
     }
 
     eventListeners() {

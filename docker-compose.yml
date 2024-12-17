@@ -72,7 +72,6 @@ services:
     env_file:
       - .env
     environment:
-      VAULT_ADDR: 'http://vault_container:8200' # Vault service name here
       REDIRECT_URI: "https://localhost/api/credentials/callback"
     depends_on:
       - database

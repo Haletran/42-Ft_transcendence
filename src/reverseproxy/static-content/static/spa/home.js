@@ -1,8 +1,8 @@
 import { Page } from '../src/pages.js';
-import { fetchMinInfo } from '../src/fetchUser.js';
 import { logoutUser } from '../src/logout.js';
 import { startWebSocket } from './login_base.js';
 import { setACookie } from '../js/utils.js';
+import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
 export class HomePage extends Page {
@@ -61,10 +61,13 @@ export class HomePage extends Page {
     }
 
     render() {
-        fetchMinInfo(); // will go fetch ONLY the profile pic
+        fetchMinInfo();
         super.render();
         setACookie('game_running', 'false', 1);
-
+        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+            const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
+            if (profilePic) profilePic.src = profilePictureUrl;
+        });
 
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
