@@ -84,7 +84,7 @@ export class Monopoly extends Page {
                 <button class="btn btn-primary w-100 hover-effect" data-bs-toggle="modal" data-bs-target="#monopolyModal">
                   <i class="bi bi-chevron-right"></i> Choose the Monopoly version
                 </button>
-                <button id="start_button_m" value="tour" class="btn btn-light w-100">Play</button>
+                <button id="start_button_m" value="tour" class="btn btn-light w-100" disabled>Play</button>
             </div>
         </div>
     </div>
@@ -147,6 +147,7 @@ export class Monopoly extends Page {
                 console.log("Selected Map ID:", selectedMap);
                 const modal = bootstrap.Modal.getInstance(document.getElementById("monopolyModal"));
                 modal.hide();
+                document.getElementById("start_button_m").disabled = false;
             }
         });
     }
