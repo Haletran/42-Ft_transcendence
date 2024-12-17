@@ -4,7 +4,7 @@ import { fetchMatchHistory, fetchStatistics } from '../src/scoreTable.js';
 import { isUserOnline } from './home.js';
 import { logoutUser } from '../src/logout.js';
 import { setACookie } from '../js/utils.js';
-
+import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 export class Profile extends Page {
     constructor() {
@@ -110,11 +110,16 @@ export class Profile extends Page {
     render() {
         setACookie('game_running', 'false', 1);
         fetchProfileInfo();
+        fetchMinInfo();
         fetchStatistics();
         fetchMatchHistory();
         isUserOnline();
 
         super.render(); // Call the parent render method
+        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+            const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
+            if (profilePic) profilePic.src = profilePictureUrl;
+        });
 
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {

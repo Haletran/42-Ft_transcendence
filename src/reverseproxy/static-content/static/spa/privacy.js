@@ -1,4 +1,4 @@
-import { fetchMinInfo, getUserInfos } from "../src/fetchUser.js";
+import { getUserInfos } from "../src/fetchUser.js";
 import { isUserOnline } from "./home.js";
 import { Page } from '../src/pages.js';
 import { logoutUser } from "../src/logout.js";
@@ -6,6 +6,7 @@ import { getCSRFToken } from "../src/csrf.js";
 import { Router } from '../src/router.js';
 import { deleteAccount } from "../src/logout.js";
 import { setACookie } from '../js/utils.js';
+import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
 export class Privacy extends Page {
@@ -123,11 +124,15 @@ export class Privacy extends Page {
  `;
     }
     async render() {
+        fetchMinInfo();
         setACookie('game_running', 'false', 1);
         isUserOnline();
-        fetchMinInfo();
-
         super.render();
+
+        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+            const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
+            if (profilePic) profilePic.src = profilePictureUrl;
+        });
 
         // update checkboxes value
         const userData = await getUserInfos();

@@ -11,7 +11,7 @@ export async function fetchProfileInfo() {
             const userData = await response.json();
             document.getElementById('username').innerText = userData.username;
             document.getElementById('email').innerText = userData.email;
-            updateProfilePicture(userData.profile_picture);
+            //updateProfilePicture(userData.profile_picture);
         }
         else {
             console.log(response.status);
@@ -101,7 +101,7 @@ export async function fetchSettingsInfo() {
     }
 }
 
-export async function fetchMinInfo() {
+export async function fetchMinInfo2() {
     try {
         const response = await fetch('/api/credentials/user-info/', {
             method: 'GET',
@@ -110,7 +110,7 @@ export async function fetchMinInfo() {
         if (response.ok) {
             const userData = await response.json();
             console.log('fetchMinInfo', userData.profile_picture);
-            updateProfilePicture(userData.profile_picture);
+            //updateProfilePicture(userData.profile_picture);
         }
         else {
             console.log(response.status);

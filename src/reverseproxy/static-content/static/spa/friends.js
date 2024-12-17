@@ -1,4 +1,4 @@
-import { fetchMinInfo } from '../src/fetchUser.js';
+import { fetchMinInfo2 } from '../src/fetchUser.js';
 import { updateProfilePicture } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
@@ -7,6 +7,8 @@ import { logoutUser } from '../src/logout.js';
 import { fetchFriendHistory, fetchFriendStatistics } from '../src/scoreTable.js';
 import { isFriendOnline, isUserOnline } from './home.js';
 import { setACookie } from '../js/utils.js';
+import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
+
 
 
 export class Friends extends Page {
@@ -130,7 +132,14 @@ export class Friends extends Page {
     }
     async render() {
         setACookie('game_running', 'false', 1);
+        fetchMinInfo();
         isUserOnline();
+        super.render();// Call the parent render method
+
+        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+            const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
+            if (profilePic) profilePic.src = profilePictureUrl;
+        });
 
         try {
             const currentUserData = await getCurrentUserInfo();
@@ -140,11 +149,7 @@ export class Friends extends Page {
             const currentUserId = currentUserData.id;
             const currentUserEmail = currentUserData.email;
             const currentUserName = currentUserData.username;
-            //const currentPic = currentUserData.profile_picture;
-            fetchMinInfo();
-            console.log('HELLO');
-            //updateProfilePicture(currentPic);
-            super.render();// Call the parent render method
+            fetchMinInfo2();
 
             const logoutButton = document.getElementById('logout-butt');
             if (logoutButton) {
