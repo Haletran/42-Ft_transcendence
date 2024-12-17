@@ -45,22 +45,46 @@ export class Monopoly extends Page {
     <div class="menu">
         <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 90vh">
             <div id="menu" class="d-flex flex-column align-items-center gap-3">
-                <button data-link="/home" class="btn btn-outline-light me-auto"><i 
-                        class="bi bi-arrow-left"></i></button>
+                    <button data-link="/home" class="btn btn-outline-light me-auto"><i 
+                            class="bi bi-arrow-left"></i></button>
                 <div id="logo" style="display: flex; align-items: center">
                     <h1 id="menu" class="display-1 montserrat-bold fw-bold mx-auto">MONOPOLY</h1>
                 </div>
-                <div class="d-flex flex-column gap-2">
+                <div class="d-flex flex-column gap-2 w-100">
                     <label for="customRange1" class="form-label">How many players ?</label>
-                    <input type="range" class="form-range" min="2" max="6" step="2" id="customRange1">
+                    <div class="d-flex justify-content-center gap-2">
+                        <input type="range" class="form-range" min="2" max="6" step="2" id="customRange1"><span id="rangeValue"></span>
+                    </div>
                     <div class="user_name d-grid gap-2">
-                        <input type="text" class="form-control" id="player_1" placeholder="Player 1">
-                        <input type="text" class="form-control" id="player_2" placeholder="Player 2">
-                        <input type="text" class="form-control" id="player_3" placeholder="Player 3">
-                        <input type="text" class="form-control" id="player_4" placeholder="Player 4">
+                    </div>
+                    <div class="container mt-5">
+                        <!-- Modal -->
+                        <div class="modal fade" id="monopolyModal" tabindex="-1" aria-labelledby="monopolyModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="monopolyModalLabel">Choose the Monopoly version</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <p class="text-muted">Select a Monopoly map to play with your friends.</p>
+                                <div id="mapGrid" class="row g-4">
+                                  <!-- Cards will be populated dynamically -->
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button id="saveButton" class="btn btn-primary" disabled>Save changes</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                     </div>
                 </div>
-                <button id="start_button_m" value="tour" class="btn btn-light">Play</button>
+                                    <!-- Trigger Button -->
+                <button class="btn btn-primary w-100 hover-effect" data-bs-toggle="modal" data-bs-target="#monopolyModal">
+                  <i class="bi bi-chevron-right"></i> Choose the Monopoly version
+                </button>
+                <button id="start_button_m" value="tour" class="btn btn-light w-100">Play</button>
             </div>
         </div>
     </div>
@@ -77,6 +101,53 @@ export class Monopoly extends Page {
         const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
+        });
+        this.render_modal();
+    }
+
+
+    render_modal() {
+        const monopolyMaps = [
+            { id: 1, name: "Classic", image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpbs.twimg.com%2Fmedia%2FB4V-r4_CQAItF9A.jpg&f=1&nofb=1&ipt=c476ef91a21b4d46b6bfebe15ab644c75e35a12053dfdc600a15f30569d6aed6&ipo=images" },
+            { id: 2, name: "Fortnite", image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpreview.redd.it%2Fgd2p5dfl1e101.jpg%3Fauto%3Dwebp%26s%3D1e2731864f99e10ff3f107c9a9637003786e1699&f=1&nofb=1&ipt=743bb7acf6987b89dda98f65027c3f947a4aa04ba06b9900b8e0116f2ea564b7&ipo=images" },
+            { id: 3, name: "42", image: "/static/imgs/42board.png" },
+            { id: 4, name: "Angouleme", image: "/static/imgs/angouboard.png" },
+        ];
+
+        let selectedMap = null;
+
+        const mapGrid = document.getElementById("mapGrid");
+        monopolyMaps.forEach(map => {
+            const col = document.createElement("div");
+            col.className = "col-6";
+
+            const card = document.createElement("div");
+            card.className = "card cursor-pointer";
+            card.dataset.id = map.id;
+            card.innerHTML = `
+              <img src="${map.image}" class="card-img-top" alt="${map.name}">
+              <div class="card-body">
+                <p class="card-text text-center">${map.name}</p>
+              </div>
+            `;
+            card.addEventListener("click", () => handleMapSelect(map.id, card));
+            col.appendChild(card);
+            mapGrid.appendChild(col);
+        });
+
+        const handleMapSelect = (mapId, cardElement) => {
+            selectedMap = mapId;
+            document.querySelectorAll(".card").forEach(card => card.classList.remove("selected"));
+            cardElement.classList.add("selected");
+            document.getElementById("saveButton").disabled = false;
+        };
+
+        document.getElementById("saveButton").addEventListener("click", () => {
+            if (selectedMap) {
+                console.log("Selected Map ID:", selectedMap);
+                const modal = bootstrap.Modal.getInstance(document.getElementById("monopolyModal"));
+                modal.hide();
+            }
         });
     }
 
@@ -101,6 +172,8 @@ export class Monopoly extends Page {
                 input.placeholder = `Player ${i}`;
                 userNameContainer.appendChild(input);
             }
+            const rangeValue = document.getElementById('rangeValue');
+            rangeValue.innerHTML = range.value;
         });
 
 

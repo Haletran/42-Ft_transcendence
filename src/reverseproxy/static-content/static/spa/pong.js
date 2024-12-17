@@ -69,7 +69,9 @@ export class Pong extends Page {
                             <div class="accordion-body">
                                 <div class="d-flex flex-column gap-2">
                                     <label for="customRange1" class="form-label">How many players ?</label>
-                                    <input type="range" class="form-range" min="4" max="8" step="4" id="customRange1">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <input type="range" class="form-range" min="4" max="8" step="4" id="customRange1"><span id="rangeValue"></span>
+                                    </div>
                                         <div class="user_name d-flex flex-column gap-2">
                                             <input type="text" class="form-control" id="player_1" placeholder="Player 1">
                                             <input type="text" class="form-control" id="player_2" placeholder="Player 2">
@@ -123,6 +125,8 @@ export class Pong extends Page {
                 input.placeholder = `Player ${i}`;
                 userNameContainer.appendChild(input);
             }
+            const rangeValue = document.getElementById('rangeValue');
+            rangeValue.innerHTML = range.value;
         });
 
 

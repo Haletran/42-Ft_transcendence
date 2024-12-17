@@ -323,3 +323,19 @@ img.main-logo {
 .terms-modal button:hover {
     background-color: whitesmoke;
 }
+
+.selected {
+    border: 2px solid var(--bs-primary) !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.hover-effect {
+    transition: transform 0.5s;
+}
+
+.hover-effect:hover {
+    transform: scale(1.1);
+}

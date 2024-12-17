@@ -31,7 +31,7 @@ class Player {
 
     getPlayerColor(id) {
         const colors = ['#FFFFF', '#2DCC4A', '#3357FF', '#F1C40F', '#8E44AD'];
-        return colors[id % colors.length]; // Cycles through the color array
+        return colors[id % colors.length];
     }
 
     getPlayerPng(color) {
