@@ -37,7 +37,37 @@ def add_game(request):
                 player1_score=int(player1_score),
                 player2_score=int(player2_score),
                 is_ai=is_ai,
-                is_tournament=is_tournament
+                is_tournament=is_tournament,
+                is_pong=True
+            )
+            new_game.save()
+
+            response = JsonResponse({'message': 'Game added successfully'}, status=200)
+            return response
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Invalid method'}, status=405)
+
+def add_monopoly(request):
+    if request.method == 'POST':
+        try:
+            user_origin = request.POST.get('user_origin')
+            winner_username = request.POST.get('winner_username')
+            winner_money = request.POST.get('winner_money')
+            winner_properties = request.POST.get
+
+            new_game = Game.objects.create(
+                user_origin=user_origin,
+                player1_username=winner_username,
+                player2_username=winner_username,
+                result=winner_username,
+                player1_score=int(winner_money),
+                player2_score=int(winner_properties),
+                is_ai=False,
+                is_tournament=False,
+                is_pong=False
             )
             new_game.save()
 
@@ -57,7 +87,7 @@ def match_history(request):
     matches = Game.objects.filter(
         user_origin=username
     ).values(
-        'player1_username', 'player2_username', 'result', 'player1_score', 'player2_score', 'is_ai', 'is_tournament' 
+        'player1_username', 'player2_username', 'result', 'player1_score', 'player2_score', 'is_ai', 'is_tournament', 'is_pong' 
     )
 
     return JsonResponse(list(matches), safe=False)

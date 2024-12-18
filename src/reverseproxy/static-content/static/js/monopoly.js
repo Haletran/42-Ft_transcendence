@@ -180,6 +180,7 @@ function endTurn() {
     // Check if the game is finished
     if (isGameFinished(players)) {
         const winner = players.find(player => player.isActive);
+        setMonopolyVictory(winner);
         alert(`Game over! Player ${winner.id} is the winner!`);
         resetGame();
         // Additional logic to end the game, such as stopping turns or displaying a winner screen

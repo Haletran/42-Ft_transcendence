@@ -11,18 +11,4 @@ class Game(models.Model):
     player2_score = models.IntegerField()
     is_ai = models.BooleanField(default=False)
     is_tournament = models.BooleanField(default=False)
-
-    # def add_game():
-    #     Game.objects.create(
-    #         user_origin = self.user_origin,
-    #         player1_username = self.player1_username,
-    #         player2_username = self.player1_username,
-    #         player1_result = self.player1_result,
-    #         player2_result = self.player2_result,
-    #         player1_score = self.player1_score,
-    #         player2_score = self.player2_score,
-    #         is_ai = self.is_ai,
-    #         is_tournament = self.is_tournament,
-    #     )
-
-    # def delete_game
+    is_pong = models.BooleanField(default=False)
