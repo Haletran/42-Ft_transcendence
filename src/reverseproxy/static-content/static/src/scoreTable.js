@@ -2,7 +2,7 @@ import { getUserInfos } from "./fetchUser.js";
 import { getCurrentFriendInfo } from "../spa/friends.js";
 import { getCSRFToken } from "./csrf.js";
 
-export async function set1v1victory(player1, player2, is_ai, is_tournament) {
+export async function set1v1victory(player1, player2, scores, is_ai, is_tournament) {
     const userData = await getUserInfos();
     if (userData.match_history === false) {
         console.log("User does not want to keep match history")
@@ -12,9 +12,9 @@ export async function set1v1victory(player1, player2, is_ai, is_tournament) {
     formData.append('user_origin', userData.username);
     formData.append('player1_username', player1.name);
     formData.append('player2_username', player2.name);
-    player1.score < player2.score ? formData.append('result', player2.name) : formData.append('result', player1.name);
-    formData.append('player1_score', player1.score);
-    formData.append('player2_score', player2.score);
+    scores.p1 < scores.p2 ? formData.append('result', player2.name) : formData.append('result', player1.name);
+    formData.append('player1_score', scores.p1);
+    formData.append('player2_score', scores.p2);
     formData.append('is_ai', is_ai);
     formData.append('is_tournament', is_tournament);
 
@@ -99,8 +99,8 @@ export async function fetchStatistics() {
         wins_f.innerHTML = losses_f.innerHTML = rate_f.innerHTML = total_f.innerHTML = '';
 
         total_f.innerHTML = 'TOT: ' + data.total_matches;
-        wins_f.innerHTML = 'LOSSES: ' + data.wins;
-        losses_f.innerHTML = 'WINS: ' + data.losses;
+        wins_f.innerHTML = 'LOSSES: ' + data.losses;
+        losses_f.innerHTML = 'WINS: ' + data.wins;
         rate_f.innerHTML = data.rate + ' % of wins';
 
     } catch (error) {
