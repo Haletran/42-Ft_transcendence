@@ -55,6 +55,10 @@ export class Monopoly extends Page {
                     <div class="d-flex justify-content-center gap-2">
                         <input type="range" class="form-range" min="2" max="6" step="2" id="customRange1"><span id="rangeValue"></span>
                     </div>
+                        <p class="text-muted">2 to 6 players (default 4 players)</p>
+                                        <button class="btn btn-primary w-100 hover-effect" data-bs-toggle="modal" data-bs-target="#monopolyModal">
+                  <i class="bi bi-chevron-right"></i> Choose the Monopoly version
+                </button>
                     <div class="user_name d-grid gap-2">
                     </div>
                     <div class="container mt-5">
@@ -80,10 +84,6 @@ export class Monopoly extends Page {
                         </div>
                     </div>
                 </div>
-                                    <!-- Trigger Button -->
-                <button class="btn btn-primary w-100 hover-effect" data-bs-toggle="modal" data-bs-target="#monopolyModal">
-                  <i class="bi bi-chevron-right"></i> Choose the Monopoly version
-                </button>
                 <button id="start_button_m" value="tour" class="btn btn-light w-100" disabled>Play</button>
             </div>
         </div>
@@ -157,6 +157,7 @@ export class Monopoly extends Page {
         if (logoutButton) {
             logoutButton.addEventListener('click', function () {
                 logoutUser();
+                unsubscribe();
             });
         }
 
@@ -195,8 +196,10 @@ export class Monopoly extends Page {
                         // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
                         // ADD CHOICE OF NB PLAYERS
                         const range = document.getElementById('customRange1');
+                        const map = document.querySelector('.selected');
                         const module = await import(`/static/js/monopoly.js?timestamp=${new Date().getTime()}`);
-                        await module.init_monopoly_game(range.value);
+                        console.log(map.dataset.id);
+                        await module.init_monopoly_game(range.value, map.dataset.id);
                     }
                     catch (error) {
                         console.error('Error starting game:', error);
