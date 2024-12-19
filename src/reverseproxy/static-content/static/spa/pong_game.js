@@ -1,5 +1,6 @@
 // SETUP CANVAS
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie, getACookie } from '../js/utils.js';
+import { set1v1victory } from '../src/scoreTable.js';
 
 let canvas = document.querySelector('canvas');
 if (!canvas) {
@@ -213,6 +214,8 @@ class Tournament {
         return new Promise((resolve) => {
             const matchLoop = () => {
                 if (GameEnd()) {
+                    const scores = { p1: game.player1.score, p2: game.player2.score };
+                    set1v1victory(game.player1, game.player2, scores, false, true);
                     const winner = getWinner(game.player1, game.player2);
                     resolve(winner === game.player1.name ? player1 : player2);
                 } else {
@@ -458,6 +461,8 @@ async function animate(pong, resolve) {
     }
 
     if (GameEnd()) {
+        const scores = { p1: game.player1.score, p2: game.player2.score };
+        set1v1victory(game.player1, game.player2, scores, game.player2.isAi, false);
         const winner = getWinner(game.player1, game.player2);
         game.player1.reset()
         game.player2.reset()
