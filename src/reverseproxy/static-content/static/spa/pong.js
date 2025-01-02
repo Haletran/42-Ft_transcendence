@@ -75,8 +75,8 @@ export class Pong extends Page {
                                         <div class="user_name d-flex flex-column gap-2">
                                             <input type="text" class="form-control" id="player_1" placeholder="Player 1">
                                             <input type="text" class="form-control" id="player_2" placeholder="Player 2">
-                                            <input type="text" class="form-control" id="player_2" placeholder="Player 2">
-                                            <input type="text" class="form-control" id="player_2" placeholder="Player 4">
+                                            <input type="text" class="form-control" id="player_3" placeholder="Player 2">
+                                            <input type="text" class="form-control" id="player_4" placeholder="Player 4">
                                         </div>
                                     <button id="tournament_button" value="tour" class="btn btn-light">Start Tournament</button>
                                 </div>

@@ -299,6 +299,13 @@ function initGame(gamemode) {
         const table = new Table(0, 0, canvas.width, canvas.height, 'black')
         return { player1, player2, ball, table }
     }
+    else if (gamemode === 'tour') {
+        const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1', false)
+        const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'AI', true)
+        const ball = new Ball(x, y, 10, 'red', { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
+        const table = new Table(0, 0, canvas.width, canvas.height, 'black')
+        return { player1, player2, ball, table }
+    }
 }
 
 function movePlayers() {
@@ -531,6 +538,8 @@ export function startGame(gamemode, playerNames) {
                         animate(pong, resolve);
                     }
                     else if (gamemode === 'tour') {
+                        const pong = new Pong(gamemode);
+                        game = pong.game;
                         startTournament(playerNames, resolve);
                     }
                 }
