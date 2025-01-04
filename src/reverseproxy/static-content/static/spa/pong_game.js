@@ -1,6 +1,7 @@
 // SETUP CANVAS
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie, getACookie } from '../js/utils.js';
 import { set1v1victory } from '../src/scoreTable.js';
+const { interactWithContract } = require("../../../../crypto/scripts/interact.js");
 
 let canvas = document.querySelector('canvas');
 if (!canvas) {
@@ -216,6 +217,7 @@ class Tournament {
                 if (GameEnd()) {
                     const scores = { p1: game.player1.score, p2: game.player2.score };
                     set1v1victory(game.player1, game.player2, scores, false, true);
+                    interactWithContract('0x70e0bA845a1A0F2DA3359C97E0285013525FFC49', p1, game.player1.score, p2, game.player2.score);
                     const winner = getWinner(game.player1, game.player2);
                     resolve(winner === game.player1.name ? player1 : player2);
                 } else {

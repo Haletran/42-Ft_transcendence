@@ -1,14 +1,11 @@
 const { ethers } = require("hardhat");
 
-async function main() {
+async function interactWithContract(contractAddress, player1, score1, player2, score2) {
     // Connect to the provider (Hardhat local node, or external network)
     const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 
     // Get the signer (the first account from the local Hardhat node)
     const signer = provider.getSigner();
-
-    // Replace with the actual deployed contract address
-    const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
     // ABI of the contract
     const abi = [
@@ -41,17 +38,17 @@ async function main() {
     // Create contract instance
     const scoreContract = new ethers.Contract(contractAddress, abi, signer);
 
-    // Call the getMatch function
     try {
+        // Call the getMatch function to fetch the current match details
         const matchDetails = await scoreContract.getMatch();
         console.log("Match details:", matchDetails);
     } catch (error) {
         console.error("Error calling getMatch:", error);
     }
 
-    // Example of submitting match data
     try {
-        const tx = await scoreContract.setMatch("Player1", 10, "Player2", 20);
+        // Submit match data to the contract
+        const tx = await scoreContract.setMatch(player1, score1, player2, score2);
         await tx.wait();
         console.log("Match data submitted successfully.");
     } catch (error) {
@@ -59,10 +56,5 @@ async function main() {
     }
 }
 
-// Run the main function
-main()
-    .then(() => process.exit(0))
-    .catch((error) => {
-        console.error("Error in main function:", error);
-        process.exit(1);
-    });
+// Export the function so it can be used in other files
+module.exports = { interactWithContract };
