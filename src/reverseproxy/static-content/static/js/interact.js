@@ -1,14 +1,11 @@
-const { ethers } = require("hardhat");
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 
-async function main() {
-    // Connect to the provider (Hardhat local node, or external network)
+export async function interactWithContract(contractAddress, player1, score1, player2, score2) {
+    // Connect to the local blockchain
     const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 
-    // Get the signer (the first account from the local Hardhat node)
-    const signer = provider.getSigner();
-
-    // Replace with the actual deployed contract address
-    const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    // Get the first account as the signer
+    const signer = provider.getSigner(0); // Using the first account provided by Hardhat
 
     // ABI of the contract
     const abi = [
@@ -41,28 +38,23 @@ async function main() {
     // Create contract instance
     const scoreContract = new ethers.Contract(contractAddress, abi, signer);
 
-    // Call the getMatch function
     try {
+        // Fetch current match details
+        console.log("Fetching match details...");
         const matchDetails = await scoreContract.getMatch();
         console.log("Match details:", matchDetails);
     } catch (error) {
-        console.error("Error calling getMatch:", error);
+        console.error("Error calling getMatch:", error.message);
     }
 
-    // Example of submitting match data
     try {
-        const tx = await scoreContract.setMatch("Player1", 10, "Player2", 20);
+        // Submit match data to the contract
+        console.log("Submitting match data...");
+        const tx = await scoreContract.setMatch(player1, score1, player2, score2);
+        console.log("Transaction submitted. Waiting for confirmation...");
         await tx.wait();
         console.log("Match data submitted successfully.");
     } catch (error) {
-        console.error("Error submitting match data:", error);
+        console.error("Error submitting match data:", error.message);
     }
 }
-
-// Run the main function
-main()
-    .then(() => process.exit(0))
-    .catch((error) => {
-        console.error("Error in main function:", error);
-        process.exit(1);
-    });

@@ -1,6 +1,7 @@
 // SETUP CANVAS
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie, getACookie } from '../js/utils.js';
 import { set1v1victory } from '../src/scoreTable.js';
+import { interactWithContract } from '../js/interact.js'
 
 let canvas = document.querySelector('canvas');
 if (!canvas) {
@@ -217,6 +218,8 @@ class Tournament {
                     const scores = { p1: game.player1.score, p2: game.player2.score };
                     set1v1victory(game.player1, game.player2, scores, false, true);
                     const winner = getWinner(game.player1, game.player2);
+                    // const contractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
+                    // interactWithContract(contractAddress, game.player1.name, game.player1.score, game.player2.name, game.player2.score); To see with Baptiste on how to implement it
                     resolve(winner === game.player1.name ? player1 : player2);
                 } else {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
