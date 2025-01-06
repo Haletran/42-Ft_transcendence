@@ -3,6 +3,7 @@ import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, se
 import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
+import { getProfileUsername } from '../src/fetchUser.js';
 
 
 
@@ -49,7 +50,6 @@ export class Pong extends Page {
                 <button class="btn btn-outline-light me-auto" href="/home" data-link="/home"><i
                         class="bi bi-arrow-left"></i></button>
                 <div id="logo" style="display: flex; align-items: center">
-
                     <h1 id="menu" class="display-1 montserrat-bold fw-bold mx-auto">PONG</h1>
                 </div>
                 <article class="d-flex flex-column gap-2">
@@ -58,6 +58,42 @@ export class Pong extends Page {
                         vs 1</button>
                     <button id="start_button2" value="vsa" class="btn btn-outline-light full-width btn-lg">1
                         vs AI</button>
+                        <button id="settings_button" class="btn btn-outline-info full-width btn-lg">
+                            <i class="bi bi-gear-fill"></i> Settings
+                        </button>
+                    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="settingsModalLabel">Game Settings</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="playerColor" class="form-label">Player Color</label>
+                                        <input type="color" class="form-control form-control-color" id="playerColor" value="#ffffff">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="ballColor" class="form-label">Ball Color</label>
+                                        <input type="color" class="form-control form-control-color" id="ballColor" value="#000000">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="mapColor" class="form-label">Map Color</label>
+                                        <input type="color" class="form-control form-control-color" id="mapColor" value="#000000">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="textColor" class="form-label">Text Color</label>
+                                        <input type="color" class="form-control form-control-color" id="textColor" value="#000000">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" id="resetSettings">RESET</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" id="saveSettings">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="accordion" id="accordionExample">
                         <div class="accordion-item text-align-center">
                           <h2 class="accordion-header">
@@ -106,6 +142,56 @@ export class Pong extends Page {
     }
 
     eventListeners() {
+
+        const settingsButton = document.getElementById('settings_button');
+        if (settingsButton) {
+            settingsButton.addEventListener('click', () => {
+                const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
+                modal.show();
+            });
+        }
+        const saveSettingsButton = document.getElementById('saveSettings');
+        if (saveSettingsButton) {
+            saveSettingsButton.addEventListener('click', () => {
+                const playerColor = document.getElementById('playerColor').value;
+                const ballColor = document.getElementById('ballColor').value;
+                const mapColor = document.getElementById('mapColor').value;
+                const textColor = document.getElementById('textColor').value;
+                localStorage.setItem('playerColor', playerColor);
+                localStorage.setItem('ballColor', ballColor);
+                localStorage.setItem('mapColor', mapColor);
+                localStorage.setItem('textColor', textColor);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+                modal.hide();
+            });
+        }
+        const playerColorInput = document.getElementById('playerColor');
+        const mapColorInput = document.getElementById('mapColor');
+        const ballColorInput = document.getElementById('ballColor');
+        const textColorInput = document.getElementById('textColor');
+        if (playerColorInput && mapColorInput && ballColorInput && textColorInput) {
+            playerColorInput.value = localStorage.getItem('playerColor') || '#ffffff';
+            ballColorInput.value = localStorage.getItem('ballColor') || '#ffffff';
+            mapColorInput.value = localStorage.getItem('mapColor') || '#282931';
+            textColorInput.value = localStorage.getItem('textColor') || '#ffffff';
+        }
+
+        const resetSettingsButton = document.getElementById('resetSettings');
+        if (resetSettingsButton) {
+            resetSettingsButton.addEventListener('click', () => {
+                localStorage.removeItem('playerColor');
+                localStorage.removeItem('ballColor');
+                localStorage.removeItem('mapColor');
+                localStorage.removeItem('textColor');
+                playerColorInput.value = '#ffffff';
+                ballColorInput.value = '#ffffff';
+                mapColorInput.value = '#282931';
+                textColorInput.value = '#ffffff';
+            });
+        }
+
+
+
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {
@@ -155,6 +241,8 @@ export class Pong extends Page {
                         // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
                         const module = await import(`/static/spa/pong_game.js?timestamp=${new Date().getTime()}`);
                         setACookie('game_running', 'true', 1);
+                        const username = await getProfileUsername();
+                        localStorage.setItem('username', username);
                         if (buttonId === 'tournament_button') {
                             let player_name = [];
                             const range = document.getElementById('customRange1');

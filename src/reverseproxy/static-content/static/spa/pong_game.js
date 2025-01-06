@@ -1,6 +1,7 @@
 // SETUP CANVAS
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie, getACookie } from '../js/utils.js';
 import { set1v1victory } from '../src/scoreTable.js';
+import { getProfileUsername } from '../src/fetchUser.js';
 
 let canvas = document.querySelector('canvas');
 if (!canvas) {
@@ -12,6 +13,11 @@ if (!canvas) {
 }
 const ctx = canvas.getContext("2d");
 let game = 0;
+const collisionSound_PONG = new Audio('/static/imgs/pong.mp3');
+const collisionSound_PING = new Audio('/static/imgs/ping.mp3');
+const coutdownSound = new Audio('/static/imgs/countdown.mp3');
+const victorySound = new Audio('/static/imgs/victory.mp3');
+const pointSound = new Audio('/static/imgs/point.mp3');
 
 // VARIABLES
 canvas.width = innerWidth - 400
@@ -104,12 +110,14 @@ class Ball {
 }
 
 class Table {
-    constructor(x, y, width, height, bg_color) {
+    constructor(x, y, width, height, bg_color, t_color) {
         this.x = x
         this.y = y
         this.width = width
         this.height = height
         this.color = bg_color
+        this.text_color = t_color;
+
     }
 
     draw() {
@@ -127,7 +135,7 @@ class Table {
         ctx.stroke();
 
         ctx.font = "23px sans-serif";
-        ctx.fillStyle = 'grey';
+        ctx.fillStyle = this.text_color;
         ctx.fillText(game.player1.name, 50, 50);
         ctx.fillText(game.player2.name, canvas.width - 150, 50);
 
@@ -282,21 +290,31 @@ class Pong {
 // GAME RELATED FUNCTIONS
 function initGame(gamemode) {
     // depends on the responsivess
+    let username = localStorage.getItem('username');
+    let ballColor = localStorage.getItem('ballColor');
+    let playerColor = localStorage.getItem('playerColor');
+    let textColor = localStorage.getItem('textColor');
+    let tableColor = localStorage.getItem('mapColor');
+    if (!tableColor) { tableColor = '#282931' }
+    if (!textColor) { textColor = '#ffffff' }
+    if (!playerColor) { playerColor = '#ffffff' }
+    if (!ballColor) { ballColor = '#ffffff' }
+    if (!username) { username = 'player1' }
     const angleRange = Math.PI / 2;
     const baseAngle = Math.random() < 0.5 ? Math.PI : 0;
     const randomAngle = baseAngle + (Math.random() * angleRange - angleRange / 2);
     if (gamemode === 'pvp') {
-        const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1', false)
-        const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'player2', false)
-        const ball = new Ball(x, y, 10, 'red', { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
-        const table = new Table(0, 0, canvas.width, canvas.height, 'black')
+        const player1 = new Player(30, y, playerColor, 10, 100, 5, username, false)
+        const player2 = new Player(canvas.width - 30, y, playerColor, 10, 100, 5, 'player2', false)
+        const ball = new Ball(x, y, 10, ballColor, { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
+        const table = new Table(0, 0, canvas.width, canvas.height, tableColor, textColor)
         return { player1, player2, ball, table }
     }
     else if (gamemode === 'vsa') {
-        const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1', false)
-        const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'AI', true)
+        const player1 = new Player(30, y, playerColor, 10, 100, 5, username, false)
+        const player2 = new Player(canvas.width - 30, y, playerColor, 10, 100, 5, 'AI', true)
         const ball = new Ball(x, y, 10, 'red', { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
-        const table = new Table(0, 0, canvas.width, canvas.height, 'black')
+        const table = new Table(0, 0, canvas.width, canvas.height, tableColor, textColor)
         return { player1, player2, ball, table }
     }
 }
@@ -366,10 +384,12 @@ function movePlayers() {
 
 async function moveBall() {
     if (game.ball.y + game.ball.radius > canvas.height || game.ball.y - game.ball.radius < 0) {
+        playSound(collisionSound_PING);
         game.ball.velocity.y = -game.ball.velocity.y
     }
     if (game.ball.x + game.ball.radius > canvas.width || game.ball.x - game.ball.radius < 0) {
         let player_win = 0;
+        playSound(pointSound);
         if (game.ball.x + game.ball.radius > game.player2.x) {
             hitEffect();
             player_win = 1;
@@ -391,9 +411,11 @@ async function moveBall() {
 
     if (game.ball.x + game.ball.radius > game.player2.x && game.ball.y > game.player2.y && game.ball.y < game.player2.y + game.player2.height) {
         game.ball.velocity.x = -game.ball.velocity.x
+        playSound(collisionSound_PONG);
     }
     if (game.ball.x - game.ball.radius < game.player1.x + game.player1.width && game.ball.y > game.player1.y && game.ball.y < game.player1.y + game.player1.height) {
         game.ball.velocity.x = -game.ball.velocity.x
+        playSound(collisionSound_PONG);
     }
 
     let paddleHeight = game.player1.height;
@@ -466,6 +488,7 @@ async function animate(pong, resolve) {
         const winner = getWinner(game.player1, game.player2);
         game.player1.reset()
         game.player2.reset()
+        playSound(victorySound);
         alert(`${winner} won!`);
         cancelAnimationFrame(animationFrameId);
         clearCanvas();
@@ -503,20 +526,28 @@ async function pauseGame(value) {
     setACookie('game_running', 'true', 1);
 }
 
+function playSound(sound) {
+    sound.currentTime = 0;
+    getACookie('game_running') === 'true' ? sound.play() : sound.pause();
+}
+
 window.addEventListener('keydown', checkKeyDown, false);
 window.addEventListener('keyup', checkKeyUp, false);
 
 export function startGame(gamemode, playerNames) {
     if (getACookie('game_running') === 'true') {
+        playSound(coutdownSound);
         return new Promise((resolve) => {
-            let count = 3;
+            let count = ["3", "2", "1", "GO !"];
+            let i = 0;
             const interval = setInterval(() => {
                 ctx.clearRect(canvas.width / 2 - 50, canvas.height / 2 - 100, 100, 150);
                 ctx.font = "50px Arial";
                 ctx.fillStyle = "white";
-                ctx.fillText(count, canvas.width / 2 - 20, canvas.height / 2);
-                count--;
-                if (count < 0) {
+                const textSize = ctx.measureText(count[i]).width;
+                ctx.fillText(count[i], (canvas.width - textSize) / 2, canvas.height / 2);
+                i++;
+                if (i > 4) {
                     clearInterval(interval);
                     if (gamemode === 'pvp') {
                         const pong = new Pong(gamemode);
@@ -534,7 +565,7 @@ export function startGame(gamemode, playerNames) {
                         startTournament(playerNames, resolve);
                     }
                 }
-            }, 500);
+            }, 700);
         });
     }
 }

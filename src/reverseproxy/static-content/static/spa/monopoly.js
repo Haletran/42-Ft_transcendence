@@ -161,7 +161,6 @@ export class Monopoly extends Page {
             });
         }
 
-
         document.getElementById('customRange1').addEventListener('input', function () {
             const range = document.getElementById('customRange1');
             const userNameContainer = document.querySelector('.user_name');
@@ -178,13 +177,6 @@ export class Monopoly extends Page {
             rangeValue.innerHTML = range.value;
         });
 
-
-        // document.addEventListener('DOMContentLoaded', function () {
-        //     const rangeInput = document.getElementById('customRange1');
-        //     rangeInput.value = 4;
-        //     rangeInput.focus();
-        // });
-
         ['start_button_m'].forEach(buttonId => {
             const button = document.getElementById(buttonId);
             if (button) {
@@ -193,7 +185,6 @@ export class Monopoly extends Page {
                     showElementsByClass('game', 'flex');
                     addClassToElementsByClass('game', 'center');
                     try {
-                        // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
                         // ADD CHOICE OF NB PLAYERS
                         const range = document.getElementById('customRange1');
                         const map = document.querySelector('.selected');

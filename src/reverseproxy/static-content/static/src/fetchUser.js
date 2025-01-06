@@ -74,6 +74,27 @@ export async function getProfileName() {
     }
 }
 
+export async function getProfileUsername() {
+    try {
+        const response = await fetch('/api/credentials/user-info/', {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            return userData.username;
+        } else {
+            console.log(response.status);
+            console.log('User not logged in');
+            return null;
+        }
+    } catch (error) {
+        console.error("User not logged in:", error);
+        return null;
+    }
+}
+
 export async function fetchSettingsInfo() {
     try {
         const response = await fetch('/api/credentials/user-info/', {
