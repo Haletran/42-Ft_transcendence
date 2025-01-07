@@ -1,6 +1,7 @@
 // SETUP CANVAS
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie, getACookie } from '../js/utils.js';
 import { set1v1victory } from '../src/scoreTable.js';
+import { interactWithContract } from '../js/interact.js'
 import { getProfileUsername } from '../src/fetchUser.js';
 
 let canvas = document.querySelector('canvas');
@@ -225,6 +226,8 @@ class Tournament {
                     const scores = { p1: game.player1.score, p2: game.player2.score };
                     set1v1victory(game.player1, game.player2, scores, false, true);
                     const winner = getWinner(game.player1, game.player2);
+                    // const contractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
+                    // interactWithContract(contractAddress, game.player1.name, game.player1.score, game.player2.name, game.player2.score); To see with Baptiste on how to implement it
                     resolve(winner === game.player1.name ? player1 : player2);
                 } else {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -315,6 +318,13 @@ function initGame(gamemode) {
         const player2 = new Player(canvas.width - 30, y, playerColor, 10, 100, 5, 'AI', true)
         const ball = new Ball(x, y, 10, 'red', { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
         const table = new Table(0, 0, canvas.width, canvas.height, tableColor, textColor)
+        return { player1, player2, ball, table }
+    }
+    else if (gamemode === 'tour') {
+        const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1', false)
+        const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'AI', true)
+        const ball = new Ball(x, y, 10, 'red', { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
+        const table = new Table(0, 0, canvas.width, canvas.height, 'black')
         return { player1, player2, ball, table }
     }
 }
@@ -562,6 +572,8 @@ export function startGame(gamemode, playerNames) {
                         animate(pong, resolve);
                     }
                     else if (gamemode === 'tour') {
+                        const pong = new Pong(gamemode);
+                        game = pong.game;
                         startTournament(playerNames, resolve);
                     }
                 }

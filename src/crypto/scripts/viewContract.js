@@ -8,7 +8,7 @@ async function main() {
     const signer = provider.getSigner();
 
     // Replace with the actual deployed contract address
-    const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    const contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 
     // ABI of the contract
     const abi = [
@@ -54,18 +54,6 @@ async function main() {
     }
 
     // Call the viewContractState function
-    await viewContractState();
-
-    // Example of submitting match data
-    try {
-        const tx = await scoreContract.setMatch("Player1", 10, "Player2", 20);
-        await tx.wait();
-        console.log("Match data submitted successfully.");
-    } catch (error) {
-        console.error("Error submitting match data:", error);
-    }
-
-    // View updated contract state
     await viewContractState();
 }
 
