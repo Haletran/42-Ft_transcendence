@@ -56,13 +56,12 @@ export class Monopoly extends Page {
                         <input type="range" class="form-range" min="2" max="6" step="2" id="customRange1"><span id="rangeValue"></span>
                     </div>
                         <p class="text-muted">2 to 6 players (default 4 players)</p>
-                                        <button class="btn btn-primary w-100 hover-effect" data-bs-toggle="modal" data-bs-target="#monopolyModal">
+                <button class="btn btn-primary w-100 hover-effect" data-bs-toggle="modal" data-bs-target="#monopolyModal">
                   <i class="bi bi-chevron-right"></i> Choose the Monopoly version
                 </button>
                     <div class="user_name d-grid gap-2">
                     </div>
                     <div class="container mt-5">
-                        <!-- Modal -->
                         <div class="modal fade" id="monopolyModal" tabindex="-1" aria-labelledby="monopolyModalLabel" aria-hidden="true">
                           <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
@@ -84,6 +83,46 @@ export class Monopoly extends Page {
                         </div>
                     </div>
                 </div>
+                <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="settingsModalLabel">Game Settings</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                        <div class="col mb-3">
+                            <label for="playerColor" class="form-label">Player Color</label>
+                            <input type="color" class="form-control form-control-color" id="playerColor" value="#ffffff">
+                        </div>
+                        <div class="col mb-3">
+                            <label for="ballColor" class="form-label">Ball Color</label>
+                            <input type="color" class="form-control form-control-color" id="ballColor" value="#000000">
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col mb-3">
+                            <label for="mapColor" class="form-label">Map Color</label>
+                            <input type="color" class="form-control form-control-color" id="mapColor" value="#000000">
+                        </div>
+                        <div class="col mb-3">
+                            <label for="textColor" class="form-label">Text Color</label>
+                            <input type="color" class="form-control form-control-color" id="textColor" value="#000000">
+                        </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="resetSettings">RESET</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="saveSettings">Save changes</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <button id="settings_button" class="btn btn-outline-info w-100">
+                    <i class="bi bi-gear-fill"></i> Settings
+                </button>
                 <button id="start_button_m" value="tour" class="btn btn-light w-100" disabled>Play</button>
             </div>
         </div>
@@ -153,6 +192,53 @@ export class Monopoly extends Page {
     }
 
     eventListeners() {
+        const settingsButton = document.getElementById('settings_button');
+        if (settingsButton) {
+            settingsButton.addEventListener('click', () => {
+                const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
+                modal.show();
+            });
+        }
+        const saveSettingsButton = document.getElementById('saveSettings');
+        if (saveSettingsButton) {
+            saveSettingsButton.addEventListener('click', () => {
+                const playerColor = document.getElementById('playerColor').value;
+                const ballColor = document.getElementById('ballColor').value;
+                const mapColor = document.getElementById('mapColor').value;
+                const textColor = document.getElementById('textColor').value;
+                localStorage.setItem('playerColor', playerColor);
+                localStorage.setItem('ballColor', ballColor);
+                localStorage.setItem('mapColor', mapColor);
+                localStorage.setItem('textColor', textColor);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+                modal.hide();
+            });
+        }
+        const playerColorInput = document.getElementById('playerColor');
+        const mapColorInput = document.getElementById('mapColor');
+        const ballColorInput = document.getElementById('ballColor');
+        const textColorInput = document.getElementById('textColor');
+        if (playerColorInput && mapColorInput && ballColorInput && textColorInput) {
+            playerColorInput.value = localStorage.getItem('playerColor') || '#ffffff';
+            ballColorInput.value = localStorage.getItem('ballColor') || '#ffffff';
+            mapColorInput.value = localStorage.getItem('mapColor') || '#282931';
+            textColorInput.value = localStorage.getItem('textColor') || '#ffffff';
+        }
+
+        const resetSettingsButton = document.getElementById('resetSettings');
+        if (resetSettingsButton) {
+            resetSettingsButton.addEventListener('click', () => {
+                localStorage.removeItem('playerColor');
+                localStorage.removeItem('ballColor');
+                localStorage.removeItem('mapColor');
+                localStorage.removeItem('textColor');
+                playerColorInput.value = '#ffffff';
+                ballColorInput.value = '#ffffff';
+                mapColorInput.value = '#282931';
+                textColorInput.value = '#ffffff';
+            });
+        }
+
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function () {

@@ -32,3 +32,7 @@ CSRF_TRUSTED_ORIGINS = [
 git rm -r --cached .
 ```
 Then commit/push and it should work properly :)
+
+
+
+Ajouter boulevard Charlotte (CHER)

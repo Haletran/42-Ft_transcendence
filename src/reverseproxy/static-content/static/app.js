@@ -3,6 +3,7 @@ import { HomePage } from './spa/home.js';
 import { RegisterPage } from './spa/register.js';
 import { LoginPage } from './spa/login.js';
 import { Monopoly } from './spa/monopoly.js';
+import { Credit } from './spa/credits.js';
 import { Pong } from './spa/pong.js';
 import { Profile } from './spa/profile.js';
 import { Settings } from './spa/settings.js';
@@ -23,6 +24,7 @@ const routes = {
   '/login_base': loginBasePage, // accessible without auth, should log out
   '/friends': Friends,
   '/privacy': Privacy,
+  '/credits': Credit,
 };
 
 export const router = new Router(routes);
@@ -40,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Add a specific event listener for the logo
   const logo = document.querySelector('.navbar-brand[data-link]');
   if (logo) {
     logo.addEventListener('click', (e) => {
@@ -49,30 +50,29 @@ document.addEventListener('DOMContentLoaded', () => {
       router.navigate();
     });
   }
-  //console.log("BIND NAV", window.location.pathname);
   //checkUserAuthentification(window.location.pathname);
   //window.addEventListener('popstate', router.navigate.bind(router));
-  ( async () => { await router.initialize();})()
+  (async () => { await router.initialize(); })()
 });
 
 export async function checkUserAuthentification(path) {
   try {
-      const isLogged = await isUserLoggedIn();
+    const isLogged = await isUserLoggedIn();
 
-      console.log('User Authenticated: ', isLogged);
+    console.log('User Authenticated: ', isLogged);
 
-      const PublicPaths = ['/login_base', '/', '/register'];
+    const PublicPaths = ['/login_base', '/', '/register'];
 
-      if (isLogged || PublicPaths.includes(path)) {
-        return path;
-      } else {
-        return '/login_base';
-
-      }
-    } catch (error) {
-      console.error('Error checking user authentication:', error);
+    if (isLogged || PublicPaths.includes(path)) {
+      return path;
+    } else {
       return '/login_base';
+
     }
+  } catch (error) {
+    console.error('Error checking user authentication:', error);
+    return '/login_base';
+  }
 }
 
 export async function isUserLoggedIn() {
@@ -82,13 +82,12 @@ export async function isUserLoggedIn() {
       const userData = await response.json();
       return userData != null;
     } else if (response.status === 401) {
-      // User is unauthenticated
       console.warn('User is not logged in.');
       return false;
     }
   } catch (error) {
-      console.error('Error checking user authentication:', error);
-      return false;
+    console.error('Error checking user authentication:', error);
+    return false;
   }
   return false;
 }

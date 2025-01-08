@@ -3,6 +3,8 @@ import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, se
 import { set1v1victory } from '../src/scoreTable.js';
 import { interactWithContract } from '../js/interact.js'
 import { getProfileUsername } from '../src/fetchUser.js';
+import { shoot } from '../src/particles.js';
+
 
 let canvas = document.querySelector('canvas');
 if (!canvas) {
@@ -24,6 +26,7 @@ const pointSound = new Audio('/static/imgs/point.mp3');
 canvas.width = innerWidth - 400
 canvas.height = innerHeight - 200
 let keys = {};
+let first_hit = 0;
 let animationFrameId;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const hitEffect = () => {
@@ -274,6 +277,7 @@ class Tournament {
         }
 
         const tournamentWinner = this.bracket[0].winner;
+        shoot();
         alert(`Tournament Winner: ${tournamentWinner.name}!`);
         clearCanvas();
         hideElementsByClass('game');
@@ -292,7 +296,6 @@ class Pong {
 
 // GAME RELATED FUNCTIONS
 function initGame(gamemode) {
-    // depends on the responsivess
     let username = localStorage.getItem('username');
     let ballColor = localStorage.getItem('ballColor');
     let playerColor = localStorage.getItem('playerColor');
@@ -309,22 +312,22 @@ function initGame(gamemode) {
     if (gamemode === 'pvp') {
         const player1 = new Player(30, y, playerColor, 10, 100, 5, username, false)
         const player2 = new Player(canvas.width - 30, y, playerColor, 10, 100, 5, 'player2', false)
-        const ball = new Ball(x, y, 10, ballColor, { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
+        const ball = new Ball(x, y, 10, ballColor, { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 2)
         const table = new Table(0, 0, canvas.width, canvas.height, tableColor, textColor)
         return { player1, player2, ball, table }
     }
     else if (gamemode === 'vsa') {
         const player1 = new Player(30, y, playerColor, 10, 100, 5, username, false)
         const player2 = new Player(canvas.width - 30, y, playerColor, 10, 100, 5, 'AI', true)
-        const ball = new Ball(x, y, 10, 'red', { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
+        const ball = new Ball(x, y, 10, ballColor, { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 2)
         const table = new Table(0, 0, canvas.width, canvas.height, tableColor, textColor)
         return { player1, player2, ball, table }
     }
     else if (gamemode === 'tour') {
-        const player1 = new Player(30, y, 'white', 10, 100, 5, 'player1', false)
-        const player2 = new Player(canvas.width - 30, y, 'white', 10, 100, 5, 'AI', true)
-        const ball = new Ball(x, y, 10, 'red', { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 4)
-        const table = new Table(0, 0, canvas.width, canvas.height, 'black')
+        const player1 = new Player(30, y, playerColor, 10, 100, 5, 'player1', false)
+        const player2 = new Player(canvas.width - 30, y, playerColor, 10, 100, 5, 'player2', false)
+        const ball = new Ball(x, y, 10, ballColor, { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 2)
+        const table = new Table(0, 0, canvas.width, canvas.height, tableColor, textColor)
         return { player1, player2, ball, table }
     }
 }
@@ -334,7 +337,6 @@ function movePlayers() {
         return;
     }
 
-    // AI MOVEMENT TO IMPROVE not working according to the subject
     if (game.player2.isAi) {
         console.log("X / Y / playerx / playery : ", game.ball.x, game.ball.y, game.player2.x, game.player2.y)
         if (game.ball.x > canvas.width / 2) {
@@ -404,10 +406,12 @@ async function moveBall() {
             hitEffect();
             player_win = 1;
             game.player1.score += 1
+            setTimeout(shoot(3), 100);
         } else if (game.ball.x - game.ball.radius < game.player1.x + game.player1.width) {
             hitEffect();
             player_win = 2;
             game.player2.score += 1
+            setTimeout(shoot(2), 100);
         }
         const angleRange = Math.PI / 2;
         const baseAngle = player_win === 1 ? Math.PI : 0;
@@ -417,13 +421,29 @@ async function moveBall() {
         game.ball.velocity.x = 3 * Math.cos(randomAngle);
         game.ball.velocity.y = 3 * Math.sin(randomAngle);
         player_win = 0;
+        first_hit = 0;
+        game.ball.speed = 2;
     }
 
     if (game.ball.x + game.ball.radius > game.player2.x && game.ball.y > game.player2.y && game.ball.y < game.player2.y + game.player2.height) {
+        if (first_hit === 0) {
+            game.ball.speed += 3;
+            first_hit = 1;
+        }
+        else if (first_hit === 1 && game.ball.speed < 6) {
+            game.ball.speed += 0.2;
+        }
         game.ball.velocity.x = -game.ball.velocity.x
         playSound(collisionSound_PONG);
     }
     if (game.ball.x - game.ball.radius < game.player1.x + game.player1.width && game.ball.y > game.player1.y && game.ball.y < game.player1.y + game.player1.height) {
+        if (first_hit === 0) {
+            game.ball.speed += 3;
+            first_hit = 1;
+        }
+        else if (first_hit === 1 && game.ball.speed < 6) {
+            game.ball.speed += 0.2;
+        }
         game.ball.velocity.x = -game.ball.velocity.x
         playSound(collisionSound_PONG);
     }
@@ -472,7 +492,6 @@ function linkPause(pong, resolve) {
     const pauseButton = document.getElementById('pause_button')
     const pause = document.querySelector('.bi-pause-fill');
     pauseButton.addEventListener('click', () => {
-        console.log("PAUSE BUTTON CLICKED")
         if (value % 2 == 0) {
             pause.classList.remove('bi-pause-fill');
             pause.classList.add('bi-play-fill');
