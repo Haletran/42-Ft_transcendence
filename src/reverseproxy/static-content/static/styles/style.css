@@ -28,8 +28,7 @@ body {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    border: 2px solid white;
-    /* Optional: Border to match the image background */
+    /* border: 2px solid white; */
 }
 
 
@@ -159,6 +158,10 @@ img.main-logo {
     border: 2px solid white;
     border-radius: 10px;
     background-color: rgb(40, 41, 49);
+}
+
+#credits_canvas {
+    border-radius: 10px;
 }
 
 #monopoly_canvas {
