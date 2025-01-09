@@ -10,8 +10,9 @@ import { Settings } from './spa/settings.js';
 import { Friends } from './spa/friends.js';
 import { initializeCSRFToken } from './src/csrf.js';
 import { loginBasePage } from './spa/login_base.js';
-import { logoutUser } from './src/logout.js';
+// import { logoutUser } from './src/logout.js';
 import { Privacy } from './spa/privacy.js'
+import { test } from './spa/404.js'
 
 const routes = {
   '/': LoginPage, // accessible without auth, should log out
@@ -25,6 +26,7 @@ const routes = {
   '/friends': Friends,
   '/privacy': Privacy,
   '/credits': Credit,
+  '/404': test
 };
 
 export const router = new Router(routes);
@@ -61,9 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
       router.navigate();
     });
   }
-  //checkUserAuthentification(window.location.pathname);
-  //window.addEventListener('popstate', router.navigate.bind(router));
-  (async () => { await router.initialize(); })()
+  (async () => {
+    await router.initialize();
+    if (!routes[window.location.pathname]) {
+      router.goTo('/404');
+    }
+  })()
 });
 
 export async function checkUserAuthentification(path) {
@@ -72,7 +77,7 @@ export async function checkUserAuthentification(path) {
 
     console.log('User Authenticated: ', isLogged);
 
-    const PublicPaths = ['/login_base', '/', '/register'];
+    const PublicPaths = ['/login_base', '/', '/register', '/404'];
 
     if (isLogged || PublicPaths.includes(path)) {
       return path;
