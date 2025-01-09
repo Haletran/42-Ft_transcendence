@@ -46,32 +46,38 @@ const y = canvas.height / 2
 let contractAddresses = [];
 
 async function fetchContractAddresses() {
-    const url = '/static/spa/contract/deployedAddresses.json';
-    console.log('Fetching from URL:', url); // Log the URL being fetched
-    const response = await fetch(url);
-    const text = await response.text(); // Read response as plain text
-    console.log('Response Text:', text); // Log the raw text
-    const addresses = JSON.parse(text); // Parse the raw text as JSON
+    try {
+        const url = '/static/spa/contract/deployedAddresses.json';
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const text = await response.text();
+        let addresses;
+        try {
+            addresses = JSON.parse(text);
+        } catch (err) {
+            throw new Error('Failed to parse JSON');
+        }
+        const firstContract = addresses[0];
 
-    // Extract all contract addresses from the first object in the array
-    const firstContract = addresses[0]; // The first (and only) item in the array
-
-    // Return all contract addresses as an array
-    return [
-        firstContract.contract1,
-        firstContract.contract2,
-        firstContract.contract3,
-        firstContract.contract4,
-        firstContract.contract5,
-        firstContract.contract6,
-        firstContract.contract7
-    ];
+        return [
+            firstContract.contract1,
+            firstContract.contract2,
+            firstContract.contract3,
+            firstContract.contract4,
+            firstContract.contract5,
+            firstContract.contract6,
+            firstContract.contract7
+        ];
+    } catch (err) {
+        console.error('Error fetching contract addresses:', err);
+        throw err;
+    }
 }
 
-// Assign the result to contractAddresses
 fetchContractAddresses().then(addresses => {
-    contractAddresses = addresses; // Set contractAddresses to the fetched array
-    console.log("Contract Addresses:", contractAddresses);
+    contractAddresses = addresses;
 }).catch(err => {
     console.error("Error fetching addresses:", err);
 });
@@ -263,7 +269,6 @@ class Tournament {
                     const scores = { p1: game.player1.score, p2: game.player2.score };
                     set1v1victory(game.player1, game.player2, scores, false, true);
                     const winner = getWinner(game.player1, game.player2);
-                    console.log(this.contract);
                     interactWithContract(contractAddresses[this.contract], game.player1.name, game.player1.score, game.player2.name, game.player2.score);
                     resolve(winner === game.player1.name ? player1 : player2);
                     this.contract++;
@@ -436,11 +441,11 @@ function movePlayers() {
     if (keys['83'] && game.player1.y < canvas.height - game.player1.height) { // S
         game.player1.y += game.player1.speed;
     }
-    if (keys['32']) { // SPACE
-        // PRESS SPACE if you want to make a user won (debug purpose)
-        console.log("SPACE PRESSED")
-        game.player1.score = 5
-    }
+    // if (keys['32']) { // SPACE
+    //     // PRESS SPACE if you want to make a user won (debug purpose)
+    //     console.log("SPACE PRESSED")
+    //     game.player1.score = 5
+    // }
 }
 
 async function moveBall() {
@@ -479,7 +484,6 @@ async function moveBall() {
         first_hit = 0;
         game.ball.speed = 2;
     }
-    console.log(game.ball.x, game.ball.y, game.ball.velocity.x, game.ball.velocity.y)
     if (game.ball.x + game.ball.radius > game.player2.x && game.ball.y > game.player2.y && game.ball.y < game.player2.y + game.player2.height) {
         if (first_hit === 0) {
             game.ball.speed += 3;
@@ -590,7 +594,6 @@ async function animate(pong, resolve) {
     game.player2.update()
     game.ball.update()
     animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
-    console.log("Game is running, the SCORE is (1/2): ", game.player1.score, game.player2.score)
 }
 
 // UTILS

@@ -63,7 +63,6 @@ export class HomePage extends Page {
 
     async render() {
         const loggedIn = await isUserLoggedIn();
-        console.log('loggedIn: ', loggedIn);
         if (loggedIn == false) {
             router.goTo('/login_base');
             return;
@@ -105,7 +104,7 @@ export async function isUserOnline() {
         }
         else {
             //startWebSocket();
-            console.log('Not an user: not online')
+            throw new Error('Error fetching online status');
         }
     } catch (error) {
         console.error("Error fetching online status");

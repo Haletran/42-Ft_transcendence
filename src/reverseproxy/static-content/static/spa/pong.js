@@ -161,7 +161,6 @@ export class Pong extends Page {
 
     async render() {
         const loggedIn = await isUserLoggedIn();
-        console.log('loggedIn: ', loggedIn);
         if (loggedIn == false) {
             router.goTo('/login_base');
             return;
@@ -336,12 +335,10 @@ async function startthegame(button, buttonId, player1, player2) {
                 }
             }
             winner = await module.startGame(button.value, player_name);
-            console.log("WINNER tournament: ", winner);
             setACookie('game_running', 'false', 1);
         }
         else {
             winner = await module.startGame(button.value);
-            console.log("WINNER 1v1: ", winner);
             setACookie('game_running', 'false', 1);
         }
     } catch (err) {

@@ -124,7 +124,7 @@ export class Settings extends Page {
         setACookie('game_running', 'false', 1);
         fetchSettingsInfo();
         isUserOnline();
-        super.render(); // Call the parent render method
+        super.render();
         setupProfilePictureSelection();
         this.attachFormListener();
 
@@ -135,7 +135,6 @@ export class Settings extends Page {
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {
-                //event.preventDefault();
                 logoutUser();
             });
         }
@@ -165,6 +164,11 @@ export class Settings extends Page {
 
             if (profileInput.files[0]) {
                 formData.append('profile_picture', profileInput.files[0]);
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+                if (!allowedTypes.includes(profileInput.files[0].type)) {
+                    alert('Only JPG, JPEG, PNG, and GIF files are allowed.');
+                    return;
+                }
                 console.log(profileInput.files[0]);
             }
 

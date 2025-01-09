@@ -42,7 +42,6 @@ export class Credit extends Page {
     }
     async render() {
         const loggedIn = await isUserLoggedIn();
-        console.log('loggedIn: ', loggedIn);
         if (loggedIn == false) {
             Router.goTo('/login_base');
             return;

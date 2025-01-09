@@ -5,7 +5,6 @@ import { isUserOnline } from './home.js';
 import { logoutUser } from '../src/logout.js';
 import { setACookie } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
-import { router, isUserLoggedIn } from '../app.js';
 
 export class Profile extends Page {
     constructor() {
@@ -109,12 +108,7 @@ export class Profile extends Page {
  `;
     }
     async render() {
-        const loggedIn = await isUserLoggedIn();
-        console.log('loggedIn: ', loggedIn);
-        if (loggedIn == false) {
-            router.goTo('/login_base');
-            return;
-        }
+
         setACookie('game_running', 'false', 1);
         fetchProfileInfo();
         fetchMinInfo();
