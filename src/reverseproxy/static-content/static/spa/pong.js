@@ -4,6 +4,8 @@ import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 import { getProfileUsername } from '../src/fetchUser.js';
+import { router, isUserLoggedIn } from '../app.js';
+
 
 export class Pong extends Page {
     constructor() {
@@ -132,8 +134,13 @@ export class Pong extends Page {
         `;
     }
 
-    render() {
-        setACookie('game_running', 'false', 1);
+    async render() {
+        const loggedIn = await isUserLoggedIn();
+        console.log('loggedIn: ', loggedIn);
+        if (loggedIn == false) {
+            router.goTo('/login_base');
+            return;
+        }
         fetchMinInfo();
         startWebSocket();
         super.render();

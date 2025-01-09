@@ -9,7 +9,8 @@ export class Router {
 	  this.authPath = null;
 	  // Add event listener for navigation
 	  window.addEventListener('popstate', () => {
-		this.navigate(); // This will handle back/forward navigation
+		console.log('back and forth');
+		this.navigate(window.location.pathname); // back/forward arrows
 	  });
 	}
   
@@ -20,7 +21,7 @@ export class Router {
 	}
 	async navigate(path = this.authPath || window.location.pathname) {
 
-	  console.log('In navigate -> Navigating to:', this.path);
+	  console.log('In navigate -> Navigating to:', path);
 	  const route = this.routes[path] || this.notFoundPage;
 	  console.log('In navigate -> Route found:', route.name);
   
