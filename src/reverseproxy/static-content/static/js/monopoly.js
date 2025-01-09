@@ -672,6 +672,7 @@ function drawPurchasePrompt(tile) {
     const posX = 1050;
     const posY = 640;
 
+    monopoly_game();
     // Draw the pop-up background
     ctx.fillStyle = "#212529";
     drawRoundedRect(posX - windowWidth / 2, posY - windowHeight / 2, windowWidth, windowHeight, 10, "white", 2);
@@ -706,6 +707,8 @@ function drawBuildPrompt(landedTile) {
     const promptHeight = 125;
     const promptX = 1050;
     const promptY = 620;
+
+    monopoly_game();
 
     // Draw prompt background with white fill
     ctx.fillStyle = "#FFF";
@@ -832,7 +835,7 @@ function showTileInfo(tile) {
     // If the tile has an owner (e.g., for property tiles)
     if (tile.owner !== 0) {
         ctx.fillText(`Owner: ${tile.owner}`, posX + 15, posY + 60);
-        ctx.fillText(`Houses: ${tile.house}`, posX + 200, posY + 60);
+        ctx.fillText(`Houses: ${tile.house}`, posX + 150, posY + 60);
     }
     if (tile.price < 0) {
         for (let i = 0; i <= 5; i++) {
