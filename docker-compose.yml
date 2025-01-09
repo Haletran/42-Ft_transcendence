@@ -136,8 +136,6 @@ services:
       - "9003"
     depends_on:
       - scores-database
-    env_file:
-      - .env
     networks:
       - transcendence
     command: >
@@ -151,12 +149,10 @@ services:
     volumes:
       - scores_data:/var/lib/postgresql/data
       - ./src/scores-database/postgresql.conf:/etc/postgresql/postgresql.conf
-    # environment:
-    #   POSTGRES_DB: scores_db
-    #   POSTGRES_USER: scores_user
-    #   POSTGRES_PASSWORD: scores_password
-    env_file:
-      - .env
+    environment:
+      POSTGRES_DB: scores_db
+      POSTGRES_USER: scores_user
+      POSTGRES_PASSWORD: scores_password
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     networks:
       - transcendence
