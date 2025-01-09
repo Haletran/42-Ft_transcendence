@@ -1,6 +1,7 @@
 import { Page } from '../src/pages.js';
 import { shoot } from '../src/particles.js';
-
+import { Router } from '../src/router.js';
+import { isUserLoggedIn } from '../app.js';
 
 export class Credit extends Page {
     constructor() {
@@ -43,7 +44,7 @@ export class Credit extends Page {
         const loggedIn = await isUserLoggedIn();
         console.log('loggedIn: ', loggedIn);
         if (loggedIn == false) {
-            router.goTo('/login_base');
+            Router.goTo('/login_base');
             return;
         }
         super.render();
