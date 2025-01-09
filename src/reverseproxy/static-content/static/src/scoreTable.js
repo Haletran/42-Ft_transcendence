@@ -110,7 +110,7 @@ export async function fetchMatchHistory() {
             const end = start + itemsPerPage;
             const pageItems = data.slice(start, end);
 
-            pageItems.forEach(match => {
+            pageItems.reverse().forEach(match => {
                 const matchItem = document.createElement('a');
                 matchItem.classList.add('list-group-item');
                 if (match.is_pong === true) {
@@ -184,10 +184,11 @@ export async function fetchStatistics() {
         const rate_f = document.getElementById('rate');
 
         wins_f.innerHTML = losses_f.innerHTML = rate_f.innerHTML = total_f.innerHTML = '';
-
+    
+        console.log(data);
         total_f.innerHTML = 'TOT: ' + data.total_matches;
-        wins_f.innerHTML = 'LOSSES: ' + data.losses;
-        losses_f.innerHTML = 'WINS: ' + data.wins;
+        wins_f.innerHTML = 'WINS: ' + data.wins;
+        losses_f.innerHTML = 'LOSSES: ' + data.losses;
         rate_f.innerHTML = data.rate + ' % of wins';
 
     } catch (error) {

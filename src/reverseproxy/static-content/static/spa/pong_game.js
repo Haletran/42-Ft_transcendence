@@ -296,6 +296,7 @@ class Pong {
 // GAME RELATED FUNCTIONS
 function initGame(gamemode) {
     let username = localStorage.getItem('username');
+    let username2 = localStorage.getItem('username2');
     let ballColor = localStorage.getItem('ballColor');
     let playerColor = localStorage.getItem('playerColor');
     let textColor = localStorage.getItem('textColor');
@@ -310,7 +311,7 @@ function initGame(gamemode) {
     const randomAngle = baseAngle + (Math.random() * angleRange - angleRange / 2);
     if (gamemode === 'pvp') {
         const player1 = new Player(30, y, playerColor, 10, 100, 5, username, false)
-        const player2 = new Player(canvas.width - 30, y, playerColor, 10, 100, 5, 'player2', false)
+        const player2 = new Player(canvas.width - 30, y, playerColor, 10, 100, 5, username2, false)
         const ball = new Ball(x, y, 10, ballColor, { x: 3 * Math.cos(randomAngle), y: 3 * Math.sin(randomAngle) }, 2)
         const table = new Table(0, 0, canvas.width, canvas.height, tableColor, textColor)
         return { player1, player2, ball, table }

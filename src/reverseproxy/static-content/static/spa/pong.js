@@ -98,6 +98,31 @@ export class Pong extends Page {
                     </div>
                 </div>
                 </div>
+                <div class="modal fade" id="1v1Modal" tabindex="-1" aria-labelledby="1v1ModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="1v1ModalLabel">Choose display names</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="player1name">Player 1 name</label>
+                                <input type="name" class="form-control" id="player1name" placeholder="enter name">
+                            </div><br>
+                            <div class="form-group">
+                                <label for="player2name">Player 2 name</label>
+                                <input type="name" class="form-control" id="player2name" placeholder="enter name">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" id="Start1v1">Play</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
                 <div class="accordion" id="accordionExample">
                 <div class="accordion-item text-align-center">
                   <h2 class="accordion-header">
@@ -152,6 +177,8 @@ export class Pong extends Page {
     }
 
     eventListeners() {
+
+        // const 1v1Button = document.getElementById();
 
         const settingsButton = document.getElementById('settings_button');
         if (settingsButton) {
@@ -239,48 +266,72 @@ export class Pong extends Page {
             const button = document.getElementById(buttonId);
             if (button) {
                 button.addEventListener('click', async function () {
-                    const existingCanvas = document.querySelector('#pong_canvas');
-                    if (existingCanvas) {
-                        existingCanvas.remove();
+                    let play;
+                    if (buttonId == 'start_button') {
+                        const modal = new bootstrap.Modal(document.getElementById('1v1Modal'));
+                        modal.show();
+                        play = document.getElementById('Start1v1');
+                        play.addEventListener('click', async (e) => {
+                            if (play != button) { modal.hide(); }
+                            let player1 = document.getElementById('player1name').value;
+                            let player2 = document.getElementById('player2name').value;
+                            if (!player1) { player1 = 'player1'};
+                            if (!player2) { player2 = 'player2'};
+                            console.log(player1, player2);
+                            modal.hide();
+                            startthegame(button, buttonId, player1, player2);
+                        });
                     }
-                    hideElementsByClass('menu');
-                    showElementsByClass('game', 'flex');
-                    addClassToElementsByClass('game', 'center');
-                    try {
-                        let winner = 0;
-                        // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
-                        const module = await import(`/static/spa/pong_game.js?timestamp=${new Date().getTime()}`);
-                        setACookie('game_running', 'true', 1);
-                        const username = await getProfileUsername();
-                        localStorage.setItem('username', username);
-                        if (buttonId === 'tournament_button') {
-                            let player_name = [];
-                            const range = document.getElementById('customRange1');
-                            for (let i = 1; i <= range.value; i++) {
-                                const player = document.getElementById(`player_${i}`);
-                                if (player) {
-                                    if (player.value == "") {
-                                        player_name.push(`Player ${i}`);
-                                    } else
-                                        player_name.push(player.value);
-                                }
-                            }
-                            // GET THE WINNER NAME HERE IF NEEDED
-                            winner = await module.startGame(button.value, player_name);
-                            console.log("WINNER tournament: ", winner);
-                            setACookie('game_running', 'false', 1);
-                        }
-                        else {
-                            // GET THE WINNER NAME HERE IF NEEDED
-                            winner = await module.startGame(button.value);
-                            console.log("WINNER 1v1: ", winner);
-                            setACookie('game_running', 'false', 1);
-                        }
-                    } catch (err) {
-                        console.error('Error loading game:', err);
+                    else {
+                        const player1 = await getProfileUsername();
+                        startthegame(button, buttonId, player1, 'player2');
                     }
                 });
+               // });
             }
         });
+    }
+}
+
+async function startthegame(button, buttonId, player1, player2) {
+    const existingCanvas = document.querySelector('#pong_canvas');
+    if (existingCanvas) {
+        existingCanvas.remove();
+    }
+    hideElementsByClass('menu');
+    showElementsByClass('game', 'flex');
+    addClassToElementsByClass('game', 'center');
+    try {
+        let winner = 0;
+        // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
+        const module = await import(`/static/spa/pong_game.js?timestamp=${new Date().getTime()}`);
+        setACookie('game_running', 'true', 1);
+        localStorage.setItem('username', player1);
+        localStorage.setItem('username2', player2);
+        if (buttonId === 'tournament_button') {
+            let player_name = [];
+            const range = document.getElementById('customRange1');
+            for (let i = 1; i <= range.value; i++) {
+                const player = document.getElementById(`player_${i}`);
+                if (player) {
+                    if (player.value == "") {
+                        player_name.push(`Player ${i}`);
+                    } else
+                        player_name.push(player.value);
+                }
+            }
+            // GET THE WINNER NAME HERE IF NEEDED
+            winner = await module.startGame(button.value, player_name);
+            console.log("WINNER tournament: ", winner);
+            setACookie('game_running', 'false', 1);
+        }
+        else {
+            // GET THE WINNER NAME HERE IF NEEDED
+            winner = await module.startGame(button.value);
+            console.log("WINNER 1v1: ", winner);
+            setACookie('game_running', 'false', 1);
+        }
+    } catch (err) {
+        console.error('Error loading game:', err);
     }
 }

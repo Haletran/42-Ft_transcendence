@@ -100,7 +100,7 @@ def statistics(request):
     try:
         matches_against_ai = Game.objects.filter(is_ai=True).filter(user_origin=username)
         total_matches = matches_against_ai.count()
-        wins = matches_against_ai.filter(result='win').count()
+        wins = matches_against_ai.filter(result=username).count()
         losses = total_matches - wins
 
         win_percentage = (wins / total_matches) * 100 if total_matches > 0 else 0
@@ -109,7 +109,7 @@ def statistics(request):
             'total_matches': total_matches,
             'wins': wins,
             'losses':losses,
-            'rate': round(win_percentage, 2)
+            'rate': win_percentage
         })
 
     except Exception as e:
