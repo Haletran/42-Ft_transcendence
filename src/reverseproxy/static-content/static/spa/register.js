@@ -261,14 +261,25 @@ export class RegisterPage extends Page {
 
 				if (response.ok) {
 					const result = await response.json();
-					// startWebSocket();
 					router.goTo('/home');
 				} else {
 					const error = await response.json();
-					alert('Registration failed: ' + error.message);
+					console.error('Registration failed:', error);
+					if (error.message) {
+						alert('Registration failed: ' + error.message);
+					}
+					else {
+						alert('Registration failed: Username already in use');
+					}
 				}
 			} catch (error) {
-				alert('An error occurred: ' + error.message);
+				if (error.message.includes("413") === 413) {
+					alert('Profile pic too big');
+				}
+				else {
+					alert('Profile pic too big');
+				}
+
 			}
 		});
 	}

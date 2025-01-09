@@ -1,7 +1,7 @@
 import { Page } from '../src/pages.js';
 import { Router } from '../src/router.js';
 import { router, isUserLoggedIn } from '../app.js';
-import { fetchSettingsInfo } from '../src/fetchUser.js';
+import { fetchSettingsInfo, getUserInfos } from '../src/fetchUser.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { setupProfilePictureSelection } from '../js/event.js';
 import { logoutUser } from '../src/logout.js';
@@ -153,6 +153,12 @@ export class Settings extends Page {
             const username = document.getElementById('floatingUsername').value;
             const password = document.getElementById('floatingPassword').value;
 
+            const _42auth = await getUserInfos();
+            if (_42auth.email.search('student.42angouleme.fr') != -1 ) {
+                alert("you cannot update your profile since you are logged with 42");
+                return ;
+            }
+
             // Prepare the data to send
             const formData = new FormData();
             formData.append('username', username);
@@ -199,8 +205,8 @@ export class Settings extends Page {
                     console.error('Edit failed:', error);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred: ' + error.message);
+                
+                alert('Profile pic too big');
             }
         });
 
