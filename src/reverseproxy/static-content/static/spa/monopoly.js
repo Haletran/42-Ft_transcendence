@@ -1,4 +1,5 @@
 import { Page } from '../src/pages.js';
+import { router, isUserLoggedIn } from '../app.js';
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie } from '../js/utils.js';
 import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
@@ -131,7 +132,13 @@ export class Monopoly extends Page {
     </div>
         `;
     }
-    render() {
+    async render() {
+        const loggedIn = await isUserLoggedIn();
+        console.log('loggedIn: ', loggedIn);
+        if (loggedIn == false) {
+            router.goTo('/login_base');
+            return;
+        }
         fetchMinInfo();
         startWebSocket();
         super.render(); // Call the parent render method

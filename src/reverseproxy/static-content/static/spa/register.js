@@ -133,7 +133,8 @@ export class RegisterPage extends Page {
 	}
 
 	async render() {
-		const logBOOL = isUserLoggedIn();
+		const logBOOL = await isUserLoggedIn();
+		console.log('LOGBOOL', logBOOL);
 		if (logBOOL == true)
 			logoutUser();
 		

@@ -1,5 +1,6 @@
 import { Page } from '../src/pages.js';
 import { Router } from '../src/router.js';
+import { router, isUserLoggedIn } from '../app.js';
 import { fetchSettingsInfo } from '../src/fetchUser.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { setupProfilePictureSelection } from '../js/event.js';
@@ -112,7 +113,13 @@ export class Settings extends Page {
     `
             ;
     }
-    render() {
+    async render() {
+        const loggedIn = await isUserLoggedIn();
+        console.log('loggedIn: ', loggedIn);
+        if (loggedIn == false) {
+            router.goTo('/login_base');
+            return;
+        }
         fetchMinInfo();
         setACookie('game_running', 'false', 1);
         fetchSettingsInfo();

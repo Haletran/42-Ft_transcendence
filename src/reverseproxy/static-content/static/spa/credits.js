@@ -39,7 +39,13 @@ export class Credit extends Page {
         </div>
         `;
     }
-    render() {
+    async render() {
+        const loggedIn = await isUserLoggedIn();
+        console.log('loggedIn: ', loggedIn);
+        if (loggedIn == false) {
+            router.goTo('/login_base');
+            return;
+        }
         this.breakout();
         super.render();
     }

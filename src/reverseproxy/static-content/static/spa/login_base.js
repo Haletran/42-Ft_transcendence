@@ -174,6 +174,8 @@ export function startWebSocket() {
 }
 
 export function closeWebSocket() {
+	if (!StatusSocket) return;
+	console.log('STATUS SOCKET', StatusSocket);
 	if (StatusSocket.readyState === WebSocket.OPEN) {
 		StatusSocket.close();
 	} else {

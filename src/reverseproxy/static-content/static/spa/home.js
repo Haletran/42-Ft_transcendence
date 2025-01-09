@@ -3,6 +3,7 @@ import { logoutUser } from '../src/logout.js';
 import { startWebSocket } from './login_base.js';
 import { getACookie, setACookie } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
+import { isUserLoggedIn, router } from '../app.js';
 
 
 export class HomePage extends Page {
@@ -60,7 +61,13 @@ export class HomePage extends Page {
 	  `;
     }
 
-    render() {
+    async render() {
+        const loggedIn = await isUserLoggedIn();
+        console.log('loggedIn: ', loggedIn);
+        if (loggedIn == false) {
+            router.goTo('/login_base');
+            return;
+        }
         setACookie('game_running', 'false', 1);
         fetchMinInfo();
         isUserOnline();
