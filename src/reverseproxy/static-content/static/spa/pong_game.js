@@ -367,37 +367,37 @@ function initGame(gamemode) {
 }
 
 
-function predictBallY(ball, player) {
-    const ballSlope = ball.velocity.y / ball.velocity.x;
-    const ballIntercept = ball.y - ballSlope * ball.x;
-    const playerX = player.x + player.width;
-    return ballSlope * playerX + ballIntercept;
+
+function predictBallYAtX(targetX) {
+    let predictedX = game.ball.x + game.ball.radius;
+    let predictedY = game.ball.y + game.ball.radius;
+    let velocityX = game.ball.velocity.x;
+    let velocityY = game.ball.velocity.y;
+    const predictionInterval = 1000;
+    const boardHeight = canvas.height;
+
+    while (predictedX < targetX) {
+        predictedX += velocityX * (predictionInterval / 1000);
+        predictedY += velocityY * (predictionInterval / 1000);
+
+        if (predictedY - game.ball.height / 2 <= 0 || predictedY + game.ball.height / 2 >= boardHeight) {
+            velocityY *= -1;
+        }
+        if (predictedX <= 0) {
+            break;
+        }
+    }
+    return predictedY;
 }
+
 
 function moveAI() {
     if (getACookie('game_running') === 'false') {
         return;
     }
-    // if (game.player2.isAi) {
-    //     if (game.ball.x > canvas.width / 2) {
-    //         if (game.ball.y > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
-    //             keys['40'] = true; // DOWN
-    //             keys['38'] = false; // UP
-    //         } else if (game.ball.y < game.player2.y + game.player2.height / 2 && game.player2.y > 0) {
-    //             keys['38'] = true; // UP
-    //             keys['40'] = false; // DOWN
-    //         } else {
-    //             keys['38'] = false; // UP
-    //             keys['40'] = false; // DOWN
-    //         }
-    //     } else {
-    //         keys['38'] = false; // UP
-    //         keys['40'] = false; // DOWN
-    //     }
-    // }
     if (game.player2.isAi) {
         if (game.ball.x > canvas.width / 2) {
-            const predictedY = predictBallY(game.ball, game.player2);
+            const predictedY = predictBallYAtX(game.player2.x);
             if (predictedY > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
                 keys['40'] = true; // DOWN
                 keys['38'] = false; // UP
@@ -413,24 +413,6 @@ function moveAI() {
             keys['40'] = false; // DOWN
         }
     }
-
-    if (game.player1.isAi) {
-        if (game.ball.x < canvas.width / 2) {
-            if (game.ball.y > game.player1.y + game.player1.height / 2 && game.player1.y < canvas.height - game.player1.height) {
-                keys['83'] = true; // S
-                keys['87'] = false; // W
-            } else if (game.ball.y < game.player1.y + game.player1.height / 2 && game.player1.y > 0) {
-                keys['87'] = true; // W
-                keys['83'] = false; // S
-            } else {
-                keys['87'] = false; // W
-                keys['83'] = false; // S
-            }
-        } else {
-            keys['87'] = false; // W
-            keys['83'] = false; // S
-        }
-    }
 }
 
 
@@ -438,10 +420,7 @@ function movePlayers() {
     if (getACookie('game_running') === 'false') {
         return;
     }
-    if (!game.table.lastAIMoveTime || Date.now() - game.table.lastAIMoveTime > 1000) {
-        moveAI();
-        game.table.lastAIMoveTime = Date.now();
-    }
+    moveAI();
     if (keys['38'] && game.player2.y > 0) { // UP
         game.player2.y -= game.player2.speed;
     }
@@ -487,11 +466,17 @@ async function moveBall() {
         game.ball.y = canvas.height / 2;
         game.ball.velocity.x = 3 * Math.cos(randomAngle);
         game.ball.velocity.y = 3 * Math.sin(randomAngle);
+        if (game.ball.velocity.x < 0) {
+            game.ball.velocity.x = -game.ball.velocity.x
+        }
+        if (game.ball.velocity.y < 0) {
+            game.ball.velocity.y = -game.ball.velocity.y
+        }
         player_win = 0;
         first_hit = 0;
         game.ball.speed = 2;
     }
-
+    console.log(game.ball.x, game.ball.y, game.ball.velocity.x, game.ball.velocity.y)
     if (game.ball.x + game.ball.radius > game.player2.x && game.ball.y > game.player2.y && game.ball.y < game.player2.y + game.player2.height) {
         if (first_hit === 0) {
             game.ball.speed += 3;
@@ -508,7 +493,7 @@ async function moveBall() {
             game.ball.speed += 3;
             first_hit = 1;
         }
-        else if (first_hit === 1 && game.ball.speed < 6) {
+        else if (first_hit === 1 && game.ball.speed < 8) {
             game.ball.speed += 0.2;
         }
         game.ball.velocity.x = -game.ball.velocity.x
@@ -530,6 +515,8 @@ async function moveBall() {
     if (game.ball.x + game.ball.radius > game.player2.x && game.ball.y > game.player2.y + halfPaddle && game.ball.y < game.player2.y + paddleHeight) {
         game.ball.velocity.y = Math.abs(game.ball.velocity.y);
     }
+
+
 
     game.ball.x += game.ball.velocity.x * game.ball.speed
     game.ball.y += game.ball.velocity.y * game.ball.speed
