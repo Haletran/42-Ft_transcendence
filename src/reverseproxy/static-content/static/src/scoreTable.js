@@ -132,44 +132,46 @@ export async function fetchMatchHistory() {
                 MatchHistoryList.appendChild(matchItem);
             });
 
-            const gap = document.createElement('div');
-            gap.style.marginBottom = '10px';
-            MatchHistoryList.appendChild(gap);
+            if (pageItems.length > 3) {
+                const gap = document.createElement('div');
+                gap.style.marginBottom = '10px';
+                MatchHistoryList.appendChild(gap);
 
-            const pagination = document.createElement('div');
-            pagination.classList.add('pagination');
-            pagination.style.display = 'flex';
-            pagination.style.justifyContent = 'center';
+                const pagination = document.createElement('div');
+                pagination.classList.add('pagination');
+                pagination.style.display = 'flex';
+                pagination.style.justifyContent = 'center';
 
-            const prevButton = document.createElement('button');
-            prevButton.textContent = 'Previous';
-            prevButton.classList.add('btn', 'btn-outline-light', 'mr-2');
-            prevButton.disabled = currentPage === 1;
-            prevButton.onclick = () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderPage(currentPage);
-                }
-            };
+                const prevButton = document.createElement('button');
+                prevButton.textContent = 'Previous';
+                prevButton.classList.add('btn', 'btn-outline-light', 'mr-2');
+                prevButton.disabled = currentPage === 1;
+                prevButton.onclick = () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPage(currentPage);
+                    }
+                };
 
-            const gap2 = document.createElement('span');
-            gap2.style.marginRight = '10px';
+                const gap2 = document.createElement('span');
+                gap2.style.marginRight = '10px';
 
-            const nextButton = document.createElement('button');
-            nextButton.textContent = 'Next';
-            nextButton.classList.add('btn', 'btn-outline-light');
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.onclick = () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderPage(currentPage);
-                }
-            };
+                const nextButton = document.createElement('button');
+                nextButton.textContent = 'Next';
+                nextButton.classList.add('btn', 'btn-outline-light');
+                nextButton.disabled = currentPage === totalPages;
+                nextButton.onclick = () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderPage(currentPage);
+                    }
+                };
 
-            pagination.appendChild(prevButton);
-            pagination.appendChild(gap2);
-            pagination.appendChild(nextButton);
-            MatchHistoryList.appendChild(pagination);
+                pagination.appendChild(prevButton);
+                pagination.appendChild(gap2);
+                pagination.appendChild(nextButton);
+                MatchHistoryList.appendChild(pagination);
+            }
         }
 
         renderPage(currentPage);
@@ -196,7 +198,7 @@ export async function fetchStatistics() {
         const rate_f = document.getElementById('rate');
 
         wins_f.innerHTML = losses_f.innerHTML = rate_f.innerHTML = total_f.innerHTML = '';
-    
+
         console.log(data);
         total_f.innerHTML = 'TOT: ' + data.total_matches;
         wins_f.innerHTML = 'WINS: ' + data.wins;
