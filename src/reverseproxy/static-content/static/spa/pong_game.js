@@ -6,7 +6,7 @@ import { getProfileUsername } from '../src/fetchUser.js';
 import { shoot } from '../src/particles.js';
 
 
-let canvas = document.querySelector('canvas');
+let canvas = document.querySelector('canvas#pong_canvas');
 if (!canvas) {
     const gameDiv = document.querySelector('.game');
     canvas = document.createElement('canvas');
@@ -121,7 +121,7 @@ class Table {
         this.height = height
         this.color = bg_color
         this.text_color = t_color;
-
+        this.lastAIMoveTime = 0;
     }
 
     draw() {
@@ -277,7 +277,6 @@ class Tournament {
         }
 
         const tournamentWinner = this.bracket[0].winner;
-        shoot();
         alert(`Tournament Winner: ${tournamentWinner.name}!`);
         clearCanvas();
         hideElementsByClass('game');
@@ -332,18 +331,42 @@ function initGame(gamemode) {
     }
 }
 
-function movePlayers() {
+
+function predictBallY(ball, player) {
+    const ballSlope = ball.velocity.y / ball.velocity.x;
+    const ballIntercept = ball.y - ballSlope * ball.x;
+    const playerX = player.x + player.width;
+    return ballSlope * playerX + ballIntercept;
+}
+
+function moveAI() {
     if (getACookie('game_running') === 'false') {
         return;
     }
-
+    // if (game.player2.isAi) {
+    //     if (game.ball.x > canvas.width / 2) {
+    //         if (game.ball.y > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
+    //             keys['40'] = true; // DOWN
+    //             keys['38'] = false; // UP
+    //         } else if (game.ball.y < game.player2.y + game.player2.height / 2 && game.player2.y > 0) {
+    //             keys['38'] = true; // UP
+    //             keys['40'] = false; // DOWN
+    //         } else {
+    //             keys['38'] = false; // UP
+    //             keys['40'] = false; // DOWN
+    //         }
+    //     } else {
+    //         keys['38'] = false; // UP
+    //         keys['40'] = false; // DOWN
+    //     }
+    // }
     if (game.player2.isAi) {
-        console.log("X / Y / playerx / playery : ", game.ball.x, game.ball.y, game.player2.x, game.player2.y)
         if (game.ball.x > canvas.width / 2) {
-            if (game.ball.y > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
+            const predictedY = predictBallY(game.ball, game.player2);
+            if (predictedY > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
                 keys['40'] = true; // DOWN
                 keys['38'] = false; // UP
-            } else if (game.ball.y < game.player2.y + game.player2.height / 2 && game.player2.y > 0) {
+            } else if (predictedY < game.player2.y + game.player2.height / 2 && game.player2.y > 0) {
                 keys['38'] = true; // UP
                 keys['40'] = false; // DOWN
             } else {
@@ -373,8 +396,17 @@ function movePlayers() {
             keys['83'] = false; // S
         }
     }
+}
 
 
+function movePlayers() {
+    if (getACookie('game_running') === 'false') {
+        return;
+    }
+    if (!game.table.lastAIMoveTime || Date.now() - game.table.lastAIMoveTime > 1000) {
+        moveAI();
+        game.table.lastAIMoveTime = Date.now();
+    }
     if (keys['38'] && game.player2.y > 0) { // UP
         game.player2.y -= game.player2.speed;
     }
@@ -406,12 +438,12 @@ async function moveBall() {
             hitEffect();
             player_win = 1;
             game.player1.score += 1
-            setTimeout(shoot(3), 100);
+            shoot(3)
         } else if (game.ball.x - game.ball.radius < game.player1.x + game.player1.width) {
             hitEffect();
             player_win = 2;
             game.player2.score += 1
-            setTimeout(shoot(2), 100);
+            shoot(2);
         }
         const angleRange = Math.PI / 2;
         const baseAngle = player_win === 1 ? Math.PI : 0;

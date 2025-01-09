@@ -40,8 +40,8 @@ export class Credit extends Page {
         `;
     }
     render() {
-        this.breakout();
         super.render();
+        this.breakout();
     }
 
     breakout() {
@@ -50,8 +50,8 @@ export class Credit extends Page {
 
         let score = 0;
 
-        const brickRowCount = 14;
-        const brickColumnCount = 8;
+        const brickRowCount = 10;
+        const brickColumnCount = 4;
         const delay = 500;
 
         const ball = {
@@ -75,8 +75,8 @@ export class Credit extends Page {
         };
 
         const brickInfo = {
-            w: 70,
-            h: 50,
+            w: 100,
+            h: 70,
             padding: 10,
             offsetX: 45,
             offsetY: 60,
@@ -171,9 +171,10 @@ export class Credit extends Page {
             }
 
             if (
-                ball.x - ball.size > paddle.x &&
-                ball.x + ball.size < paddle.x + paddle.w &&
-                ball.y + ball.size > paddle.y
+                ball.x + ball.size > paddle.x &&
+                ball.x - ball.size < paddle.x + paddle.w &&
+                ball.y + ball.size > paddle.y &&
+                ball.y - ball.size < paddle.y + paddle.h
             ) {
                 ball.dy = -ball.speed;
             }
@@ -265,9 +266,5 @@ export class Credit extends Page {
 
         document.addEventListener('keydown', keyDown);
         document.addEventListener('keyup', keyUp);
-
-        // IF REMOVE DO NOT WORK ANYMORE IDK
-        rulesBtn.addEventListener('click', () => rules.classList.add('show'));
-        closeBtn.addEventListener('click', () => rules.classList.remove('show'));
     }
 }
