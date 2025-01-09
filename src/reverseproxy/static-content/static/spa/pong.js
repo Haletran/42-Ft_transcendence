@@ -143,7 +143,7 @@ export class Pong extends Page {
                             <input type="text" class="form-control" id="player_2" placeholder="Player 2">
                             <input type="text" class="form-control" id="player_2" placeholder="Player 4">
                         </div>
-                        <button id="tournament_button" value="tour" class="btn btn-light">Start Tournament</button>
+                        <button id="tournament_button" value="tour" class="btn btn-light" disabled=true>Start Tournament</button>
                     </div>
                     </div>
                   </div>
@@ -237,6 +237,10 @@ export class Pong extends Page {
         }
 
         document.getElementById('customRange1').addEventListener('input', function () {
+            const tour_button = document.getElementById('tournament_button');
+            if (tour_button) {
+                tour_button.disabled = false;
+            }
             const range = document.getElementById('customRange1');
             const userNameContainer = document.querySelector('.user_name');
             userNameContainer.innerHTML = '';
@@ -275,19 +279,19 @@ export class Pong extends Page {
                             if (play != button) { modal.hide(); }
                             let player1 = document.getElementById('player1name').value;
                             let player2 = document.getElementById('player2name').value;
-                            if (!player1) { player1 = 'player1'};
-                            if (!player2) { player2 = 'player2'};
+                            if (!player1) { player1 = 'player1' };
+                            if (!player2) { player2 = 'player2' };
                             console.log(player1, player2);
                             modal.hide();
                             startthegame(button, buttonId, player1, player2);
                         });
                     }
-                    else {
+                    else if (buttonId == 'start_button2' || buttonId == 'tournament_button') {
                         const player1 = await getProfileUsername();
                         startthegame(button, buttonId, player1, 'player2');
                     }
                 });
-               // });
+                // });
             }
         });
     }
@@ -320,13 +324,11 @@ async function startthegame(button, buttonId, player1, player2) {
                         player_name.push(player.value);
                 }
             }
-            // GET THE WINNER NAME HERE IF NEEDED
             winner = await module.startGame(button.value, player_name);
             console.log("WINNER tournament: ", winner);
             setACookie('game_running', 'false', 1);
         }
         else {
-            // GET THE WINNER NAME HERE IF NEEDED
             winner = await module.startGame(button.value);
             console.log("WINNER 1v1: ", winner);
             setACookie('game_running', 'false', 1);

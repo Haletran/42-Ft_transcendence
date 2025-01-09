@@ -53,6 +53,9 @@ reset: down
 hard-reset: reset
 	-docker system prune --all --volumes -f
 
+replace:
+	@bash replace.sh
+
 re: reset all
 
 subject:
