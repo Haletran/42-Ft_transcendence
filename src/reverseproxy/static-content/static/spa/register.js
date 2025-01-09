@@ -77,7 +77,7 @@ export class RegisterPage extends Page {
 			<div class="mb-3">
 				<br>
     			<label for="customProfilePicture" class="form-label">Upload your profile picture</label>
-    			<input type="file" id="customProfilePicture" name="customProfilePicture" accept="image/*" class="form-control">
+    			<input type="file" id="customProfilePicture" name="customProfilePicture" accept=".jpg, .jpeg, .png, .gif" class="form-control">
     		</div>
 
 			<div class="mb-3 form-check">
@@ -209,8 +209,8 @@ export class RegisterPage extends Page {
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
 
-			const username = document.getElementById('registerUsername').value;
-			const email = document.getElementById('registerEmail').value;
+			let username = document.getElementById('registerUsername').value;
+			let email = document.getElementById('registerEmail').value;
 			const password = document.getElementById('registerPassword').value;
 
 			// Prepare the data to send
@@ -223,6 +223,12 @@ export class RegisterPage extends Page {
 
 			if (agreeBOOL === false) {
 				alert("Please agree to terms and conditions.");
+				return ;
+			}
+			username = username.trim();
+			email = email.trim();
+			if (username.search(' ') != -1 || email.search(' ') != -1) {
+				alert("no space allowed in fields");
 				return ;
 			}
 

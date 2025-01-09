@@ -48,7 +48,7 @@ except Exception as e:
     raise RuntimeError(f"Unable to retrieve DB credentials from Vault: {e}")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
