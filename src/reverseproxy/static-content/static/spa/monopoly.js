@@ -54,9 +54,9 @@ export class Monopoly extends Page {
                 <div class="d-flex flex-column gap-2 w-100">
                     <label for="customRange1" class="form-label">How many players ?</label>
                     <div class="d-flex justify-content-center gap-2">
-                        <input type="range" class="form-range" min="2" max="6" step="2" id="customRange1"><span id="rangeValue"></span>
+                        <input type="range" class="form-range" min="2" max="4" step="1" id="customRange1"><span id="rangeValue"></span>
                     </div>
-                        <p class="text-muted">2 to 6 players (default 4 players)</p>
+                        <p class="text-muted">2 to 4 players (default 3 players)</p>
                 <button class="btn btn-primary w-100 hover-effect" data-bs-toggle="modal" data-bs-target="#monopolyModal">
                   <i class="bi bi-chevron-right"></i> Choose the Monopoly version
                 </button>
