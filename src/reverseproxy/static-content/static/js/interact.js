@@ -5,7 +5,7 @@ export async function interactWithContract(contractAddress, player1, score1, pla
     const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 
     // Get the first account as the signer
-    const signer = provider.getSigner(0); // Using the first account provided by Hardhat
+    const signer = provider.getSigner(); // Using the first account provided by Hardhat
 
     // ABI of the contract
     const abi = [
@@ -39,17 +39,12 @@ export async function interactWithContract(contractAddress, player1, score1, pla
     const scoreContract = new ethers.Contract(contractAddress, abi, signer);
 
     try {
-        // Fetch current match details
-        console.log("Fetching match details...");
-        const matchDetails = await scoreContract.getMatch();
-        console.log("Match details:", matchDetails);
-    } catch (error) {
-        console.error("Error calling getMatch:", error.message);
-    }
-
-    try {
         // Submit match data to the contract
         console.log("Submitting match data...");
+        console.log("Function arguments:");
+        console.log("Contract Address:", contractAddress);
+        console.log("Player 1:", player1, "Score 1:", score1);
+        console.log("Player 2:", player2, "Score 2:", score2);
         const tx = await scoreContract.setMatch(player1, score1, player2, score2);
         console.log("Transaction submitted. Waiting for confirmation...");
         await tx.wait();

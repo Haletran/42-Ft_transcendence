@@ -13,6 +13,7 @@ services:
       - ./src/reverseproxy/ssl/nginx.crt:/etc/nginx/ssl/nginx.crt
       - ./src/reverseproxy/ssl/nginx.key:/etc/nginx/ssl/nginx.key
       - profile_pictures:/usr/share/nginx/media/
+      - ./src/crypto/contract_address:/var/www/html/static/spa/contract
     depends_on:
       - django-credentials
     env_file:
@@ -30,8 +31,6 @@ services:
       - ./src/crypto/.:/usr/src/app
     networks:
       - transcendence
-    command: >
-      sh -c "sleep 3 && npx hardhat node"
 
   redis:
     image: redis:6
