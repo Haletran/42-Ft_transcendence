@@ -4,6 +4,8 @@ FROM node:18
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
+RUN apt-get update && apt-get install -y vim
+
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
@@ -16,5 +18,7 @@ RUN mkdir -p /root/.config/hardhat-nodejs && chmod -R 777 /root/.config
 # Expose a port if your Hardhat project requires one
 EXPOSE 8545
 
-# Command to start Hardhat (e.g., start a local blockchain)
-CMD ["npx", "hardhat", "node"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]

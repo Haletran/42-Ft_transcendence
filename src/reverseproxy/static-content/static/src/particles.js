@@ -27,7 +27,7 @@ export function shoot(i) {
         });
     } else if (i === 2) {
         confetti({
-            particleCount: 100,
+            particleCount: 50,
             angle: 10,
             spread: 55,
             origin: { x: 0 },
@@ -36,7 +36,7 @@ export function shoot(i) {
 
     } else if (i === 3) {
         confetti({
-            particleCount: 100,
+            particleCount: 50,
             angle: 180,
             spread: 55,
             origin: { x: 1 },
