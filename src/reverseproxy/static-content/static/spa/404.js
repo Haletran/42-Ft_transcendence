@@ -21,6 +21,5 @@ export class test extends Page {
     }
     async render() {
         super.render();
-        console.log('404');
     }
 }

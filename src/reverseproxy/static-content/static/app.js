@@ -74,9 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
 export async function checkUserAuthentification(path) {
   try {
     const isLogged = await isUserLoggedIn();
-
-    console.log('User Authenticated: ', isLogged);
-
     const PublicPaths = ['/login_base', '/', '/register', '/404'];
 
     if (isLogged || PublicPaths.includes(path)) {
@@ -98,11 +95,9 @@ export async function isUserLoggedIn() {
       const userData = await response.json();
       return userData != null;
     } else if (response.status === 401) {
-      console.warn('User is not logged in.');
-      return false;
+      throw new Error('User not logged in');
     }
   } catch (error) {
-    console.error('Error checking user authentication:', error);
     return false;
   }
   return false;

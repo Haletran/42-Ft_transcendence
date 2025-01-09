@@ -34,10 +34,9 @@ export async function set1v1victory(player1, player2, scores, is_ai, is_tourname
 
         if (response.ok) {
             const result = await response.json();
-            console.log('New Game added to scores', result);
         } else {
             const error = await response.json();
-            console.error('Failed to add new game:', error);
+            throw new Error('Failed to add new game:', error);
         }
     }
     catch (error) {
@@ -199,7 +198,6 @@ export async function fetchStatistics() {
 
         wins_f.innerHTML = losses_f.innerHTML = rate_f.innerHTML = total_f.innerHTML = '';
 
-        console.log(data);
         total_f.innerHTML = 'TOT: ' + data.total_matches;
         wins_f.innerHTML = 'WINS: ' + data.wins;
         losses_f.innerHTML = 'LOSSES: ' + data.losses;

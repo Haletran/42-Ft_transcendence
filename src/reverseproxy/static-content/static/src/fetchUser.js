@@ -14,7 +14,6 @@ export async function fetchProfileInfo() {
             //updateProfilePicture(userData.profile_picture);
         }
         else {
-            console.log(response.status);
             console.log('User not logged in');
             hideProfilePicture();
         }
@@ -30,7 +29,6 @@ export async function fetchProfileInfo() {
 
 export function updateProfilePicture(profilePictureUrl) {
     const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
-    console.log(profilePictureUrl);
     profilePic.src = profilePictureUrl;
     if (document.querySelector('img[alt="profile_picture_main"]'))
         document.querySelector('img[alt="profile_picture_main"]').src = profilePictureUrl;
@@ -42,13 +40,11 @@ function hideProfilePicture() {
 }
 
 function updateProfileMail(Mail) {
-    console.log(Mail);
     const profileMail = document.querySelector('input[type="email"]');
     profileMail.value = Mail;
 }
 
 function updateProfileUsername(Username) {
-    console.log(Username);
     const profileUsername = document.querySelector('input[type="username"]');
     profileUsername.value = Username;
 }
@@ -64,7 +60,6 @@ export async function getProfileName() {
             const userData = await response.json();
             return userData.email;
         } else {
-            console.log(response.status);
             console.log('User not logged in');
             return null;
         }
@@ -85,7 +80,6 @@ export async function getProfileUsername() {
             const userData = await response.json();
             return userData.username;
         } else {
-            console.log(response.status);
             console.log('User not logged in');
             return null;
         }
@@ -109,7 +103,6 @@ export async function fetchSettingsInfo() {
             updateProfileMail(userData.email);
         }
         else /*if (response.status === 401)*/ {
-            console.log(response.status);
             console.log('User not logged in');
             router.goTo('/');
         }
@@ -130,11 +123,9 @@ export async function fetchMinInfo2() {
         });
         if (response.ok) {
             const userData = await response.json();
-            console.log('fetchMinInfo', userData.profile_picture);
             //updateProfilePicture(userData.profile_picture);
         }
         else {
-            console.log(response.status);
             console.log('User not logged in');
             router.goTo('/');
         }
@@ -152,12 +143,10 @@ export async function fetchMonopInfo() {
         });
         if (response.ok) {
             const userData = await response.json();
-            console.log('fetchMinInfo', userData.profile_picture);
             updateProfilePicture(userData.profile_picture);
             document.getElementById("username").textContent = userData.username;
         }
         else {
-            console.log(response.status);
             console.log('User not logged in');
             router.goTo('/');
         }

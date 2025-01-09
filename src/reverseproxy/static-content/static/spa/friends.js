@@ -127,8 +127,7 @@ export class Friends extends Page {
  `;
     }
     async render() {
-        const loggedIn = await isUserLoggedIn();
-        console.log('loggedIn: ', loggedIn);
+        const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             router.goTo('/login_base');
             return;
@@ -161,7 +160,11 @@ export class Friends extends Page {
                 });
             }
 
-            document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
+            const addFriendForm = document.getElementById('add-friend-form');
+            if (!addFriendForm) {
+                throw new Error('Add friend form not found');
+            }
+            addFriendForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
 
                 const usernameOrEmail = document.getElementById('friend-username').value;
@@ -190,26 +193,19 @@ export class Friends extends Page {
                     });
                 };
 
-                console.log('Form submitted with username or email:', usernameOrEmail);
 
                 // Check if the user is trying to add themselves
                 if (usernameOrEmail === currentUserEmail || usernameOrEmail === currentUserName) {
                     showToast('You cannot add yourself as a friend.', 'danger');
-                    console.log('Attempt to add self as friend prevented.');
                     return;
                 }
 
                 try {
-                    console.log('Starting fetch request for emails...');
                     const emailsResponse = await fetch('/api/friends/fetch_emails/', {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' }
                     });
-
-                    console.log('Fetch request for emails completed.');
                     const emailsData = await emailsResponse.json();
-                    console.log('Emails response data:', emailsData);
-
                     if (emailsResponse.ok) {
                         const emailExists = emailsData.emails?.includes(usernameOrEmail);
                         const userExists = emailsData.usernames?.includes(usernameOrEmail);
@@ -222,23 +218,20 @@ export class Friends extends Page {
                             userEmail = usernameOrEmail;
                             userName = emailsData.usernames[index];
                             userId = emailsData.id[index];
-                            //showToast(`Email ${usernameOrEmail} found. Username: ${userName}, ID: ${userId}`, 'success');
                         } else if (userExists) {
                             const index = emailsData.usernames.indexOf(usernameOrEmail);
                             userName = usernameOrEmail;
                             userEmail = emailsData.emails[index];
                             userId = emailsData.id[index];
-                            //showToast(`Username ${usernameOrEmail} found. Email: ${userEmail}, ID: ${userId}`, 'success');
                         } else {
                             showToast(`Email or Username ${usernameOrEmail} not found.`, 'danger');
-                            console.log('Email or Username not found.');
+                            throw new Error('Email or Username not found.');
                             return;
                         }
 
-                        console.log('Starting fetch request to add friend...');
                         const csrfToken = getCSRFToken('csrftoken');
                         if (!csrfToken) {
-                            console.error('CSRF token is missing!');
+                            throw new Error('CSRF token is missing!');
                         }
                         const addFriendResponse = await fetch('/api/friends/add/', {
                             method: 'POST',
@@ -269,7 +262,6 @@ export class Friends extends Page {
                         showToast(emailsData.error || 'Failed to fetch emails.', 'danger');
                     }
                 } catch (error) {
-                    console.error('Error occurred during fetch request:', error);
                     showToast('An error occurred. Please try again.', 'danger');
                 }
             });
@@ -312,8 +304,6 @@ async function fetchPendingConfirmations(currentUserId) {
         }
 
         const data = await response.json();
-        console.log('Pending confirmations data:', data);
-
         const confirmationList = document.getElementById('pending-invitations-list');
         confirmationList.innerHTML = '';
 
@@ -362,8 +352,6 @@ async function getIncomingInvitations(currentUserId) {
         }
 
         const data = await response.json();
-        console.log('incoming invitations data:', data);
-
         const confirmationList = document.getElementById('incoming-invitations-list');
         confirmationList.innerHTML = '';
 
@@ -409,10 +397,9 @@ async function getIncomingInvitations(currentUserId) {
 async function handleInvitationResponse(invitationId, accept, currentUserId) {
     try {
         const url = `/api/friends/respond_invitation/?id=${invitationId}`;
-        console.log(`Making request to: ${url}`);
         const csrfToken = getCSRFToken('csrftoken');
         if (!csrfToken) {
-            console.error('CSRF token is missing!');
+            throw new Error('CSRF token is missing!');
         }
         const response = await fetch(url, {
             method: 'POST',
@@ -424,20 +411,15 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
                 choice: accept,
             }),
         });
-
-        // Log response status for debugging
-        console.log(`Response status: ${response.status}`);
-
         if (!response.ok) {
             const errorMessage = `Failed to respond to invitation: ${response.statusText} (Status: ${response.status})`;
-            console.error(errorMessage);
             throw new Error(errorMessage);
         }
 
         const data = await response.json();
-        console.log('Invitation response data:', data);
-
-        // Refresh the incoming invitations list
+        if (data.error) {
+            throw new Error(data.error);
+        }
         getIncomingInvitations(currentUserId);
     } catch (error) {
         console.error('Error responding to invitation:', error);
@@ -448,7 +430,7 @@ async function fetchAcceptedFriendships(currentUserId) {
     try {
         const csrfToken = getCSRFToken('csrftoken');
         if (!csrfToken) {
-            console.error('CSRF token is missing!');
+            throw new Error('CSRF token is missing!');
         }
         const response = await fetch(`/api/friends/get_accepted_friendships/?user_id=${currentUserId}`, {
             method: 'GET',
@@ -463,8 +445,6 @@ async function fetchAcceptedFriendships(currentUserId) {
         }
 
         const data = await response.json();
-        console.log('Accepted friendships data:', data);
-
         const friendshipList = document.getElementById('friends-list');
         friendshipList.innerHTML = '';
 
@@ -479,10 +459,8 @@ async function fetchAcceptedFriendships(currentUserId) {
         } else {
             data.accepted_friendships.forEach(async (friendship) => {
                 const listItem = document.createElement('div');
-                console.log('Searching for friend: ', friendship.friend_username);
                 const friendData = await getCurrentFriendInfo(friendship.friend_username);
                 const onlineStatus = await isFriendOnline(friendship.friend_username);
-                console.log(onlineStatus);
                 listItem.className = 'col-sm-6';
                 listItem.innerHTML = `
                     <div class="card">
@@ -500,7 +478,6 @@ async function fetchAcceptedFriendships(currentUserId) {
                       </div>
                     </div>
                 `;
-                console.log(friendData.display_friends);
                 if (friendData.display_friends === true) {
                     const profileBox = document.createElement('div');
                     profileBox.className = 'profile-box';
@@ -569,7 +546,6 @@ async function fetchAcceptedFriendships(currentUserId) {
 }
 
 export async function getCurrentFriendInfo(username) {
-    console.log("getCurrentFriendInfo: ", username);
     const response = await fetch(`/api/credentials/userid-info/?user=${username}`, {
         method: 'GET',
         credentials: 'include',
@@ -577,7 +553,6 @@ export async function getCurrentFriendInfo(username) {
             'Content-Type': 'application/json',
         }
     });
-    //console.log("HELLO: ", response.json());
     if (!response.ok) {
         throw new Error('Failed to get current user info');
     }

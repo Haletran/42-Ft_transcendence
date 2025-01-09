@@ -15,7 +15,6 @@ class UserStore {
             if (response.ok) {
                 const userData = await response.json();
 
-                // Vérifier s'il y a un changement de photo de profil
                 if (this._hasProfilePictureChanged(userData.profile_picture)) {
                     this._userData = userData;
                     this._notifyProfilePictureSubscribers(userData.profile_picture);
@@ -23,14 +22,11 @@ class UserStore {
 
                 return userData;
             } else {
-                console.log(response.status);
-                console.log('User not logged in');
-                router.goTo('/');
-                return null;
+                router.goTo('/login_base');
             }
         } catch (error) {
             console.error("User not logged in:", error);
-            router.goTo('/');
+            router.goTo('/login_base');
             return null;
         }
     }
@@ -75,10 +71,7 @@ class UserStore {
     }
 }
 
-// Création d'une instance singleton
 const userStore = new UserStore();
-
-// Exportation des fonctions
 export function fetchMinInfo() {
     return userStore.fetchMinInfo();
 }

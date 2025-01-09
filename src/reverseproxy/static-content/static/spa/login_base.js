@@ -114,12 +114,8 @@ export class loginBasePage extends Page {
 
 			const username = document.getElementById('loginUsername').value;
 			const password = document.getElementById('loginPassword').value;
-
-			// Prepare the data to send
 			const data = { username, password };
-
 			try {
-				console.log('CSRF Token:', getCSRFToken('csrftoken'));
 				const csrfToken = getCSRFToken('csrftoken');
 				if (!csrfToken) {
 					console.error('CSRF token is missing!');
@@ -137,16 +133,12 @@ export class loginBasePage extends Page {
 
 				if (response.ok) {
 					const result = await response.json();
-					// startWebSocket();
-					console.log('Login successful:', result);
 					router.goTo('/home');
 				} else {
 					const error = await response.json();
-					console.error('Login failed:', error);
 					alert('Login failed: ' + error.message);
 				}
 			} catch (error) {
-				console.error('Error:', error);
 				alert('An error occurred: ' + error.message);
 			}
 		});
@@ -159,13 +151,10 @@ let reconnectInterval = 5000;
 
 export function startWebSocket() {
 	const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    StatusSocket = new WebSocket(protocol + window.location.host + "/ws/online-status/");
+	StatusSocket = new WebSocket(protocol + window.location.host + "/ws/online-status/");
 
 	StatusSocket.onopen = function (e) {
 		console.log("The connection for online status was setup successfully!");
-		// if (!e.wasClean) {
-        //     setTimeout(startWebSocket, reconnectInterval);
-        // }
 	};
 
 	StatusSocket.onclose = function () {
@@ -175,7 +164,6 @@ export function startWebSocket() {
 
 export function closeWebSocket() {
 	if (!StatusSocket) return;
-	console.log('STATUS SOCKET', StatusSocket);
 	if (StatusSocket.readyState === WebSocket.OPEN) {
 		StatusSocket.close();
 	} else {

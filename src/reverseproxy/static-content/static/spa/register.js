@@ -134,15 +134,14 @@ export class RegisterPage extends Page {
 
 	async render() {
 		const logBOOL = await isUserLoggedIn();
-		console.log('LOGBOOL', logBOOL);
 		if (logBOOL == true)
 			logoutUser();
-		
+
 		super.render();
 
 		this.attachFormListener();
 	}
-	
+
 	attachFormListener() {
 		const form = document.getElementById('register_form');
 
@@ -153,7 +152,7 @@ export class RegisterPage extends Page {
 		termLinks.addEventListener('click', function (event) {
 			event.preventDefault();
 			termModals.classList.add('visible');
-			});
+		});
 
 		closeModalButton.addEventListener('click', function (event) {
 			termModals.classList.remove('visible');
@@ -171,16 +170,14 @@ export class RegisterPage extends Page {
 
 		const profileInput = document.getElementById('customProfilePicture');
 		profileInput.addEventListener('change', () => {
-			console.log("Uploaded file:", profileInput.files[0]);
 		});
 
-		// monitor checkboxes (will be added to data sent)
 		let matchHistoryBOOL = true;
 		let friendsBOOL = true;
 		let agreeBOOL = false;
 
 		const matchHistory = document.getElementById('matchHistory');
-		matchHistory.addEventListener('change', function() {
+		matchHistory.addEventListener('change', function () {
 			if (this.checked) {
 				matchHistoryBOOL = false;
 			} else {
@@ -189,7 +186,7 @@ export class RegisterPage extends Page {
 		});
 
 		const displayFriends = document.getElementById('displayFriends');
-		displayFriends.addEventListener('change', function() {
+		displayFriends.addEventListener('change', function () {
 			if (this.checked) {
 				friendsBOOL = false;
 			} else {
@@ -198,7 +195,7 @@ export class RegisterPage extends Page {
 		});
 
 		const agree = document.getElementById('conditions');
-		agree.addEventListener('change', function() {
+		agree.addEventListener('change', function () {
 			if (this.checked) {
 				agreeBOOL = true;
 			} else {
@@ -223,30 +220,30 @@ export class RegisterPage extends Page {
 
 			if (agreeBOOL === false) {
 				alert("Please agree to terms and conditions.");
-				return ;
+				return;
 			}
 			username = username.trim();
 			email = email.trim();
 			if (username.search(' ') != -1 || email.search(' ') != -1) {
 				alert("no space allowed in fields");
-				return ;
+				return;
 			}
 
 			if (profileInput.files[0]) {
+				const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+				if (!allowedTypes.includes(profileInput.files[0].type)) {
+					alert('Only JPG, JPEG, PNG, and GIF files are allowed.');
+					return;
+				}
 				formData.append('profile_picture', profileInput.files[0]);
-				console.log(profileInput.files[0]);
 			} else if (defaultFileBlob) {
 				formData.append('profile_picture', defaultFileBlob)
 			} else {
-				console.error('Default file is not ready yet!');
 				alert('Default file is not ready yet! Please try again.');
 				return;
 			}
 
 			try {
-
-				// get CSRF token
-				console.log('CSRF Token:', getCSRFToken('csrftoken'));
 				const csrfToken = getCSRFToken('csrftoken');
 				if (!csrfToken) {
 					console.error('CSRF token is missing!');
@@ -264,8 +261,6 @@ export class RegisterPage extends Page {
 
 				if (response.ok) {
 					const result = await response.json();
-					console.log('Registration successful:', result);
-					// startWebSocket();
 					router.goTo('/home');
 				} else {
 					const error = await response.json();
@@ -281,11 +276,10 @@ export class RegisterPage extends Page {
 				if (error.message.includes("413") === 413) {
 					alert('Profile pic too big');
 				}
-				//console.error('Error:', error);
 				else {
 					alert('Profile pic too big');
 				}
-				
+
 			}
 		});
 	}

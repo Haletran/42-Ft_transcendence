@@ -4,8 +4,6 @@ import { router } from '../app.js';
 
 export function logoutUser() {
 
-    // get CSRF token
-    console.log('CSRF Token:', getCSRFToken('csrftoken'));
     const csrfToken = getCSRFToken('csrftoken');
     if (!csrfToken) {
         console.error('CSRF token is missing!');
@@ -22,6 +20,12 @@ export function logoutUser() {
         .then((response) => {
             if (response.ok) {
                 closeWebSocket();
+                document.cookie.split(";").forEach((cookie) => {
+                    document.cookie = cookie
+                        .replace(/^ +/, "")
+                        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                localStorage.clear();
                 console.log('Successfully logged out');
             } else {
                 console.error('Logout failed');

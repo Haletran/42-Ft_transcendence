@@ -37,8 +37,6 @@ export function setupProfilePictureSelection() {
                 actual_pp.classList.remove('animate__animated', 'animate__bounce');
                 pp.id = 'actual_pp';
                 actual_pp = pp;
-                // Add bounce animation
-                //actual_pp.classList.add('animate__animated', 'animate__bounce');
                 actual_pp.addEventListener('animationend', () => {
                     actual_pp.classList.remove('animate__animated', 'animate__bounce');
                 });

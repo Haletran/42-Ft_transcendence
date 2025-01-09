@@ -73,7 +73,6 @@ export class Monopoly extends Page {
                               <div class="modal-body">
                                 <p class="text-muted">Select a Monopoly map to play with your friends.</p>
                                 <div id="mapGrid" class="row g-4">
-                                  <!-- Cards will be populated dynamically -->
                                 </div>
                               </div>
                               <div class="modal-footer">
@@ -93,8 +92,7 @@ export class Monopoly extends Page {
         `;
     }
     async render() {
-        const loggedIn = await isUserLoggedIn();
-        console.log('loggedIn: ', loggedIn);
+        const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             router.goTo('/login_base');
             return;
@@ -104,7 +102,7 @@ export class Monopoly extends Page {
         super.render(); // Call the parent render method
         this.eventListeners();
         setACookie('game_running', 'false', 1);
-        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+        subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
@@ -157,6 +155,53 @@ export class Monopoly extends Page {
     }
 
     eventListeners() {
+        const settingsButton = document.getElementById('settings_button');
+        if (settingsButton) {
+            settingsButton.addEventListener('click', () => {
+                const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
+                modal.show();
+            });
+        }
+        const saveSettingsButton = document.getElementById('saveSettings');
+        if (saveSettingsButton) {
+            saveSettingsButton.addEventListener('click', () => {
+                const playerColor = document.getElementById('playerColor').value;
+                const ballColor = document.getElementById('ballColor').value;
+                const mapColor = document.getElementById('mapColor').value;
+                const textColor = document.getElementById('textColor').value;
+                localStorage.setItem('playerColor', playerColor);
+                localStorage.setItem('ballColor', ballColor);
+                localStorage.setItem('mapColor', mapColor);
+                localStorage.setItem('textColor', textColor);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+                modal.hide();
+            });
+        }
+        const playerColorInput = document.getElementById('playerColor');
+        const mapColorInput = document.getElementById('mapColor');
+        const ballColorInput = document.getElementById('ballColor');
+        const textColorInput = document.getElementById('textColor');
+        if (playerColorInput && mapColorInput && ballColorInput && textColorInput) {
+            playerColorInput.value = localStorage.getItem('playerColor') || '#ffffff';
+            ballColorInput.value = localStorage.getItem('ballColor') || '#ffffff';
+            mapColorInput.value = localStorage.getItem('mapColor') || '#282931';
+            textColorInput.value = localStorage.getItem('textColor') || '#ffffff';
+        }
+
+        const resetSettingsButton = document.getElementById('resetSettings');
+        if (resetSettingsButton) {
+            resetSettingsButton.addEventListener('click', () => {
+                localStorage.removeItem('playerColor');
+                localStorage.removeItem('ballColor');
+                localStorage.removeItem('mapColor');
+                localStorage.removeItem('textColor');
+                playerColorInput.value = '#ffffff';
+                ballColorInput.value = '#ffffff';
+                mapColorInput.value = '#282931';
+                textColorInput.value = '#ffffff';
+            });
+        }
+
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function () {
@@ -185,10 +230,6 @@ export class Monopoly extends Page {
             const button = document.getElementById(buttonId);
             if (button) {
                 button.addEventListener('click', async function () {
-                    const existingCanvas = document.querySelector('#monopoly_canvas');
-                    if (existingCanvas) {
-                        existingCanvas.remove();
-                    }
                     hideElementsByClass('menu');
                     showElementsByClass('game', 'flex');
                     addClassToElementsByClass('game', 'center');

@@ -29,12 +29,8 @@ export class LoginPage extends Page {
                 return;
             }
         } catch (error) {
-            console.error('User not logged in:', error);
             logoutUser();
-            //super.render();
         }
-    
-        // Fallback UI rendering
         super.render();
     }
 }

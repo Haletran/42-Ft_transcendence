@@ -6,11 +6,12 @@ import { getCSRFToken } from "../src/csrf.js";
 import { Router } from '../src/router.js';
 import { deleteAccount } from "../src/logout.js";
 import { setACookie } from '../js/utils.js';
-import { router,isUserLoggedIn } from '../app.js';
+import { router, isUserLoggedIn } from '../app.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
 export class Privacy extends Page {
+
     constructor() {
         super();
         this.template = `
@@ -145,25 +146,22 @@ export class Privacy extends Page {
          `;
     }
     async render() {
-        const loggedIn = await isUserLoggedIn();
-        console.log('loggedIn: ', loggedIn);
+        const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             router.goTo('/login_base');
-            return;
         }
         fetchMinInfo();
         setACookie('game_running', 'false', 1);
         isUserOnline();
         super.render();
 
-        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+        subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
 
         // update checkboxes value
         const userData = await getUserInfos();
-        console.log('display_friends: ', userData.display_friends, ' match_history: ', userData.match_history);
         userData.match_history == true ? document.getElementById('matchHistory').checked = false : document.getElementById('matchHistory').checked = true;
         userData.display_friends == true ? document.getElementById('displayFriends').checked = false : document.getElementById('displayFriends').checked = true;
 
