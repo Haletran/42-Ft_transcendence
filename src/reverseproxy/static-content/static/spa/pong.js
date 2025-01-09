@@ -109,11 +109,11 @@ export class Pong extends Page {
                         <form>
                             <div class="form-group">
                                 <label for="player1name">Player 1 name</label>
-                                <input type="name" class="form-control" id="player1name" placeholder="enter name">
+                                <input type="name" class="form-control" id="player1name" placeholder="enter name (less than 10 char)">
                             </div><br>
                             <div class="form-group">
                                 <label for="player2name">Player 2 name</label>
-                                <input type="name" class="form-control" id="player2name" placeholder="enter name">
+                                <input type="name" class="form-control" id="player2name" placeholder="enter name (less than 10 char)">
                             </div>
                         </form>
                     </div>
@@ -276,14 +276,20 @@ export class Pong extends Page {
                         modal.show();
                         play = document.getElementById('Start1v1');
                         play.addEventListener('click', async (e) => {
-                            if (play != button) { modal.hide(); }
                             let player1 = document.getElementById('player1name').value;
                             let player2 = document.getElementById('player2name').value;
                             if (!player1) { player1 = 'player1' };
                             if (!player2) { player2 = 'player2' };
                             console.log(player1, player2);
-                            modal.hide();
-                            startthegame(button, buttonId, player1, player2);
+                            if ((player1 == player2) || (player1.length > 10 || player2.length > 10)) {
+                                alert("display name is 10 char max, names cannot be identical");
+                                document.getElementById('player1name').value = "";
+                                document.getElementById('player2name').value = "";
+                            }
+                            else {
+                                modal.hide();
+                                startthegame(button, buttonId, player1, player2);
+                            }
                         });
                     }
                     else if (buttonId == 'start_button2' || buttonId == 'tournament_button') {
