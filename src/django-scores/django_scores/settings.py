@@ -23,7 +23,14 @@ VAULT_TOKEN = os.getenv('VAULT_TOKEN', None)
 
 client = Client(url=VAULT_ADDR, token=VAULT_TOKEN)
 
-SECRET_KEY = 'django-insecure-rmz$j5%o_bv0wad1o6*mc$l28w%ax@!2)eul-x-4wn+r721oqz'
+try:
+    # Attempt to fetch the secret stored at the given path in Vault
+    secret = client.secrets.kv.v2.read_secret_version(path='data/django/db_scores/')
+    
+    # Correct way to access the 'value' field from Vault response
+    SECRET_KEY = secret['data']['data']['secret_key']
+except Exception as e:
+    raise RuntimeError(f"Unable to retrieve SECRET_KEY from Vault: {e}")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
