@@ -154,9 +154,9 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_DB: scores_db
-      POSTGRES_USER: scores_user
-      POSTGRES_PASSWORD: scores_password
+      POSTGRES_DB: ${POSTGRES_DB_SCORES}
+      POSTGRES_USER: ${POSTGRES_USER_SCORES}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_SCORES}
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     networks:
       - transcendence
