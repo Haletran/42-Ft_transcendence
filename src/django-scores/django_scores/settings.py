@@ -32,6 +32,21 @@ try:
 except Exception as e:
     raise RuntimeError(f"Unable to retrieve SECRET_KEY from Vault: {e}")
 
+try:
+    # Attempt to fetch the secret stored at the given path in Vault
+    secret_db = client.secrets.kv.v2.read_secret_version(path='data/django/db_friends')
+    
+    # Correct way to access the credentials from Vault response
+    db_credentials = secret_db['data']['data']
+    POSTGRES_DB = db_credentials['db_name']
+    POSTGRES_USER = db_credentials['db_user']
+    POSTGRES_PASSWORD = db_credentials['db_password']
+    POSTGRES_HOST = db_credentials['db_host']
+    POSTGRES_PORT = db_credentials['db_port']
+
+except Exception as e:
+    raise RuntimeError(f"Unable to retrieve DB credentials from Vault: {e}")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -90,11 +105,11 @@ WSGI_APPLICATION = 'django_scores.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'scores_db',
-        'USER': 'scores_user',
-        'PASSWORD': 'scores_password',
-        'HOST': 'scores-database',  # Container name from docker-compose
-        'PORT': '5435',
+        'NAME': os.getenv('POSTGRES_DB_SCORES'),
+        'USER': os.getenv('POSTGRES_USER_SCORES'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD_SCORES'),
+        'HOST': os.getenv('POSTGRES_HOST_SCORES'),
+        'PORT': os.getenv('POSTGRES_PORT_SCORES'),
     }
 }
 
