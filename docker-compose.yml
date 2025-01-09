@@ -138,6 +138,8 @@ services:
       - scores-database
     networks:
       - transcendence
+    env_file:
+      - .env
     command: >
       sh -c "sleep 8 && python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 9003 django_scores.asgi:application"
 
@@ -149,6 +151,8 @@ services:
     volumes:
       - scores_data:/var/lib/postgresql/data
       - ./src/scores-database/postgresql.conf:/etc/postgresql/postgresql.conf
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: scores_db
       POSTGRES_USER: scores_user
