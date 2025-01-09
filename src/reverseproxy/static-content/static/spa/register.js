@@ -270,11 +270,22 @@ export class RegisterPage extends Page {
 				} else {
 					const error = await response.json();
 					console.error('Registration failed:', error);
-					alert('Registration failed: ' + error.message);
+					if (error.message) {
+						alert('Registration failed: ' + error.message);
+					}
+					else {
+						alert('Registration failed: Username already in use');
+					}
 				}
 			} catch (error) {
-				console.error('Error:', error);
-				alert('An error occurred: ' + error.message);
+				if (error.message.includes("413") === 413) {
+					alert('Profile pic too big');
+				}
+				//console.error('Error:', error);
+				else {
+					alert('Profile pic too big');
+				}
+				
 			}
 		});
 	}

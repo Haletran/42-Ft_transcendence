@@ -30,6 +30,8 @@ HOST = 'redis'
 PORT = 6379
 redis_client = redis.StrictRedis(host=HOST, port=PORT, db=0)
 
+MAX_FILE_SIZE = 5 * 1024 * 1024
+
 @ensure_csrf_cookie
 def set_csrf_token(request):
     csrf_token = get_token(request)
@@ -46,7 +48,10 @@ def register_view(request):
             uploaded_file = request.FILES.get('profile_picture')
             match_history = request.POST.get('matchHistory') == 'true'
             display_friends = request.POST.get('friendsDisplay') == 'true'
-        
+
+            if uploaded_file.size > MAX_FILE_SIZE:
+                return JsonResponse({'message': 'File too big'}, status=400)
+
             # check password
             try:
                 validate_password(password)
