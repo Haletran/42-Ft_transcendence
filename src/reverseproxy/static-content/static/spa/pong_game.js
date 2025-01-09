@@ -399,6 +399,8 @@ function moveAI() {
     if (game.player2.isAi) {
         if (game.ball.x > canvas.width / 2) {
             const predictedY = predictBallYAtX(game.player2.x);
+            const randomness = (Math.random() - 0.5) * 10;
+            const predictedYWithRandomness = predictedY + randomness;
             if (predictedY > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
                 keys['40'] = true; // DOWN
                 keys['38'] = false; // UP
