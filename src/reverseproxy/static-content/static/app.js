@@ -38,6 +38,17 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
 
       const path = linkel.getAttribute('data-link');
+      if (path === '/profile' || path === '/settings' || path === '/friends' || path === '/privacy') {
+        const footer = document.querySelector('footer');
+        if (footer) {
+          footer.classList.add('fixed-bottom');
+        }
+      } else {
+        const footer = document.querySelector('footer');
+        if (footer) {
+          footer.classList.remove('fixed-bottom');
+        }
+      }
       router.goTo(path);
     }
   });
