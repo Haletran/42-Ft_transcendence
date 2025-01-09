@@ -43,6 +43,40 @@ const hitEffect = () => {
 const x = canvas.width / 2
 const y = canvas.height / 2
 
+let contractAddresses = [];
+
+async function fetchContractAddresses() {
+    const url = '/static/spa/contract/deployedAddresses.json';
+    console.log('Fetching from URL:', url); // Log the URL being fetched
+    const response = await fetch(url);
+    const text = await response.text(); // Read response as plain text
+    console.log('Response Text:', text); // Log the raw text
+    const addresses = JSON.parse(text); // Parse the raw text as JSON
+
+    // Extract all contract addresses from the first object in the array
+    const firstContract = addresses[0]; // The first (and only) item in the array
+
+    // Return all contract addresses as an array
+    return [
+        firstContract.contract1,
+        firstContract.contract2,
+        firstContract.contract3,
+        firstContract.contract4,
+        firstContract.contract5,
+        firstContract.contract6,
+        firstContract.contract7
+    ];
+}
+
+// Assign the result to contractAddresses
+fetchContractAddresses().then(addresses => {
+    contractAddresses = addresses; // Set contractAddresses to the fetched array
+    console.log("Contract Addresses:", contractAddresses);
+}).catch(err => {
+    console.error("Error fetching addresses:", err);
+});
+
+
 // SETUP GAME CLASSES
 class Player {
     constructor(x, y, color, width, height, speed, name, isAi) {
@@ -170,9 +204,9 @@ class Tournament {
                 name
             );
         });
-
         this.bracket = this.createBracket();
         this.currentRound = 0;
+        this.contract = 0;
         this.matchInProgress = false;
     }
 
@@ -229,9 +263,10 @@ class Tournament {
                     const scores = { p1: game.player1.score, p2: game.player2.score };
                     set1v1victory(game.player1, game.player2, scores, false, true);
                     const winner = getWinner(game.player1, game.player2);
-                    // const contractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
-                    // interactWithContract(contractAddress, game.player1.name, game.player1.score, game.player2.name, game.player2.score); To see with Baptiste on how to implement it
+                    console.log(this.contract);
+                    interactWithContract(contractAddresses[this.contract], game.player1.name, game.player1.score, game.player2.name, game.player2.score);
                     resolve(winner === game.player1.name ? player1 : player2);
+                    this.contract++;
                 } else {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     game.table.update();
