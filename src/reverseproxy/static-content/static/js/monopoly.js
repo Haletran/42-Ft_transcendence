@@ -105,7 +105,6 @@ function drawPlayerInfo() {
 
     players.forEach((player, index) => {
         const infoY = 60 + index * 200; // Spacing for each player's info
-        //drawRoundedRect(sidebarX + 10, infoY - 20, 150, 150, 5, "#FFF", 2); // Draw a rounded rectangle for each player
 
         // Draw the background color behind the player's name
         ctx.fillStyle = player.color; // Use the player's color
@@ -461,7 +460,7 @@ function waitForPurchaseDecision(player, landedTile, callback) {
         const clickX = event.offsetX;
         const clickY = event.offsetY;
         const yesX = 1050 - 60;
-        const yesY = 620 + 20;
+        const yesY = 650 + 20;
         const noX = 1050 + 20;
 
         let decision = null;
@@ -502,9 +501,9 @@ function waitForBuildDecision(player, landedTile, callback) {
     canvas.addEventListener("click", function onClick(event) {
         const clickX = event.offsetX;
         const clickY = event.offsetY;
-        const yesX = 1050 - 80;
-        const yesY = 640 + 30;
-        const noX = 1050 + 40;
+        const yesX = 1050 - 60;
+        const yesY = 610 + 20;
+        const noX = 1050 + 20;
 
         let decision = null;
 
