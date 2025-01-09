@@ -120,5 +120,4 @@ export async function isFriendOnline(username) {
         console.error(error);
         return false;
     }
-
 }

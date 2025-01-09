@@ -110,7 +110,7 @@ export class loginBasePage extends Page {
 		form.addEventListener('submit', async (e) => {
 			//document.querySelector('.loader').style.display = 'flex';
 			//document.getElementById('app').style.display = 'none';
-			e.preventDefault(); // Prevent the default form submission
+			e.preventDefault();
 
 			const username = document.getElementById('loginUsername').value;
 			const password = document.getElementById('loginPassword').value;
