@@ -1,15 +1,3 @@
-// document.getElementById('add_player').onclick = function () {
-//     var list = document.querySelector('.list-group');
-//     if (list.children.length < 4) {
-//         var item = document.createElement('li');
-//         item.classList.add('list-group-item');
-//         item.innerHTML = '<i class="bi bi-robot"></i> Player ' + (list.children.length + 1);
-//         list.appendChild(item);
-//     } else {
-//         alert('Maximum 4 players allowed');
-//     }
-// }
-
 function isAlreadytaken(username) {
     var items = document.querySelectorAll('.list-group-item');
     for (var i = 0; i < items.length; i++) {

@@ -574,34 +574,33 @@ function drawBoard() {
         if (map == 1) {
             tiles.push(
                 new Tile("GO !", "special", startX + boardSize - cornerSize, startY + boardSize - cornerSize, cornerSize, cornerSize, "#ddd", +500, 0), // Tile 1
-                new Tile("Tile 1", 1, startX + boardSize - tileSize * 2, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -100, -30), // Tile 2
-                new Tile("Tile 2", 1, startX + boardSize - tileSize * 3, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -100, -30), // Tile 3
-                new Tile("Tile 3", 1, startX + boardSize - tileSize * 4, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -100, -30), // Tile 4
+                new Tile("42 Lyon", 1, startX + boardSize - tileSize * 2, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -100, -30), // Tile 2
+                new Tile("42 Nice", 1, startX + boardSize - tileSize * 3, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -100, -30), // Tile 3
+                new Tile("42 Lille", 1, startX + boardSize - tileSize * 4, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -100, -30), // Tile 4
                 new Tile("Special Tile", "special", startX + boardSize - tileSize * 5, startY + boardSize - cornerSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 5
-                new Tile("Tile 4", 2, startX + boardSize - tileSize * 6, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -180, -70), // Tile 6
-                new Tile("Tile 5", 2, startX + boardSize - tileSize * 7, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -180, -70), // Tile 7
+                new Tile("42 Nantes", 2, startX + boardSize - tileSize * 6, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -180, -70), // Tile 6
+                new Tile("42 Bordeaux", 2, startX + boardSize - tileSize * 7, startY + boardSize - cornerSize, tileSize, cornerSize, "#fff", -180, -70), // Tile 7
                 new Tile("Minishell", "jail", startX, startY + boardSize - cornerSize, cornerSize, cornerSize, "#ddd", 0, 0), // Tile 8
-                new Tile("Tile 6", 3, startX, startY + boardSize - tileSize - tileSize, cornerSize, tileSize, "#fff", -200, -80), // Tile 9
-                new Tile("Tile 7", 3, startX, startY + boardSize - tileSize - 2 * tileSize, cornerSize, tileSize, "#fff", -200, -80), // Tile 10
+                new Tile("42 Toulouse", 3, startX, startY + boardSize - tileSize - tileSize, cornerSize, tileSize, "#fff", -200, -80), // Tile 9
+                new Tile("42 Marseille", 3, startX, startY + boardSize - tileSize - 2 * tileSize, cornerSize, tileSize, "#fff", -200, -80), // Tile 10
                 new Tile("Chance", "chance", startX, startY + boardSize - tileSize - 3 * tileSize, cornerSize, tileSize, "#ffcc00", 0, 0), // Tile 11
-                new Tile("Tile 8", 4, startX, startY + boardSize - tileSize - 4 * tileSize, cornerSize, tileSize, "#fff", -240, -100), // Tile 12
-                new Tile("Tile 9", 4, startX, startY + boardSize - tileSize - 5 * tileSize, cornerSize, tileSize, "#fff", -240, -100), // Tile 13
+                new Tile("42 Rennes", 4, startX, startY + boardSize - tileSize - 4 * tileSize, cornerSize, tileSize, "#fff", -240, -100), // Tile 12
+                new Tile("42 Strasbourg", 4, startX, startY + boardSize - tileSize - 5 * tileSize, cornerSize, tileSize, "#fff", -240, -100), // Tile 13
                 new Tile("Event", "event", startX, startY + boardSize - tileSize - 6 * tileSize, cornerSize, tileSize, "#ffcc00", 0, 0), // Tile 14
                 new Tile("Cafeteria", "special", startX, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, tileSize, "#ddd", 0, 0), // Tile 15
-                new Tile("Tile 10", 5, startX + tileSize, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, tileSize, "#fff", -260, -110), // Tile 16
-                new Tile("Tile 11", 5, startX + tileSize * 2, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, tileSize, "#fff", -260, -110), // Tile 17
+                new Tile("42 Angers", 5, startX + tileSize, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, tileSize, "#fff", -260, -110), // Tile 16
+                new Tile("42 Grenoble", 5, startX + tileSize * 2, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, tileSize, "#fff", -260, -110), // Tile 17
                 new Tile("Special Tile", "special", startX + tileSize * 3, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, tileSize, "#ffcc00", 0, 0), // Tile 18
-                new Tile("Tile 12", 6, startX + tileSize * 4, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, tileSize, "#fff", -300, -130), // Tile 19
-                new Tile("Tile 13", 6, startX + tileSize * 5, startY + boardSize - cornerSize - 7 * tileSize, tileSize, tileSize, "#fff", -300, -130), // Tile 20
-                new Tile("Tile 14", 6, startX + tileSize * 6, startY + boardSize - cornerSize - 7 * tileSize, tileSize, tileSize, "#fff", -300, -130), // Tile 21
+                new Tile("42 Montpellier", 6, startX + tileSize * 4, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, tileSize, "#fff", -300, -130), // Tile 19
+                new Tile("42 Rouen", 6, startX + tileSize * 5, startY + boardSize - cornerSize - 7 * tileSize, tileSize, tileSize, "#fff", -300, -130), // Tile 20
+                new Tile("42 Reims", 6, startX + tileSize * 6, startY + boardSize - cornerSize - 7 * tileSize, tileSize, tileSize, "#fff", -300, -130), // Tile 21
                 new Tile("Go to Minishell", "jail", startX + tileSize * 7, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, cornerSize, "#ddd", 0, 0), // Tile 22
-                new Tile("Tile 15", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 6 * tileSize, tileSize, cornerSize, "#fff", -350, -150), // Tile 23
+                new Tile("42 Clermont-Ferrand", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 6 * tileSize, tileSize, cornerSize, "#fff", -350, -150), // Tile 23
                 new Tile("Chance", "chance", startX + tileSize * 7, startY + boardSize - cornerSize - 5 * tileSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 24
                 new Tile("42 Angouleme", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 4 * tileSize, tileSize, cornerSize, "#fff", -350, -150, "/static/imgs/42_angouleme.jpg"), // Tile 25
                 new Tile("Special Tile", "special", startX + tileSize * 7, startY + boardSize - cornerSize - 3 * tileSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 26
                 new Tile("Event", "event", startX + tileSize * 7, startY + boardSize - cornerSize - 2 * tileSize, cornerSize, tileSize, "#ffcc00", 0, 0), // Tile 27
-                new Tile("42 Paris", 8, startX + tileSize * 7, startY + boardSize - cornerSize - tileSize, tileSize, cornerSize, "#fff", -400, -200, "/static/imgs/42.png"), //
-
+                new Tile("42 Paris", 8, startX + tileSize * 7, startY + boardSize - cornerSize - tileSize, tileSize, cornerSize, "#fff", -400, -200, "/static/imgs/42.png"), // Tile 28
             );
         }
         else if (map == 2) {
