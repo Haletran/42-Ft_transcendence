@@ -269,13 +269,20 @@ export class Pong extends Page {
         ['start_button', 'start_button2', 'tournament_button'].forEach(buttonId => {
             const button = document.getElementById(buttonId);
             if (button) {
-                button.addEventListener('click', async function () {
+                button.replaceWith(button.cloneNode(true));
+                const newButton = document.getElementById(buttonId);
+
+                newButton.addEventListener('click', async function () {
                     let play;
                     if (buttonId == 'start_button') {
                         const modal = new bootstrap.Modal(document.getElementById('1v1Modal'));
                         modal.show();
                         play = document.getElementById('Start1v1');
-                        play.addEventListener('click', async (e) => {
+                        play.replaceWith(play.cloneNode(true));
+                        const newPlay = document.getElementById('Start1v1');
+
+                        newPlay.addEventListener('click', async (e) => {
+                            if (newPlay != newButton) { modal.hide(); }
                             let player1 = document.getElementById('player1name').value;
                             let player2 = document.getElementById('player2name').value;
                             if (!player1) { player1 = 'player1' };
@@ -294,10 +301,9 @@ export class Pong extends Page {
                     }
                     else if (buttonId == 'start_button2' || buttonId == 'tournament_button') {
                         const player1 = await getProfileUsername();
-                        startthegame(button, buttonId, player1, 'player2');
+                        await startthegame(newButton, buttonId, player1, 'player2');
                     }
                 });
-                // });
             }
         });
     }
@@ -313,7 +319,6 @@ async function startthegame(button, buttonId, player1, player2) {
     addClassToElementsByClass('game', 'center');
     try {
         let winner = 0;
-        // PREVENT CACHING ISSUE BY ADDING TIMESTAMP
         const module = await import(`/static/spa/pong_game.js?timestamp=${new Date().getTime()}`);
         setACookie('game_running', 'true', 1);
         localStorage.setItem('username', player1);
