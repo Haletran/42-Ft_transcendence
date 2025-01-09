@@ -118,12 +118,8 @@ export class Friends extends Page {
                     </div>
                 </div>
             </div>
-            <div class="toast align-items-center position-fixed bottom-0 end-0" role="alert" aria-live="assertive"
-            aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            <div aria-live="polite" aria-atomic="true" class="position-relative">
+                <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
             </div>
         </div>
         </div>
@@ -140,7 +136,7 @@ export class Friends extends Page {
         setACookie('game_running', 'false', 1);
         fetchMinInfo();
         isUserOnline();
-        super.render();// Call the parent render method
+        super.render();
 
         const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
@@ -169,36 +165,52 @@ export class Friends extends Page {
                 event.preventDefault();
 
                 const usernameOrEmail = document.getElementById('friend-username').value;
-                const messageDiv = document.getElementById('add-friend-message');
+
+                // Function to display a toast message
+                const showToast = (message, type = 'info') => {
+                    const toastContainer = document.getElementById('toast-container');
+                    const toastId = `toast-${Date.now()}`;
+                    const toastHTML = `
+                        <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="d-flex">
+                                <div class="toast-body">${message}</div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    `;
+                    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+                    const toastElement = document.getElementById(toastId);
+                    const toast = new bootstrap.Toast(toastElement);
+                    toast.show();
+
+                    // Remove the toast from the DOM after hiding
+                    toastElement.addEventListener('hidden.bs.toast', () => {
+                        toastElement.remove();
+                    });
+                };
 
                 console.log('Form submitted with username or email:', usernameOrEmail);
 
                 // Check if the user is trying to add themselves
                 if (usernameOrEmail === currentUserEmail || usernameOrEmail === currentUserName) {
-                    messageDiv.textContent = "You cannot add yourself as a friend.";
-                    messageDiv.style.color = 'red';
-                    console.log("Attempt to add self as friend prevented.");
+                    showToast('You cannot add yourself as a friend.', 'danger');
+                    console.log('Attempt to add self as friend prevented.');
                     return;
                 }
 
                 try {
-                    // Step 1: Fetch emails from credentials service
                     console.log('Starting fetch request for emails...');
                     const emailsResponse = await fetch('/api/friends/fetch_emails/', {
                         method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
+                        headers: { 'Content-Type': 'application/json' }
                     });
 
                     console.log('Fetch request for emails completed.');
-                    console.log('Response status:', emailsResponse.status);
-
                     const emailsData = await emailsResponse.json();
                     console.log('Emails response data:', emailsData);
 
                     if (emailsResponse.ok) {
-                        // Step 2: Check if the email exists in the fetched list
                         const emailExists = emailsData.emails?.includes(usernameOrEmail);
                         const userExists = emailsData.usernames?.includes(usernameOrEmail);
                         let userEmail = null;
@@ -209,34 +221,20 @@ export class Friends extends Page {
                             const index = emailsData.emails.indexOf(usernameOrEmail);
                             userEmail = usernameOrEmail;
                             userName = emailsData.usernames[index];
-                            userId = emailsData.id[index];  // Get the user ID using the same index
-
-                            messageDiv.textContent = `Email ${usernameOrEmail} found. Username: ${userName}, ID: ${userId}`;
-                            messageDiv.style.color = 'green';
-                            console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
+                            userId = emailsData.id[index];
+                            //showToast(`Email ${usernameOrEmail} found. Username: ${userName}, ID: ${userId}`, 'success');
                         } else if (userExists) {
                             const index = emailsData.usernames.indexOf(usernameOrEmail);
                             userName = usernameOrEmail;
                             userEmail = emailsData.emails[index];
-                            userId = emailsData.id[index];  // Get the user ID using the same index
-                            messageDiv.textContent = `Username ${usernameOrEmail} found. Email: ${userEmail}, ID: ${userId}`;
-                            messageDiv.style.color = 'green';
-                            console.log(`Found user - Email: ${userEmail}, Username: ${userName}, ID: ${userId}`);
+                            userId = emailsData.id[index];
+                            //showToast(`Username ${usernameOrEmail} found. Email: ${userEmail}, ID: ${userId}`, 'success');
                         } else {
-                            messageDiv.textContent = `Email or Username ${usernameOrEmail} not found in credentials service.`;
-                            messageDiv.style.color = 'red';
-                            console.log(`Email or Username ${usernameOrEmail} not found in credentials service.`);
+                            showToast(`Email or Username ${usernameOrEmail} not found.`, 'danger');
+                            console.log('Email or Username not found.');
                             return;
                         }
 
-                        console.log('Current User ID:', currentUserId);
-                        console.log('Current User Email:', currentUserEmail);
-                        console.log('Current User Name:', currentUserName);
-                        console.log('User ID:', userId);
-                        console.log('User Email:', userEmail);
-                        console.log('User Name:', userName);
-
-                        // Step 3: Send POST request to add the friend
                         console.log('Starting fetch request to add friend...');
                         const csrfToken = getCSRFToken('csrftoken');
                         if (!csrfToken) {
@@ -248,31 +246,31 @@ export class Friends extends Page {
                                 'Content-Type': 'application/json',
                                 'X-CSRFToken': csrfToken,
                             },
-                            body: JSON.stringify({ id_friend1: currentUserId, email_friend1: currentUserEmail, name_friend1: currentUserName, id_friend2: userId, email_friend2: userEmail, name_friend2: userName, sender: currentUserId, receiver: userId, status: "pending" })
+                            body: JSON.stringify({
+                                id_friend1: currentUserId,
+                                email_friend1: currentUserEmail,
+                                name_friend1: currentUserName,
+                                id_friend2: userId,
+                                email_friend2: userEmail,
+                                name_friend2: userName,
+                                sender: currentUserId,
+                                receiver: userId,
+                                status: "pending"
+                            })
                         });
 
-                        console.log('Fetch request to add friend completed.');
-                        console.log('Response status:', addFriendResponse.status);
-
                         const addFriendData = await addFriendResponse.json();
-                        console.log('Add friend response data:', addFriendData);
-
                         if (addFriendResponse.ok) {
-                            console.log('Friend invitation sent successfully');
+                            showToast('Friend invitation sent successfully!', 'success');
                         } else {
-                            messageDiv.textContent = addFriendData.error || 'Failed to add friend.';
-                            messageDiv.style.color = 'red';
-                            console.log('Failed to add friend:', addFriendData.error);
+                            showToast(addFriendData.error || 'Failed to add friend.', 'danger');
                         }
                     } else {
-                        messageDiv.textContent = emailsData.error || 'Failed to fetch emails.';
-                        messageDiv.style.color = 'red';
-                        console.log('Failed to fetch emails:', emailsData.error);
+                        showToast(emailsData.error || 'Failed to fetch emails.', 'danger');
                     }
                 } catch (error) {
                     console.error('Error occurred during fetch request:', error);
-                    messageDiv.textContent = 'An error occurred. Please try again.';
-                    messageDiv.style.color = 'red';
+                    showToast('An error occurred. Please try again.', 'danger');
                 }
             });
             fetchPendingConfirmations(currentUserId);

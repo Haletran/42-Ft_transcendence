@@ -274,6 +274,10 @@ export class Monopoly extends Page {
             const button = document.getElementById(buttonId);
             if (button) {
                 button.addEventListener('click', async function () {
+                    const existingCanvas = document.querySelector('#monopoly_canvas');
+                    if (existingCanvas) {
+                        existingCanvas.remove();
+                    }
                     hideElementsByClass('menu');
                     showElementsByClass('game', 'flex');
                     addClassToElementsByClass('game', 'center');
