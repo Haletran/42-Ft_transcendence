@@ -34,7 +34,7 @@ except Exception as e:
 
 try:
     # Attempt to fetch the secret stored at the given path in Vault
-    secret_db = client.secrets.kv.v2.read_secret_version(path='data/django/db_friends')
+    secret_db = client.secrets.kv.v2.read_secret_version(path='data/django/db_scores')
     
     # Correct way to access the credentials from Vault response
     db_credentials = secret_db['data']['data']
