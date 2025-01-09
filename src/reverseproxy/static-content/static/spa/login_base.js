@@ -155,9 +155,6 @@ export function startWebSocket() {
 
 	StatusSocket.onopen = function (e) {
 		console.log("The connection for online status was setup successfully!");
-		// if (!e.wasClean) {
-		//     setTimeout(startWebSocket, reconnectInterval);
-		// }
 	};
 
 	StatusSocket.onclose = function () {
@@ -167,7 +164,6 @@ export function startWebSocket() {
 
 export function closeWebSocket() {
 	if (!StatusSocket) return;
-	console.log('STATUS SOCKET', StatusSocket);
 	if (StatusSocket.readyState === WebSocket.OPEN) {
 		StatusSocket.close();
 	} else {

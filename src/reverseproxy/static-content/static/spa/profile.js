@@ -5,6 +5,8 @@ import { isUserOnline } from './home.js';
 import { logoutUser } from '../src/logout.js';
 import { setACookie } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
+import { router, isUserLoggedIn } from '../app.js';
+
 
 export class Profile extends Page {
     constructor() {
@@ -108,7 +110,10 @@ export class Profile extends Page {
  `;
     }
     async render() {
-
+        const loggedIn = isUserLoggedIn();
+        if (loggedIn == false) {
+            router.goTo('/login_base');
+        }
         setACookie('game_running', 'false', 1);
         fetchProfileInfo();
         fetchMinInfo();
@@ -117,7 +122,7 @@ export class Profile extends Page {
         isUserOnline();
 
         super.render(); // Call the parent render method
-        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+        subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });

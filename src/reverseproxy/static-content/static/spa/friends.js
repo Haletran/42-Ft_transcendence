@@ -127,7 +127,7 @@ export class Friends extends Page {
  `;
     }
     async render() {
-        const loggedIn = await isUserLoggedIn();
+        const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             router.goTo('/login_base');
             return;
@@ -160,7 +160,11 @@ export class Friends extends Page {
                 });
             }
 
-            document.getElementById('add-friend-form').addEventListener('submit', async (event) => {
+            const addFriendForm = document.getElementById('add-friend-form');
+            if (!addFriendForm) {
+                throw new Error('Add friend form not found');
+            }
+            addFriendForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
 
                 const usernameOrEmail = document.getElementById('friend-username').value;
@@ -189,7 +193,6 @@ export class Friends extends Page {
                     });
                 };
 
-                console.log('Form submitted with username or email:', usernameOrEmail);
 
                 // Check if the user is trying to add themselves
                 if (usernameOrEmail === currentUserEmail || usernameOrEmail === currentUserName) {
@@ -198,7 +201,6 @@ export class Friends extends Page {
                 }
 
                 try {
-                    console.log('Starting fetch request for emails...');
                     const emailsResponse = await fetch('/api/friends/fetch_emails/', {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' }
@@ -227,7 +229,6 @@ export class Friends extends Page {
                             return;
                         }
 
-                        console.log('Starting fetch request to add friend...');
                         const csrfToken = getCSRFToken('csrftoken');
                         if (!csrfToken) {
                             throw new Error('CSRF token is missing!');
@@ -303,8 +304,6 @@ async function fetchPendingConfirmations(currentUserId) {
         }
 
         const data = await response.json();
-        console.log('Pending confirmations data:', data);
-
         const confirmationList = document.getElementById('pending-invitations-list');
         confirmationList.innerHTML = '';
 
@@ -398,7 +397,6 @@ async function getIncomingInvitations(currentUserId) {
 async function handleInvitationResponse(invitationId, accept, currentUserId) {
     try {
         const url = `/api/friends/respond_invitation/?id=${invitationId}`;
-        console.log(`Making request to: ${url}`);
         const csrfToken = getCSRFToken('csrftoken');
         if (!csrfToken) {
             throw new Error('CSRF token is missing!');
@@ -548,7 +546,6 @@ async function fetchAcceptedFriendships(currentUserId) {
 }
 
 export async function getCurrentFriendInfo(username) {
-    console.log("getCurrentFriendInfo: ", username);
     const response = await fetch(`/api/credentials/userid-info/?user=${username}`, {
         method: 'GET',
         credentials: 'include',
@@ -556,7 +553,6 @@ export async function getCurrentFriendInfo(username) {
             'Content-Type': 'application/json',
         }
     });
-    //console.log("HELLO: ", response.json());
     if (!response.ok) {
         throw new Error('Failed to get current user info');
     }

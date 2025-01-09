@@ -22,14 +22,11 @@ class UserStore {
 
                 return userData;
             } else {
-                console.log(response.status);
-                console.log('User not logged in');
-                router.goTo('/');
-                return null;
+                router.goTo('/login_base');
             }
         } catch (error) {
             console.error("User not logged in:", error);
-            router.goTo('/');
+            router.goTo('/login_base');
             return null;
         }
     }

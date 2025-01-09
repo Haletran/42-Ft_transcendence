@@ -1,12 +1,11 @@
 export function initializeCSRFToken() {
     fetch('/api/credentials/set-csrf-token/')
-      .then(response => response.json())
-      .then(data => {
-    console.log('CSRF token set:', data);
-    })
-      .catch(error => {
-        console.error('Error setting CSRF token:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+        })
+        .catch(error => {
+            console.error('Error setting CSRF token:', error);
+        });
 }
 
 export function getCSRFToken(name) {

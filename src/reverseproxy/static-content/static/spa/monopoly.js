@@ -54,7 +54,7 @@ export class Monopoly extends Page {
                 <div class="d-flex flex-column gap-2 w-100">
                     <label for="customRange1" class="form-label">How many players ?</label>
                     <div class="d-flex justify-content-center gap-2">
-                        <input type="range" class="form-range" min="2" max="6" step="2" id="customRange1"><span id="rangeValue"></span>
+                        <input type="range" class="form-range" min="2" max="4" step="1" id="customRange1"><span id="rangeValue"></span>
                     </div>
                         <p class="text-muted">2 to 6 players (default 4 players)</p>
                 <button class="btn btn-primary w-100 hover-effect" data-bs-toggle="modal" data-bs-target="#monopolyModal">
@@ -73,7 +73,6 @@ export class Monopoly extends Page {
                               <div class="modal-body">
                                 <p class="text-muted">Select a Monopoly map to play with your friends.</p>
                                 <div id="mapGrid" class="row g-4">
-                                  <!-- Cards will be populated dynamically -->
                                 </div>
                               </div>
                               <div class="modal-footer">
@@ -84,46 +83,6 @@ export class Monopoly extends Page {
                         </div>
                     </div>
                 </div>
-                <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="settingsModalLabel">Game Settings</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                        <div class="col mb-3">
-                            <label for="playerColor" class="form-label">Player Color</label>
-                            <input type="color" class="form-control form-control-color" id="playerColor" value="#ffffff">
-                        </div>
-                        <div class="col mb-3">
-                            <label for="ballColor" class="form-label">Ball Color</label>
-                            <input type="color" class="form-control form-control-color" id="ballColor" value="#000000">
-                        </div>
-                        </div>
-                        <div class="row">
-                        <div class="col mb-3">
-                            <label for="mapColor" class="form-label">Map Color</label>
-                            <input type="color" class="form-control form-control-color" id="mapColor" value="#000000">
-                        </div>
-                        <div class="col mb-3">
-                            <label for="textColor" class="form-label">Text Color</label>
-                            <input type="color" class="form-control form-control-color" id="textColor" value="#000000">
-                        </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" id="resetSettings">RESET</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="saveSettings">Save changes</button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-                <button id="settings_button" class="btn btn-outline-info w-100">
-                    <i class="bi bi-gear-fill"></i> Settings
-                </button>
                 <button id="start_button_m" value="tour" class="btn btn-light w-100" disabled>Play</button>
             </div>
         </div>
@@ -133,8 +92,7 @@ export class Monopoly extends Page {
         `;
     }
     async render() {
-        const loggedIn = await isUserLoggedIn();
-        console.log('loggedIn: ', loggedIn);
+        const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             router.goTo('/login_base');
             return;
@@ -144,7 +102,7 @@ export class Monopoly extends Page {
         super.render(); // Call the parent render method
         this.eventListeners();
         setACookie('game_running', 'false', 1);
-        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+        subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
@@ -156,8 +114,6 @@ export class Monopoly extends Page {
         const monopolyMaps = [
             { id: 1, name: "Classic", image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpbs.twimg.com%2Fmedia%2FB4V-r4_CQAItF9A.jpg&f=1&nofb=1&ipt=c476ef91a21b4d46b6bfebe15ab644c75e35a12053dfdc600a15f30569d6aed6&ipo=images" },
             { id: 2, name: "Fortnite", image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpreview.redd.it%2Fgd2p5dfl1e101.jpg%3Fauto%3Dwebp%26s%3D1e2731864f99e10ff3f107c9a9637003786e1699&f=1&nofb=1&ipt=743bb7acf6987b89dda98f65027c3f947a4aa04ba06b9900b8e0116f2ea564b7&ipo=images" },
-            { id: 3, name: "42", image: "/static/imgs/42board.png" },
-            { id: 4, name: "Angouleme", image: "/static/imgs/angouboard.png" },
         ];
 
         let selectedMap = null;

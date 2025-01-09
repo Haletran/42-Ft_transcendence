@@ -474,12 +474,12 @@ async function moveBall() {
         game.ball.y = canvas.height / 2;
         game.ball.velocity.x = 3 * Math.cos(randomAngle);
         game.ball.velocity.y = 3 * Math.sin(randomAngle);
-        if (game.ball.velocity.x < 0) {
-            game.ball.velocity.x = -game.ball.velocity.x
-        }
-        if (game.ball.velocity.y < 0) {
-            game.ball.velocity.y = -game.ball.velocity.y
-        }
+        // if (game.ball.velocity.x < 0) {
+        //     game.ball.velocity.x = -game.ball.velocity.x
+        // }
+        // if (game.ball.velocity.y < 0) {
+        //     game.ball.velocity.y = -game.ball.velocity.y
+        // }
         player_win = 0;
         first_hit = 0;
         game.ball.speed = 2;
@@ -662,7 +662,6 @@ export function startGame(gamemode, playerNames) {
 }
 
 export function startTournament(playerNames, resolve) {
-    // might need to check if there is the correct nb of players and if there have a name
     const tournament = new Tournament(playerNames);
     tournament.startTournament(resolve);
 }

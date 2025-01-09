@@ -79,7 +79,6 @@ export class HomePage extends Page {
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function (event) {
-                //event.preventDefault();
                 unsubscribe();
                 logoutUser();
             });
@@ -88,7 +87,6 @@ export class HomePage extends Page {
 }
 
 
-// function that returns true or false, the same will be used in friends, kind of
 export async function isUserOnline() {
     try {
         const response = await fetch('/api/credentials/is_online/', {
@@ -97,13 +95,10 @@ export async function isUserOnline() {
         });
         if (response.ok) {
             const data = await response.json();
-            if (data.is_online == true)
-                console.log('User already online')
-            else
+            if (data.is_online == false)
                 startWebSocket();
         }
         else {
-            //startWebSocket();
             throw new Error('Error fetching online status');
         }
     } catch (error) {

@@ -160,25 +160,23 @@ export class Pong extends Page {
     }
 
     async render() {
-        const loggedIn = await isUserLoggedIn();
+        const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             router.goTo('/login_base');
             return;
         }
+        setACookie('game_running', 'false', 1);
         fetchMinInfo();
         startWebSocket();
         super.render();
         this.eventListeners();
-        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+        subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
     }
 
     eventListeners() {
-
-        // const 1v1Button = document.getElementById();
-
         const settingsButton = document.getElementById('settings_button');
         if (settingsButton) {
             settingsButton.addEventListener('click', () => {
@@ -225,8 +223,6 @@ export class Pong extends Page {
                 textColorInput.value = '#ffffff';
             });
         }
-
-
 
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
@@ -286,7 +282,6 @@ export class Pong extends Page {
                             let player2 = document.getElementById('player2name').value;
                             if (!player1) { player1 = 'player1' };
                             if (!player2) { player2 = 'player2' };
-                            console.log(player1, player2);
                             if ((player1 == player2) || (player1.length > 10 || player2.length > 10)) {
                                 alert("display name is 10 char max, names cannot be identical");
                                 document.getElementById('player1name').value = "";

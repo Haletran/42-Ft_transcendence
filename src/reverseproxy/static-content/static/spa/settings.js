@@ -114,11 +114,9 @@ export class Settings extends Page {
             ;
     }
     async render() {
-        const loggedIn = await isUserLoggedIn();
-        console.log('loggedIn: ', loggedIn);
+        const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             router.goTo('/login_base');
-            return;
         }
         fetchMinInfo();
         setACookie('game_running', 'false', 1);
@@ -128,7 +126,7 @@ export class Settings extends Page {
         setupProfilePictureSelection();
         this.attachFormListener();
 
-        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+        subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
