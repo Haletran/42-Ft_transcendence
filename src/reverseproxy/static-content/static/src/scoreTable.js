@@ -6,7 +6,7 @@ export async function set1v1victory(player1, player2, scores, is_ai, is_tourname
     const userData = await getUserInfos();
     if (userData.match_history === false) {
         console.log("User does not want to keep match history")
-        return ;
+        return;
     }
     const formData = new FormData();
     formData.append('user_origin', userData.username);
@@ -23,7 +23,7 @@ export async function set1v1victory(player1, player2, scores, is_ai, is_tourname
         if (!csrfToken) {
             console.error('CSRF token is missing!');
         }
-        const response = await fetch ('/api/scores/add_game/', {
+        const response = await fetch('/api/scores/add_game/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': csrfToken,
@@ -50,7 +50,7 @@ export async function setMonopolyVictory(winner) {
     const userData = await getUserInfos();
     if (userData.match_history === false) {
         console.log("User does not want to keep match history")
-        return ;
+        return;
     }
     const formData = new FormData();
     formData.append('user_origin', userData.username);
@@ -62,7 +62,7 @@ export async function setMonopolyVictory(winner) {
         if (!csrfToken) {
             console.error('CSRF token is missing!');
         }
-        const response = await fetch ('/api/scores/add_monopoly/', {
+        const response = await fetch('/api/scores/add_monopoly/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': csrfToken,
@@ -87,7 +87,7 @@ export async function setMonopolyVictory(winner) {
 
 export async function fetchMatchHistory() {
     try {
-        
+
         const userData = await getUserInfos();
 
         const response = await fetch(`/api/scores/match_history/?username=${encodeURIComponent(userData.username)}`, {
@@ -100,30 +100,67 @@ export async function fetchMatchHistory() {
         const MatchHistoryList = document.getElementById('match-history-list');
         MatchHistoryList.innerHTML = '';
 
-        data.reverse().forEach(match => {
-            const matchItem = document.createElement('a');
-            //matchItem.href = '#';
-            matchItem.classList.add('list-group-item');
-            if (match.is_pong === true) {
-                matchItem.innerHTML = `
-                    <h5 class="mb-1">Pong Game: ${match.player1_username} vs ${match.player2_username}</h5>
-                    <p class="mb-1">Winner: ${match.result}</p>
-                    <small>Score: ${match.player1_score} - ${match.player2_score}</small>
-                    <small>AI: ${match.is_ai} Tournament: ${match.is_tournament}</small>
-                    <br>
+        let currentPage = 1;
+        const itemsPerPage = 3;
+        const totalPages = Math.ceil(data.length / itemsPerPage);
+
+        function renderPage(page) {
+            MatchHistoryList.innerHTML = '';
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = data.slice(start, end);
+
+            pageItems.forEach(match => {
+                const matchItem = document.createElement('a');
+                matchItem.classList.add('list-group-item');
+                if (match.is_pong === true) {
+                    matchItem.innerHTML = `
+                <h5 class="mb-1">Pong Game: ${match.player1_username} vs ${match.player2_username}</h5>
+                <p class="mb-1">Winner: ${match.result}</p>
+                <small>Score: ${match.player1_score} - ${match.player2_score}</small>
+                <small>AI: ${match.is_ai} Tournament: ${match.is_tournament}</small>
+                <br>
                 `;
-            }
-            else
-            {
-                matchItem.innerHTML = `
-                    <h5 class="mb-1">Monopoly Game</h5>
-                    <p class="mb-1">Winner: ${match.player1_username}</p>
-                    <small>$: ${match.player1_score} - Estate: ${match.player2_score}</small>
-                    <br>
+                } else {
+                    matchItem.innerHTML = `
+                <h5 class="mb-1">Monopoly Game</h5>
+                <p class="mb-1">Winner: ${match.player1_username}</p>
+                <small>$: ${match.player1_score} - Estate: ${match.player2_score}</small>
+                <br>
                 `;
+                }
+                MatchHistoryList.appendChild(matchItem);
+            });
+
+            const pagination = document.createElement('div');
+            pagination.classList.add('pagination');
+
+            if (currentPage > 1) {
+                const prevButton = document.createElement('button');
+                prevButton.textContent = 'Previous';
+                prevButton.classList.add('btn', 'btn-primary', 'mr-2');
+                prevButton.onclick = () => {
+                    currentPage--;
+                    renderPage(currentPage);
+                };
+                pagination.appendChild(prevButton);
             }
-            MatchHistoryList.appendChild(matchItem);
-        });
+
+            if (currentPage < totalPages) {
+                const nextButton = document.createElement('button');
+                nextButton.textContent = 'Next';
+                nextButton.classList.add('btn', 'btn-primary');
+                nextButton.onclick = () => {
+                    currentPage++;
+                    renderPage(currentPage);
+                };
+                pagination.appendChild(nextButton);
+            }
+
+            MatchHistoryList.appendChild(pagination);
+        }
+
+        renderPage(currentPage);
 
     } catch (error) {
         console.error('Error fetching match history:', error);
@@ -160,7 +197,7 @@ export async function fetchStatistics() {
 
 export async function fetchFriendHistory(username) {
     try {
-        
+
         // const userData = await getCurrentFriendInfo(username);
 
         // console.log(userData);

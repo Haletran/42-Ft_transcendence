@@ -7,20 +7,6 @@ body {
     overflow: auto;
 }
 
-
-/* @font-face {
-    font-family: 'nighty';
-    src: url('Basteleur-Bold.otf') format('opentype');
-    font-weight: bold;
-}
-
-.custom-font {
-    font-family: 'nighty';
-    color: #faece2;
-    font-size: 3em;
-}
- */
-
 .online-dot {
     position: absolute;
     top: 0;

@@ -129,7 +129,7 @@ export class Pong extends Page {
         </div>
         </div>
         <div id="test" class="game justify-content-center align-items-center position-relative">
-        <button id="pause_button" class="btn btn-outline-light position-absolute position-absolute top-0 start-50 translate-middle"><i class="bi bi-pause-fill"></i></button>
+            <button id="pause_button" class="btn btn-outline-light position-absolute position-absolute top-0 start-50 translate-middle"><i class="bi bi-pause-fill"></i></button>
         </div>
         `;
     }
