@@ -132,31 +132,43 @@ export async function fetchMatchHistory() {
                 MatchHistoryList.appendChild(matchItem);
             });
 
+            const gap = document.createElement('div');
+            gap.style.marginBottom = '10px';
+            MatchHistoryList.appendChild(gap);
+
             const pagination = document.createElement('div');
             pagination.classList.add('pagination');
+            pagination.style.display = 'flex';
+            pagination.style.justifyContent = 'center';
 
-            if (currentPage > 1) {
-                const prevButton = document.createElement('button');
-                prevButton.textContent = 'Previous';
-                prevButton.classList.add('btn', 'btn-primary', 'mr-2');
-                prevButton.onclick = () => {
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.classList.add('btn', 'btn-outline-light', 'mr-2');
+            prevButton.disabled = currentPage === 1;
+            prevButton.onclick = () => {
+                if (currentPage > 1) {
                     currentPage--;
                     renderPage(currentPage);
-                };
-                pagination.appendChild(prevButton);
-            }
+                }
+            };
 
-            if (currentPage < totalPages) {
-                const nextButton = document.createElement('button');
-                nextButton.textContent = 'Next';
-                nextButton.classList.add('btn', 'btn-primary');
-                nextButton.onclick = () => {
+            const gap2 = document.createElement('span');
+            gap2.style.marginRight = '10px';
+
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.classList.add('btn', 'btn-outline-light');
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.onclick = () => {
+                if (currentPage < totalPages) {
                     currentPage++;
                     renderPage(currentPage);
-                };
-                pagination.appendChild(nextButton);
-            }
+                }
+            };
 
+            pagination.appendChild(prevButton);
+            pagination.appendChild(gap2);
+            pagination.appendChild(nextButton);
             MatchHistoryList.appendChild(pagination);
         }
 

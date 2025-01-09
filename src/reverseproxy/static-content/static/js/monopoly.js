@@ -1,4 +1,4 @@
-let canvas = document.querySelector('canvas');
+let canvas = document.querySelector('canvas#monopoly_canvas');
 if (!canvas) {
     const gameDiv = document.querySelector('.game');
     canvas = document.createElement('canvas');
