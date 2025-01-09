@@ -25,8 +25,8 @@ services:
     container_name: hardhat
     env_file:
       - .env
-    ports:
-      - "8545:8545"
+    expose:
+      - "8545"
     volumes:
       - ./src/crypto/.:/usr/src/app
     networks:
@@ -35,16 +35,16 @@ services:
   redis:
     image: redis:6
     container_name: redis
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
     networks:
       - transcendence
 
   vault:
     image: hashicorp/vault:latest
     container_name: vault_container
-    ports:
-      - "8200:8200"
+    expose:
+      - "8200"
     volumes:
       - ./src/vault/config:/vault/config
       #- ./vault/policies:/vault/policies
@@ -84,8 +84,8 @@ services:
     container_name: credentials-database
     env_file:
       - .env
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - credentials_data:/var/lib/postgresql/data
       - ./src/database/postgresql.conf:/etc/postgresql/postgresql.conf
@@ -113,8 +113,8 @@ services:
   friends-database:
     image: postgres:latest
     container_name: friends-database
-    ports:
-      - "5433:5433"
+    expose:
+      - "5433"
     volumes:
       - friends_data:/var/lib/postgresql/data
       - ./src/friends-database/postgresql.conf:/etc/postgresql/postgresql.conf
@@ -146,8 +146,8 @@ services:
   scores-database:
     image: postgres:latest
     container_name: scores-database
-    ports:
-      - "5435:5435"
+    expose:
+      - "5435"
     volumes:
       - scores_data:/var/lib/postgresql/data
       - ./src/scores-database/postgresql.conf:/etc/postgresql/postgresql.conf
