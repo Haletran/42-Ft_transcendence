@@ -137,7 +137,7 @@ export class Friends extends Page {
         isUserOnline();
         super.render();
 
-        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+        subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
@@ -226,35 +226,47 @@ export class Friends extends Page {
                         } else {
                             showToast(`Email or Username ${usernameOrEmail} not found.`, 'danger');
                             throw new Error('Email or Username not found.');
-                            return;
                         }
 
                         const csrfToken = getCSRFToken('csrftoken');
                         if (!csrfToken) {
                             throw new Error('CSRF token is missing!');
                         }
-                        const addFriendResponse = await fetch('/api/friends/add/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': csrfToken,
-                            },
-                            body: JSON.stringify({
-                                id_friend1: currentUserId,
-                                email_friend1: currentUserEmail,
-                                name_friend1: currentUserName,
-                                id_friend2: userId,
-                                email_friend2: userEmail,
-                                name_friend2: userName,
-                                sender: currentUserId,
-                                receiver: userId,
-                                status: "pending"
-                            })
-                        });
+                        let addFriendResponse;
+                        try {
+                            addFriendResponse = await fetch('/api/friends/add/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': csrfToken,
+                                },
+                                body: JSON.stringify({
+                                    id_friend1: currentUserId,
+                                    email_friend1: currentUserEmail,
+                                    name_friend1: currentUserName,
+                                    id_friend2: userId,
+                                    email_friend2: userEmail,
+                                    name_friend2: userName,
+                                    sender: currentUserId,
+                                    receiver: userId,
+                                    status: "pending"
+                                })
+
+
+                            });
+                            if (!addFriendResponse.ok) {
+                                alert("you cannot add this friend");
+                                return ;
+                            }
+                        }
+                        catch (error) {
+                            console.log(error);
+                        }
 
                         const addFriendData = await addFriendResponse.json();
                         if (addFriendResponse.ok) {
                             showToast('Friend invitation sent successfully!', 'success');
+                            router.goTo('/friends');
                         } else {
                             showToast(addFriendData.error || 'Failed to add friend.', 'danger');
                         }
@@ -262,6 +274,7 @@ export class Friends extends Page {
                         showToast(emailsData.error || 'Failed to fetch emails.', 'danger');
                     }
                 } catch (error) {
+                    console.log(error);
                     showToast('An error occurred. Please try again.', 'danger');
                 }
             });
@@ -323,12 +336,12 @@ async function fetchPendingConfirmations(currentUserId) {
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'btn-container';
 
-                const cancelButton = document.createElement('button');
-                cancelButton.className = 'btn btn-outline-light';
-                cancelButton.innerHTML = '<i class="bi bi-x"></i>';
-                cancelButton.onclick = () => handleInvitationResponse(confirmation.id, 'cancelled', currentUserId);
+                // const cancelButton = document.createElement('button');
+                // cancelButton.className = 'btn btn-outline-light';
+                // cancelButton.innerHTML = '<i class="bi bi-x"></i>';
+                // cancelButton.onclick = () => handleInvitationResponse(confirmation.id, 'cancelled', currentUserId);
 
-                btnContainer.appendChild(cancelButton);
+                // btnContainer.appendChild(cancelButton);
                 listItem.appendChild(btnContainer);
                 confirmationList.appendChild(listItem);
             });
@@ -375,18 +388,25 @@ async function getIncomingInvitations(currentUserId) {
                 const acceptButton = document.createElement('button');
                 acceptButton.className = 'btn btn-outline-light';
                 acceptButton.innerHTML = '<i class="bi bi-check2"></i> Accept';
-                acceptButton.onclick = () => handleInvitationResponse(confirmation.id, 'accepted', currentUserId);
+                acceptButton.onclick = () => {
+                    handleInvitationResponse(confirmation.id, 'accepted', currentUserId);
+                    router.goTo('/friends');
+                }
 
                 const denyButton = document.createElement('button');
                 denyButton.className = 'btn btn-outline-light';
                 denyButton.innerHTML = '<i class="bi bi-x"></i> Reject';
-                denyButton.onclick = () => handleInvitationResponse(confirmation.id, 'rejected', currentUserId);
+                denyButton.onclick = () => {
+                    handleInvitationResponse(confirmation.id, 'rejected', currentUserId);
+                    router.goTo('/friends');
+                }
 
                 btnContainer.appendChild(acceptButton);
                 btnContainer.appendChild(denyButton);
                 listItem.appendChild(btnContainer);
 
                 confirmationList.appendChild(listItem);
+                
             });
         }
     } catch (error) {
@@ -415,12 +435,12 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
             const errorMessage = `Failed to respond to invitation: ${response.statusText} (Status: ${response.status})`;
             throw new Error(errorMessage);
         }
-
         const data = await response.json();
         if (data.error) {
             throw new Error(data.error);
         }
         getIncomingInvitations(currentUserId);
+        
     } catch (error) {
         console.error('Error responding to invitation:', error);
     }
