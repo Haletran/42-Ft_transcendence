@@ -21,9 +21,11 @@ export function logoutUser() {
             if (response.ok) {
                 closeWebSocket();
                 document.cookie.split(";").forEach((cookie) => {
-                    document.cookie = cookie
-                        .replace(/^ +/, "")
-                        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                    if (!cookie.trim().startsWith('csrftoken=')) {
+                        document.cookie = cookie
+                            .replace(/^ +/, "")
+                            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                    }
                 });
                 localStorage.clear();
                 console.log('Successfully logged out');

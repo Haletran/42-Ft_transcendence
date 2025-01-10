@@ -46,3 +46,7 @@ export function getACookie(name) {
     }
     return null;
 }
+
+export function redirectTo(url) {
+    window.location.href = url;
+}

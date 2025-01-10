@@ -261,45 +261,56 @@ export class Pong extends Page {
         });
 
 
+        let gameInProgress = false;
+
         ['start_button', 'start_button2', 'tournament_button'].forEach(buttonId => {
             const button = document.getElementById(buttonId);
             if (button) {
-                button.replaceWith(button.cloneNode(true));
-                const newButton = document.getElementById(buttonId);
+                button.addEventListener('click', async function () {
+                    if (gameInProgress) {
+                        return;
+                    }
 
-                newButton.addEventListener('click', async function () {
-                    let play;
-                    if (buttonId == 'start_button') {
+                    if (buttonId === 'start_button') {
                         const modal = new bootstrap.Modal(document.getElementById('1v1Modal'));
                         modal.show();
-                        play = document.getElementById('Start1v1');
-                        play.replaceWith(play.cloneNode(true));
-                        const newPlay = document.getElementById('Start1v1');
 
-                        newPlay.addEventListener('click', async (e) => {
-                            if (newPlay != newButton) { modal.hide(); }
+                        const play = document.getElementById('Start1v1');
+                        // Remove the play button cloning
+                        play.addEventListener('click', async () => {
                             let player1 = document.getElementById('player1name').value;
                             let player2 = document.getElementById('player2name').value;
-                            if (!player1) { player1 = 'player1' };
-                            if (!player2) { player2 = 'player2' };
-                            if ((player1 == player2) || (player1.length > 10 || player2.length > 10)) {
+
+                            player1 = player1 || 'player1';
+                            player2 = player2 || 'player2';
+
+                            if ((player1 === player2) || (player1.length > 10 || player2.length > 10)) {
                                 alert("display name is 10 char max, names cannot be identical");
                                 document.getElementById('player1name').value = "";
                                 document.getElementById('player2name').value = "";
-                            }
-                            else {
+                            } else {
                                 modal.hide();
-                                startthegame(button, buttonId, player1, player2);
+                                gameInProgress = true;
+                                try {
+                                    await startthegame(button, buttonId, player1, player2);
+                                } finally {
+                                    gameInProgress = false;
+                                }
                             }
-                        });
-                    }
-                    else if (buttonId == 'start_button2' || buttonId == 'tournament_button') {
-                        const player1 = await getProfileUsername();
-                        await startthegame(newButton, buttonId, player1, 'player2');
+                        }, { once: true }); // Add once: true to prevent multiple listeners
+                    } else if (buttonId === 'start_button2' || buttonId === 'tournament_button') {
+                        gameInProgress = true;
+                        try {
+                            const player1 = await getProfileUsername();
+                            await startthegame(button, buttonId, player1, 'player2');
+                        } finally {
+                            gameInProgress = false;
+                        }
                     }
                 });
             }
         });
+
     }
 }
 

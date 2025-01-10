@@ -9,27 +9,27 @@ export class Credit extends Page {
         this.template = `
         <div class="menu">
             <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 90vh">
-                <canvas id="credits_canvas" width="1200" height="800"></canvas>
+                <canvas id="credits_canvas" width="800" height="600"></canvas>
                 <div class="row row-cols-1 row-cols-md-3 g-4 d-none">
-                    <div class="col">
+                    <div id="dboire" class="col">
                       <div class="card hover-effect">
-                        <img src="https://cdn.intra.42.fr/users/60318ee34e60d4286091eae24fd06d10/medium_dboire.jpg" class="card-img-top" alt="...">
+                        <img src="https://cdn.intra.42.fr/users/60318ee34e60d4286091eae24fd06d10/medium_dboire.jpg" class="card-img-top" alt="dboire">
                         <div class="card-body">
-                            <h5 class="card-title text-center text-white" >Dboire</h5>
+                            <h5 class="card-title text-center text-white">dboire</h5>
                         </div>
                       </div>
                     </div>
-                    <div class="col">
+                    <div id="aboulore" class="col">
                       <div class="card hover-effect">
-                        <img src="https://cdn.intra.42.fr/users/809fbf6d5204320b9be42e760c50e69a/medium_aboulore.jpg" class="card-img-top" alt="...">
+                        <img src="https://cdn.intra.42.fr/users/809fbf6d5204320b9be42e760c50e69a/medium_aboulore.jpg" class="card-img-top" alt="aboulore">
                         <div class="card-body">
-                            <h5 class="card-title text-center text-white">Aboulore</h5>
+                            <h5 class="card-title text-center text-white">aboulore</h5>
                         </div>
                       </div>
                     </div>
-                    <div class="col">
+                    <div id="bapasqui" class="col">
                       <div class="card hover-effect">
-                        <img src="https://cdn.intra.42.fr/users/ebff1d0ec01cb508b2f711208a8b44b3/medium_bapasqui.jpg" class="card-img-top" alt="...">
+                        <img src="https://cdn.intra.42.fr/users/ebff1d0ec01cb508b2f711208a8b44b3/medium_bapasqui.jpg" class="card-img-top" alt="bapasqui">
                         <div class="card-body">
                             <h5 class="card-title text-center" style="color: white;">bapasqui</h5>
                         </div>
@@ -41,22 +41,33 @@ export class Credit extends Page {
         `;
     }
     async render() {
+        let gameRunning = true;
         const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             Router.goTo('/login_base');
             return;
         }
         super.render();
-        this.breakout();
+        this.event();
+        this.breakout(gameRunning);
     }
 
-    breakout() {
+
+    event() {
+        const maker = ["dboire", "aboulore", "bapasqui"];
+        for (let i = 0; i < maker.length; i++) {
+            document.getElementById(maker[i]).addEventListener('click', () => {
+                window.open(`https://profile.intra.42.fr/users/${maker[i]}`, '_blank');
+            });
+        }
+    }
+    breakout(gameRunning) {
         const canvas = document.getElementById('credits_canvas');
         const ctx = canvas.getContext('2d');
 
         let score = 0;
 
-        const brickRowCount = 10;
+        const brickRowCount = 7;
         const brickColumnCount = 4;
         const delay = 500;
 
@@ -122,6 +133,7 @@ export class Credit extends Page {
                 document.querySelector('.row').classList.remove('d-none');
                 document.getElementById('credits_canvas').classList.add('d-none');
                 shoot(4);
+                gameRunning = false;
             } else {
                 ctx.fillText(`Score: ${score}`, canvas.width - 100, 30);
             }
@@ -242,6 +254,9 @@ export class Credit extends Page {
         }
 
         function update() {
+            if (gameRunning === false) {
+                return;
+            }
             movePaddle();
             moveBall();
             draw();

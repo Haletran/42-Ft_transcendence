@@ -154,9 +154,9 @@ export class Settings extends Page {
             const password = document.getElementById('floatingPassword').value;
 
             const _42auth = await getUserInfos();
-            if (_42auth.email.search('student.42angouleme.fr') != -1 ) {
+            if (_42auth.email.search('student.42angouleme.fr') != -1) {
                 alert("you cannot update your profile since you are logged with 42");
-                return ;
+                return;
             }
 
             // Prepare the data to send
@@ -205,7 +205,7 @@ export class Settings extends Page {
                     console.error('Edit failed:', error);
                 }
             } catch (error) {
-                
+
                 alert('Profile pic too big');
             }
         });

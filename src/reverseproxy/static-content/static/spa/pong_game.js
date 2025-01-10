@@ -2,7 +2,6 @@
 import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie, getACookie } from '../js/utils.js';
 import { set1v1victory } from '../src/scoreTable.js';
 import { interactWithContract } from '../js/interact.js'
-import { getProfileUsername } from '../src/fetchUser.js';
 import { shoot } from '../src/particles.js';
 
 
@@ -449,6 +448,7 @@ function movePlayers() {
 }
 
 async function moveBall() {
+    console.log('moveBall');
     if (game.ball.y + game.ball.radius > canvas.height || game.ball.y - game.ball.radius < 0) {
         playSound(collisionSound_PING);
         game.ball.velocity.y = -game.ball.velocity.y
@@ -457,11 +457,13 @@ async function moveBall() {
         let player_win = 0;
         playSound(pointSound);
         if (game.ball.x + game.ball.radius > game.player2.x) {
+            console.log('player 1 wins');
             hitEffect();
             player_win = 1;
             game.player1.score += 1
             shoot(3)
         } else if (game.ball.x - game.ball.radius < game.player1.x + game.player1.width) {
+            console.log('player 2 wins');
             hitEffect();
             player_win = 2;
             game.player2.score += 1
@@ -523,8 +525,6 @@ async function moveBall() {
         game.ball.velocity.y = Math.abs(game.ball.velocity.y);
     }
 
-
-
     game.ball.x += game.ball.velocity.x * game.ball.speed
     game.ball.y += game.ball.velocity.y * game.ball.speed
 }
@@ -549,6 +549,9 @@ function getWinner(p1, p2) {
 }
 
 function linkPause(pong, resolve) {
+    if (getACookie('game_running') === 'false') {
+        return;
+    }
     let value = 0;
     const pauseButton = document.getElementById('pause_button')
     const pause = document.querySelector('.bi-pause-fill');
@@ -624,6 +627,8 @@ window.addEventListener('keydown', checkKeyDown, false);
 window.addEventListener('keyup', checkKeyUp, false);
 
 export function startGame(gamemode, playerNames) {
+    const randomNumber = Math.floor(Math.random() * 100);
+    console.log('Starting game:', gamemode, " session number :", randomNumber);
     if (getACookie('game_running') === 'true') {
         playSound(coutdownSound);
         return new Promise((resolve) => {
@@ -653,6 +658,7 @@ export function startGame(gamemode, playerNames) {
                     else if (gamemode === 'tour') {
                         const pong = new Pong(gamemode);
                         game = pong.game;
+                        linkPause(pong, resolve);
                         startTournament(playerNames, resolve);
                     }
                 }
