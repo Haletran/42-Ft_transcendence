@@ -415,9 +415,7 @@ function continueGame(old_player) {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
     let player = players[currentPlayerIndex];
     player.isTurn = true;
-    drawBoard();
-    drawPlayers();
-    drawActionDisplay();
+    monopoly_game();
 }
 
 function waitForPurchaseDecision(player, landedTile, callback) {
