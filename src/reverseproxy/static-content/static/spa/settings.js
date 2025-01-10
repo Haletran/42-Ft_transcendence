@@ -10,7 +10,6 @@ import { setACookie } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
-
 export class Settings extends Page {
     constructor() {
         super();
@@ -94,7 +93,7 @@ export class Settings extends Page {
                                 alt="profile_picture_main" class="rounded-circle pp">
                         </div>
                         <br>
-    			        <input type="file" id="customProfilePicture" name="customProfilePicture" accept="image/*" class="form-control">
+    			        <input type="file" id="customProfilePicture" name="customProfilePicture" accept=".jpg, .jpeg, .gif, .png" class="form-control">
                         <button id="update_info" type="submit" class="btn btn-light mt-3">Update</button>
                         </form>
                     </div>
@@ -138,7 +137,7 @@ export class Settings extends Page {
         }
     }
 
-    attachFormListener() {
+    async attachFormListener() {
         const form = document.getElementById('profile_form');
 
         const profileInput = document.getElementById('customProfilePicture');
@@ -149,15 +148,24 @@ export class Settings extends Page {
         form.addEventListener('submit', async (e) => {
             e.preventDefault(); // Prevent the default form submission
 
-            const email = document.getElementById('floatingInput').value;
-            const username = document.getElementById('floatingUsername').value;
+            let email = document.getElementById('floatingInput').value;
+            let username = document.getElementById('floatingUsername').value;
             const password = document.getElementById('floatingPassword').value;
 
             const _42auth = await getUserInfos();
-            if (_42auth.email.search('student.42angouleme.fr') != -1 ) {
-                alert("you cannot update your profile since you are logged with 42");
+            console.log(_42auth);
+            if (_42auth.forty_two) {
+                alert("42 users cannot update their profile.");
                 return ;
             }
+
+            // check for whitespaces in username and email
+            username = username.trim();
+			email = email.trim();
+			if (username.search(' ') != -1 || email.search(' ') != -1) {
+				alert("No space allowed in fields");
+				return;
+			}
 
             // Prepare the data to send
             const formData = new FormData();
@@ -167,13 +175,18 @@ export class Settings extends Page {
 
 
             if (profileInput.files[0]) {
-                formData.append('profile_picture', profileInput.files[0]);
                 const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
                 if (!allowedTypes.includes(profileInput.files[0].type)) {
                     alert('Only JPG, JPEG, PNG, and GIF files are allowed.');
                     return;
                 }
-                console.log(profileInput.files[0]);
+                if (profileInput.files[0].size > 1024 * 1024) {
+                    alert('File size is too big');
+                    return ;
+                }
+                const isValid = await checkImageType(profileInput.files[0]);
+                if (isValid === false) { return ; }
+                formData.append('profile_picture', profileInput.files[0]);
             }
 
             console.log('In update profile, data to send: ', formData);
@@ -202,13 +215,35 @@ export class Settings extends Page {
                     this.render();
                 } else {
                     const error = await response.json();
-                    console.error('Edit failed:', error);
+                    console.log('Edit failed:', error);
+                    alert('Edit failed: ' + error.error);
                 }
             } catch (error) {
-                
-                alert('Profile pic too big');
-            }
+			    alert('Error:' + error.error);
+			}
         });
 
     }
+}
+
+export function checkImageType(file) {
+    return new Promise((resolve, reject) => {
+        if (file) {
+            const URL = window.URL || window.webkitURL;
+            const image = new Image();
+            const imageUrl = URL.createObjectURL(file);
+            image.src = imageUrl;
+
+            image.onload = function() {
+                console.log('Valid image');
+                resolve(true);
+            }
+            image.onerror = function() {
+                alert('Invalid image');
+                resolve(false);
+            }
+        } else {
+            reject(new Error('No file provided'));
+        }
+    });
 }

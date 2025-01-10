@@ -8,7 +8,7 @@ import json
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import update_session_auth_hash
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from .models import MyUser
 import requests
 from django.shortcuts import redirect
@@ -30,8 +30,6 @@ HOST = 'redis'
 PORT = 6379
 redis_client = redis.StrictRedis(host=HOST, port=PORT, db=0)
 
-MAX_FILE_SIZE = 5 * 1024 * 1024
-
 @ensure_csrf_cookie
 def set_csrf_token(request):
     csrf_token = get_token(request)
@@ -49,14 +47,11 @@ def register_view(request):
             match_history = request.POST.get('matchHistory') == 'true'
             display_friends = request.POST.get('friendsDisplay') == 'true'
 
-            if uploaded_file.size > MAX_FILE_SIZE:
-                return JsonResponse({'message': 'File too big'}, status=400)
-
             # check password
             try:
                 validate_password(password)
             except ValidationError as e:
-                return JsonResponse({'message': 'Password doesn\'t match policy'}, status=400)
+                return JsonResponse({'error': 'Password doesn\'t match policy'}, status=400)
             # Create the user
             user = MyUser.objects.create_user(email=email, username=username, password=password, match_history=match_history, display_friends=display_friends)
             if uploaded_file:
@@ -68,6 +63,9 @@ def register_view(request):
 
         except ValidationError as e:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except IntegrityError as e:
+            if 'username' in str(e):
+                return JsonResponse({'error': 'Username already exists'}, status=400)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
 
@@ -117,7 +115,8 @@ def user_info(request):
             'username': user.username,
             'profile_picture': profile_picture_url,
             'display_friends': user.display_friends,
-            'match_history': user.match_history
+            'match_history': user.match_history,
+            'forty_two': user.forty_two
         })
     except ObjectDoesNotExist:
         return JsonResponse({
@@ -143,7 +142,8 @@ def userid_info(request):
             'username': user.username,
             'profile_picture': profile_picture_url,
             'display_friends': user.display_friends,
-            'match_history': user.match_history
+            'match_history': user.match_history,
+            'forty_two': user.forty_two
         })
 
     except ObjectDoesNotExist:
@@ -212,6 +212,10 @@ def update_profile_view(request):
                         return JsonResponse({'status': 'error updating other dbs', 'message': str(e)})
 
                 if password:
+                    try:
+                        validate_password(password)
+                    except ValidationError as e:
+                        return JsonResponse({'error': 'Password doesn\'t match policy'}, status=400)
                     user.set_password(password)
                 if uploaded_file:
                     print(f"Received file: {uploaded_file.name}")
@@ -228,6 +232,9 @@ def update_profile_view(request):
                 }
 
                 return JsonResponse({'status': 'success', 'message': 'Profile successfully updated', 'user': user_data})
+        except IntegrityError as e:
+            if 'username' in str(e):
+                return JsonResponse({'error': 'Username already exists'}, status=400)
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     
@@ -306,6 +313,7 @@ def login_42(request):
 
         user, created = MyUser.objects.get_or_create(username=NewUsername, email=NewEmail, defaults={
             'email': NewEmail,
+            'forty_two': True
             # 'profile_picture': NewProfile_picture,
         })
 
@@ -321,6 +329,7 @@ def login_42(request):
             user.save()
 
         if not created:
+            user.forty_two = True
             if NewEmail:
                 user.email = NewEmail
             if NewPassword:

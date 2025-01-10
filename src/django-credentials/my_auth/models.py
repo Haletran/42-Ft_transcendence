@@ -7,6 +7,7 @@ class MyUser(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
     match_history = models.BooleanField(default=True)
     display_friends = models.BooleanField(default=True)
+    forty_two = models.BooleanField(default=False)
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='myuser_set',

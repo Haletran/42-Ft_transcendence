@@ -187,6 +187,7 @@ AUTH_USER_MODEL = 'my_auth.MyUser'
 
 MEDIA_URL = '/media/'  # for access
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # for storage
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 
 # cache configuration
 

@@ -4,6 +4,7 @@ import { router } from '../app.js';
 import { logoutUser } from '../src/logout.js';
 import { startWebSocket } from './login_base.js';
 import { isUserLoggedIn } from '../app.js';
+import { checkImageType } from './settings.js';
 
 export class RegisterPage extends Page {
 	constructor() {
@@ -235,6 +236,12 @@ export class RegisterPage extends Page {
 					alert('Only JPG, JPEG, PNG, and GIF files are allowed.');
 					return;
 				}
+				if (profileInput.files[0].size > 1024 * 1024) {
+                    alert('File size is too big');
+                    return ;
+                }
+				const isValid = await checkImageType(profileInput.files[0]);
+                if (isValid === false) { return ; }
 				formData.append('profile_picture', profileInput.files[0]);
 			} else if (defaultFileBlob) {
 				formData.append('profile_picture', defaultFileBlob)
@@ -265,21 +272,10 @@ export class RegisterPage extends Page {
 				} else {
 					const error = await response.json();
 					console.error('Registration failed:', error);
-					if (error.message) {
-						alert('Registration failed: ' + error.message);
-					}
-					else {
-						alert('Registration failed: Username already in use');
-					}
+					alert('Registration failed: ' + error.error);
 				}
 			} catch (error) {
-				if (error.message.includes("413") === 413) {
-					alert('Profile pic too big');
-				}
-				else {
-					alert('Profile pic too big');
-				}
-
+				alert('Error:' + error.error);
 			}
 		});
 	}
