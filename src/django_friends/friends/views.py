@@ -15,37 +15,40 @@ import json
 @api_view(['POST'])
 # @csrf_exempt
 def add_friend(request):
-    id_friend1 = request.data.get('id_friend1')
-    email_friend1 = request.data.get('email_friend1')
-    name_friend1 = request.data.get('name_friend1')
-    id_friend2 = request.data.get('id_friend2')
-    email_friend2 = request.data.get('email_friend2')
-    name_friend2 = request.data.get('name_friend2')
-    sender = request.data.get('sender')
-    receiver = request.data.get('receiver')
-    status = request.data.get('status', 'pending')
-    
-    if not id_friend1 or not email_friend1 or not name_friend1 or not id_friend2 or not email_friend2 or not name_friend2 or not sender or not receiver:
-        return Response({
-            "error": "All fields are required"
-        }, status=400)
-        
-    print(f"Processing friend request from {name_friend1} to {name_friend2}")
-    
-    # Create friend relationship
-    friend_instance = Friend.objects.create(
-        id_friend1=id_friend1,
-        name_friend1=name_friend1,
-        email_friend1=email_friend1,
-        id_friend2=id_friend2,
-        name_friend2=name_friend2,
-        email_friend2=email_friend2,
-        sender=sender,
-        receiver=receiver,
-        status=status
-    )
-    serializer = FriendSerializer(friend_instance)
-    return Response(serializer.data, status=201)
+    try:
+        id_friend1 = request.data.get('id_friend1')
+        email_friend1 = request.data.get('email_friend1')
+        name_friend1 = request.data.get('name_friend1')
+        id_friend2 = request.data.get('id_friend2')
+        email_friend2 = request.data.get('email_friend2')
+        name_friend2 = request.data.get('name_friend2')
+        sender = request.data.get('sender')
+        receiver = request.data.get('receiver')
+        status = request.data.get('status', 'pending')
+
+        if not id_friend1 or not email_friend1 or not name_friend1 or not id_friend2 or not email_friend2 or not name_friend2 or not sender or not receiver:
+            return Response({
+                "error": "All fields are required"
+            }, status=400)
+            
+        print(f"Processing friend request from {name_friend1} to {name_friend2}")
+
+        # Create friend relationship
+        friend_instance = Friend.objects.create(
+            id_friend1=id_friend1,
+            name_friend1=name_friend1,
+            email_friend1=email_friend1,
+            id_friend2=id_friend2,
+            name_friend2=name_friend2,
+            email_friend2=email_friend2,
+            sender=sender,
+            receiver=receiver,
+            status=status
+        )
+        serializer = FriendSerializer(friend_instance)
+        return Response(serializer.data, status=201)
+    except Exception as e:
+        return Response({'error': 'you cannot add this user'}, status=400)
 
 @api_view(['GET'])
 # @csrf_exempt
