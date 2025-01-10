@@ -264,6 +264,9 @@ class Tournament {
 
         return new Promise((resolve) => {
             const matchLoop = () => {
+                if (getACookie('game_running') === 'false') {
+                    return;
+                }
                 if (GameEnd()) {
                     const scores = { p1: game.player1.score, p2: game.player2.score };
                     set1v1victory(game.player1, game.player2, scores, false, true);
@@ -440,11 +443,11 @@ function movePlayers() {
     if (keys['83'] && game.player1.y < canvas.height - game.player1.height) { // S
         game.player1.y += game.player1.speed;
     }
-    // if (keys['32']) { // SPACE
-    //     // PRESS SPACE if you want to make a user won (debug purpose)
-    //     console.log("SPACE PRESSED")
-    //     game.player1.score = 5
-    // }
+    if (keys['32']) { // SPACE
+        // PRESS SPACE if you want to make a user won (debug purpose)
+        console.log("SPACE PRESSED")
+        game.player1.score = 5
+    }
 }
 
 async function moveBall() {
