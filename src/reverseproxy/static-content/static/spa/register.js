@@ -137,9 +137,8 @@ export class RegisterPage extends Page {
 		const logBOOL = await isUserLoggedIn();
 		if (logBOOL == true)
 			logoutUser();
-
+		setACookie('game_running', 'false', 1);
 		super.render();
-
 		this.attachFormListener();
 	}
 
@@ -237,11 +236,11 @@ export class RegisterPage extends Page {
 					return;
 				}
 				if (profileInput.files[0].size > 1024 * 1024) {
-                    alert('File size is too big');
-                    return ;
-                }
+					alert('File size is too big');
+					return;
+				}
 				const isValid = await checkImageType(profileInput.files[0]);
-                if (isValid === false) { return ; }
+				if (isValid === false) { return; }
 				formData.append('profile_picture', profileInput.files[0]);
 			} else if (defaultFileBlob) {
 				formData.append('profile_picture', defaultFileBlob)
