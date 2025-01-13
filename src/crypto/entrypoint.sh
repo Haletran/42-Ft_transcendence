@@ -5,7 +5,7 @@ sleep 20
 nohup npx hardhat node &
 
 # Wait for Hardhat node to fully start (adjust sleep time as necessary)
-sleep 20
+sleep 10
 
 # Run your deploy command
 npx hardhat run scripts/deploy.js --network localhost

@@ -26,7 +26,7 @@ services:
     env_file:
       - .env
     expose:
-      - "8545"
+      - "8545:8545"
     volumes:
       - ./src/crypto/.:/usr/src/app
     networks:

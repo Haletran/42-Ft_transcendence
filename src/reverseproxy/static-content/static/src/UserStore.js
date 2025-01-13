@@ -39,12 +39,9 @@ class UserStore {
     subscribeToProfilePicture(callback) {
         this._profilePictureSubscribers.push(callback);
 
-        // Si une photo de profil existe déjà, appeler immédiatement le callback
         if (this._userData && this._userData.profile_picture) {
             callback(this._userData.profile_picture);
         }
-
-        // Retourne une fonction de désinscription
         return () => {
             this._profilePictureSubscribers = this._profilePictureSubscribers.filter(
                 sub => sub !== callback
@@ -58,7 +55,6 @@ class UserStore {
         });
     }
 
-    // Fonction utilitaire pour mettre à jour les images de profil
     updateProfilePicture(profilePictureUrl) {
         const profilePics = [
             document.querySelector('img[alt="logo_profile_picture"]'),

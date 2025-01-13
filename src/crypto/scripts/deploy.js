@@ -4,7 +4,7 @@ const hre = require('hardhat');
 
 async function deployContract(index, signer) {
     const ScoreContract = await hre.ethers.getContractFactory("SimpleScoreContract", signer);
-    
+
     console.log(`Deploying contract ${index}...`);
     const scoreContract = await ScoreContract.deploy();
     await scoreContract.deployed();
@@ -17,7 +17,7 @@ async function deployContract(index, signer) {
 async function main() {
     const provider = new hre.ethers.providers.JsonRpcProvider("http://127.0.0.1:8545/");
     const signer = provider.getSigner();
-    
+
     let allAddresses = {}; // Object to store all the contract addresses
 
     // Deploy contracts 1 through 7 and store their addresses

@@ -1,13 +1,9 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 
 export async function interactWithContract(contractAddress, player1, score1, player2, score2) {
-    // Connect to the local blockchain
     const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 
-    // Get the first account as the signer
     const signer = provider.getSigner(); // Using the first account provided by Hardhat
-
-    // ABI of the contract
     const abi = [
         {
             "inputs": [],
@@ -35,11 +31,9 @@ export async function interactWithContract(contractAddress, player1, score1, pla
         }
     ];
 
-    // Create contract instance
     const scoreContract = new ethers.Contract(contractAddress, abi, signer);
 
     try {
-        // Submit match data to the contract
         console.log("Submitting match data...");
         console.log("Function arguments:");
         console.log("Contract Address:", contractAddress);

@@ -10,7 +10,6 @@ import { setACookie } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
-
 export class Friends extends Page {
     constructor() {
         super();
@@ -155,7 +154,6 @@ export class Friends extends Page {
             const logoutButton = document.getElementById('logout-butt');
             if (logoutButton) {
                 logoutButton.addEventListener('click', function (event) {
-                    //event.preventDefault();
                     logoutUser();
                 });
             }
@@ -187,14 +185,12 @@ export class Friends extends Page {
                     const toast = new bootstrap.Toast(toastElement);
                     toast.show();
 
-                    // Remove the toast from the DOM after hiding
                     toastElement.addEventListener('hidden.bs.toast', () => {
                         toastElement.remove();
                     });
                 };
 
 
-                // Check if the user is trying to add themselves
                 if (usernameOrEmail === currentUserEmail || usernameOrEmail === currentUserName) {
                     showToast('You cannot add yourself as a friend.', 'danger');
                     return;
@@ -336,12 +332,6 @@ async function fetchPendingConfirmations(currentUserId) {
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'btn-container';
 
-                // const cancelButton = document.createElement('button');
-                // cancelButton.className = 'btn btn-outline-light';
-                // cancelButton.innerHTML = '<i class="bi bi-x"></i>';
-                // cancelButton.onclick = () => handleInvitationResponse(confirmation.id, 'cancelled', currentUserId);
-
-                // btnContainer.appendChild(cancelButton);
                 listItem.appendChild(btnContainer);
                 confirmationList.appendChild(listItem);
             });
