@@ -19,7 +19,7 @@ make ## to launch the project (https://localhost)
 - BACKEND : Django (Python) [Documentation](https://docs.djangoproject.com/en/5.1/)
 - DB : PostgreSQL [Documentation](https://www.postgresql.org/docs/current/) [Container](https://hub.docker.com/_/postgres/)
 
-For our project, we did the `MicroServices` module which mean, each services has is own DB and is own Django.
+For our project, we implemented the `MicroServices` module, which indicates that each service has its own database and its own Django instance.
 
 
 ## 🗃️ OBLIGATIONS
