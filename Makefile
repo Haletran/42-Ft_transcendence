@@ -52,6 +52,11 @@ reset: down
 
 hard-reset: reset
 	-docker system prune --all --volumes -f
+	@rm -rf .env src/crypto/node_modules
+
+contract:
+	@echo "Getting contract"
+	-docker exec -ti hardhat npx hardhat run scripts/viewContract.js
 
 replace:
 	@bash replace.sh
