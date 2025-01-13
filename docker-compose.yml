@@ -43,8 +43,8 @@ services:
   vault:
     image: hashicorp/vault:latest
     container_name: vault_container
-    expose:
-      - "8200"
+    ports:
+      - "8200:8200"
     volumes:
       - ./src/vault/config:/vault/config
       #- ./vault/policies:/vault/policies
@@ -146,8 +146,8 @@ services:
   scores-database:
     image: postgres:latest
     container_name: scores-database
-    expose:
-      - "5435"
+    ports:
+      - "5435:5435"
     volumes:
       - scores_data:/var/lib/postgresql/data
       - ./src/scores-database/postgresql.conf:/etc/postgresql/postgresql.conf
