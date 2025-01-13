@@ -174,7 +174,7 @@ export class Friends extends Page {
                     const toastContainer = document.getElementById('toast-container');
                     const toastId = `toast-${Date.now()}`;
                     const toastHTML = `
-                        <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
                             <div class="d-flex">
                                 <div class="toast-body">${message}</div>
                                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -255,8 +255,8 @@ export class Friends extends Page {
 
                             });
                             if (!addFriendResponse.ok) {
-                                alert("you cannot add this friend");
-                                return ;
+                                showToast('You cannot add this friend', 'danger');
+                                return;
                             }
                         }
                         catch (error) {
@@ -406,7 +406,7 @@ async function getIncomingInvitations(currentUserId) {
                 listItem.appendChild(btnContainer);
 
                 confirmationList.appendChild(listItem);
-                
+
             });
         }
     } catch (error) {
@@ -440,7 +440,7 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
             throw new Error(data.error);
         }
         getIncomingInvitations(currentUserId);
-        
+
     } catch (error) {
         console.error('Error responding to invitation:', error);
     }
