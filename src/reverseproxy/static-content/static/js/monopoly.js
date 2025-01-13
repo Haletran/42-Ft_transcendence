@@ -20,8 +20,10 @@ let map;
 
 
 class Player {
-    constructor(id) {
+    constructor(id, name) {
         this.id = id;
+        this.name = name.value;
+        console.log("name : ",this.name.value);
         this.money = 1000;
         this.position = 0;
         this.isTurn = false;
@@ -117,7 +119,7 @@ function drawPlayerInfo() {
 
         // Set text color and draw player's name on top of the color block
         ctx.fillStyle = "#FFF";
-        ctx.fillText(`Player ${player.id}`, sidebarX + 20, infoY);
+        ctx.fillText(`${player.name}`, sidebarX + 20, infoY);
 
         // Display the rest of the player's information
         ctx.fillText(`Position: ${player.position}`, sidebarX + 20, infoY + 20);
@@ -694,11 +696,11 @@ function resizeCanvas() {
 
 const players = [];
 
-export function init_monopoly_game(value, map_id) {
+export function init_monopoly_game(value, map_id, name) {
 
     if (players == 0) {
         for (let i = 1; i <= value; i++) {
-            players.push(new Player(i));
+            players.push(new Player(i, name[i]));
         }
         console.log(`Game started with ${value} players`);
     }

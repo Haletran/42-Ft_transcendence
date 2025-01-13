@@ -191,7 +191,12 @@ export class Monopoly extends Page {
                         const map = document.querySelector('.selected');
                         const module = await import(`/static/js/monopoly.js?timestamp=${new Date().getTime()}`);
                         console.log(map.dataset.id);
-                        await module.init_monopoly_game(range.value, map.dataset.id);
+                        let player = [];
+                        for (let i = 1; i <= range.value; i++) {
+                            player[i] = document.getElementById(`player_${i}`);
+                            console.log(player[i].value);
+                        }
+                        await module.init_monopoly_game(range.value, map.dataset.id, player);
                     }
                     catch (error) {
                         console.error('Error starting game:', error);
