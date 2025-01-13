@@ -1,51 +1,51 @@
 const { ethers } = require("hardhat");
+const readline = require("readline");
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
+
+function askQuestion(query) {
+    return new Promise((resolve) => {
+        rl.question(query, (answer) => {
+            resolve(answer);
+        });
+    });
+}
 
 async function main() {
-    // Connect to the provider (Hardhat local node, or external network)
-    const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+    const provider = new ethers.providers.JsonRpcProvider(
+        "http://127.0.0.1:8545"
+    );
 
-    // Get the signer (the first account from the local Hardhat node)
     const signer = provider.getSigner();
-
-    // Replace with the actual deployed contract address
-    const contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-
-    // ABI of the contract
+    const contractAddress = await askQuestion("Enter the contract address: ");
     const abi = [
         {
-            "inputs": [],
-            "name": "getMatch",
-            "outputs": [
-                { "internalType": "string", "name": "", "type": "string" },
-                { "internalType": "uint256", "name": "", "type": "uint256" },
-                { "internalType": "string", "name": "", "type": "string" },
-                { "internalType": "uint256", "name": "", "type": "uint256" }
+            inputs: [],
+            name: "getMatch",
+            outputs: [
+                { internalType: "string", name: "", type: "string" },
+                { internalType: "uint256", name: "", type: "uint256" },
+                { internalType: "string", name: "", type: "string" },
+                { internalType: "uint256", name: "", type: "uint256" },
             ],
-            "stateMutability": "view",
-            "type": "function"
+            stateMutability: "view",
+            type: "function",
         },
-        {
-            "inputs": [
-                { "internalType": "string", "name": "_player1", "type": "string" },
-                { "internalType": "uint256", "name": "_score1", "type": "uint256" },
-                { "internalType": "string", "name": "_player2", "type": "string" },
-                { "internalType": "uint256", "name": "_score2", "type": "uint256" }
-            ],
-            "name": "setMatch",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }
     ];
 
-    // Create contract instance
-    const scoreContract = new ethers.Contract(contractAddress, abi, signer);
+    const scoreContract = new ethers.Contract(
+        contractAddress,
+        abi,
+        signer
+    );
 
-    // Function to view the current state of the contract
     async function viewContractState() {
         try {
             const matchDetails = await scoreContract.getMatch();
-            console.log("Contract State:");
+            //console.log("Contract State:");
             console.log("Player 1:", matchDetails[0], "Score 1:", matchDetails[1].toString());
             console.log("Player 2:", matchDetails[2], "Score 2:", matchDetails[3].toString());
         } catch (error) {
@@ -53,11 +53,10 @@ async function main() {
         }
     }
 
-    // Call the viewContractState function
     await viewContractState();
+    rl.close();
 }
 
-// Run the main function
 main()
     .then(() => process.exit(0))
     .catch((error) => {
