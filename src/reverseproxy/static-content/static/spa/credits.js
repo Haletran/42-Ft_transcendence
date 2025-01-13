@@ -2,11 +2,47 @@ import { Page } from '../src/pages.js';
 import { shoot } from '../src/particles.js';
 import { Router } from '../src/router.js';
 import { isUserLoggedIn } from '../app.js';
+import { setACookie } from '../js/utils.js';
+import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
+
 
 export class Credit extends Page {
     constructor() {
         super();
         this.template = `
+        <div class="header">
+        <nav class="navbar bg-dark  border-body" data-bs-theme="dark">
+            <div class="container-fluid">
+            <a class="navbar-brand " href="/home" data-link="/home">
+                <img src="/static/imgs/logo.png" alt="" width="25" class="d-inline-block align-text-top invert">
+                <p class="d-inline montserrat-bold">Ft_transcendence</p>
+            </a>
+            <a class="nav-link active" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img alt="logo_profile_picture" width="40" height="40" class="rounded-circle" style="
+                      object-fit: cover;
+                    " src=""
+                alt="profile_picture" />
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                <a class="dropdown-item" href="/profile" data-link="/profile">Profile</a>
+                </li>
+                <li>
+                <a class="dropdown-item" href="/settings" data-link="/settings" >Settings</a>
+                </li>
+                <li>
+                <a class="dropdown-item" href="/friends" data-link="/friends" >Friends</a>
+                </li>
+                <li>
+                <a class="dropdown-item" href="/privacy" data-link="/privacy" >Privacy</a>
+                </li>
+                <li>
+                <a class="dropdown-item fw-bold text-danger" href="/" data-link="/" id="logout-butt"><i class="bi bi-box-arrow-left"></i> Logout</a>
+                </li>
+            </ul>
+            </div>
+        </nav>
+        </div>
         <div class="menu">
             <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 90vh">
                 <canvas id="credits_canvas" width="800" height="600"></canvas>
@@ -48,6 +84,11 @@ export class Credit extends Page {
             return;
         }
         setACookie('game_running', 'false', 1);
+        fetchMinInfo();
+        subscribeToProfilePicture((profilePictureUrl) => {
+            const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
+            if (profilePic) profilePic.src = profilePictureUrl;
+        });
         super.render();
         this.event();
         this.breakout(gameRunning);
@@ -114,7 +155,7 @@ export class Credit extends Page {
         function drawBall() {
             ctx.beginPath();
             ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-            ctx.fillStyle = ball.visible ? 'red' : 'transparent';
+            ctx.fillStyle = ball.visible ? 'white' : 'transparent';
             ctx.fill();
             ctx.closePath();
         }
@@ -135,8 +176,6 @@ export class Credit extends Page {
                 document.getElementById('credits_canvas').classList.add('d-none');
                 shoot(4);
                 gameRunning = false;
-            } else {
-                ctx.fillText(`Score: ${score}`, canvas.width - 100, 30);
             }
         }
 
@@ -176,7 +215,6 @@ export class Credit extends Page {
             }
         }
 
-        // Move ball on canvas
         function moveBall() {
             ball.x += ball.dx;
             ball.y += ball.dy;
@@ -198,15 +236,14 @@ export class Credit extends Page {
                 ball.dy = -ball.speed;
             }
 
-            // Brick collision
             bricks.forEach(column => {
                 column.forEach(brick => {
                     if (brick.visible) {
                         if (
-                            ball.x - ball.size > brick.x && // left brick side check
-                            ball.x + ball.size < brick.x + brick.w && // right brick side check
-                            ball.y + ball.size > brick.y && // top brick side check
-                            ball.y - ball.size < brick.y + brick.h // bottom brick side check
+                            ball.x - ball.size > brick.x &&
+                            ball.x + ball.size < brick.x + brick.w &&
+                            ball.y + ball.size > brick.y &&
+                            ball.y - ball.size < brick.y + brick.h
                         ) {
                             ball.dy *= -1;
                             brick.visible = false;
@@ -274,7 +311,6 @@ export class Credit extends Page {
             }
         }
 
-        // Keyup event
         function keyUp(e) {
             if (
                 e.key === 'Right' ||

@@ -1,4 +1,5 @@
 import { Page } from '../src/pages.js';
+import { setACookie } from '../js/utils.js';
 
 export class test extends Page {
     constructor() {

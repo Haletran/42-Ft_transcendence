@@ -280,7 +280,7 @@ class Tournament {
                     game.player1.update();
                     game.player2.update();
                     game.ball.update();
-                    requestAnimationFrame(matchLoop);
+                    animationFrameId = requestAnimationFrame(matchLoop);
                 }
             };
             matchLoop();
@@ -288,7 +288,6 @@ class Tournament {
     }
 
     async startTournament(resolve) {
-        // Tournament progression
         if (getACookie('game_running') === 'false') {
             return;
         }
@@ -375,7 +374,6 @@ function initGame(gamemode) {
 }
 
 
-
 function predictBallYAtX(targetX) {
     let predictedX = game.ball.x + game.ball.radius;
     let predictedY = game.ball.y + game.ball.radius;
@@ -406,8 +404,6 @@ function moveAI() {
     if (game.player2.isAi) {
         if (game.ball.x > canvas.width / 2) {
             const predictedY = predictBallYAtX(game.player2.x);
-            const randomness = (Math.random() - 0.5) * 10;
-            const predictedYWithRandomness = predictedY + randomness;
             if (predictedY > game.player2.y + game.player2.height / 2 && game.player2.y < canvas.height - game.player2.height) {
                 keys['40'] = true; // DOWN
                 keys['38'] = false; // UP
@@ -451,7 +447,6 @@ function movePlayers() {
 }
 
 async function moveBall() {
-    console.log('moveBall');
     if (game.ball.y + game.ball.radius > canvas.height || game.ball.y - game.ball.radius < 0) {
         playSound(collisionSound_PING);
         game.ball.velocity.y = -game.ball.velocity.y
@@ -460,13 +455,11 @@ async function moveBall() {
         let player_win = 0;
         playSound(pointSound);
         if (game.ball.x + game.ball.radius > game.player2.x) {
-            console.log('player 1 wins');
             hitEffect();
             player_win = 1;
             game.player1.score += 1
             shoot(3)
         } else if (game.ball.x - game.ball.radius < game.player1.x + game.player1.width) {
-            console.log('player 2 wins');
             hitEffect();
             player_win = 2;
             game.player2.score += 1
@@ -479,16 +472,11 @@ async function moveBall() {
         game.ball.y = canvas.height / 2;
         game.ball.velocity.x = 3 * Math.cos(randomAngle);
         game.ball.velocity.y = 3 * Math.sin(randomAngle);
-        // if (game.ball.velocity.x < 0) {
-        //     game.ball.velocity.x = -game.ball.velocity.x
-        // }
-        // if (game.ball.velocity.y < 0) {
-        //     game.ball.velocity.y = -game.ball.velocity.y
-        // }
         player_win = 0;
         first_hit = 0;
         game.ball.speed = 2;
     }
+
     if (game.ball.x + game.ball.radius > game.player2.x && game.ball.y > game.player2.y && game.ball.y < game.player2.y + game.player2.height) {
         if (first_hit === 0) {
             game.ball.speed += 3;
@@ -631,7 +619,7 @@ window.addEventListener('keyup', checkKeyUp, false);
 
 export function startGame(gamemode, playerNames) {
     const randomNumber = Math.floor(Math.random() * 100);
-    console.log('Starting game:', gamemode, " session number :", randomNumber);
+    console.log('Starting game:', gamemode, " seed :", randomNumber);
     if (getACookie('game_running') === 'true') {
         playSound(coutdownSound);
         return new Promise((resolve) => {

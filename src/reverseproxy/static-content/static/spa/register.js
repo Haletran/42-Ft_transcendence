@@ -5,6 +5,7 @@ import { logoutUser } from '../src/logout.js';
 import { startWebSocket } from './login_base.js';
 import { isUserLoggedIn } from '../app.js';
 import { checkImageType } from './settings.js';
+import { setACookie } from '../js/utils.js';
 
 export class RegisterPage extends Page {
 	constructor() {

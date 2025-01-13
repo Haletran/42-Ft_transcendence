@@ -4,6 +4,8 @@ import { router, get42 } from '../app.js';
 import { logoutUser } from '../src/logout.js';
 import { getUserInfos } from '../src/fetchUser.js';
 import { isUserLoggedIn } from '../app.js';
+import { setACookie } from '../js/utils.js';
+
 
 export class loginBasePage extends Page {
 	constructor() {

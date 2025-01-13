@@ -99,7 +99,7 @@ export class Monopoly extends Page {
         }
         fetchMinInfo();
         startWebSocket();
-        super.render(); // Call the parent render method
+        super.render();
         this.eventListeners();
         setACookie('game_running', 'false', 1);
         subscribeToProfilePicture((profilePictureUrl) => {
@@ -155,53 +155,6 @@ export class Monopoly extends Page {
     }
 
     eventListeners() {
-        const settingsButton = document.getElementById('settings_button');
-        if (settingsButton) {
-            settingsButton.addEventListener('click', () => {
-                const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
-                modal.show();
-            });
-        }
-        const saveSettingsButton = document.getElementById('saveSettings');
-        if (saveSettingsButton) {
-            saveSettingsButton.addEventListener('click', () => {
-                const playerColor = document.getElementById('playerColor').value;
-                const ballColor = document.getElementById('ballColor').value;
-                const mapColor = document.getElementById('mapColor').value;
-                const textColor = document.getElementById('textColor').value;
-                localStorage.setItem('playerColor', playerColor);
-                localStorage.setItem('ballColor', ballColor);
-                localStorage.setItem('mapColor', mapColor);
-                localStorage.setItem('textColor', textColor);
-                const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
-                modal.hide();
-            });
-        }
-        const playerColorInput = document.getElementById('playerColor');
-        const mapColorInput = document.getElementById('mapColor');
-        const ballColorInput = document.getElementById('ballColor');
-        const textColorInput = document.getElementById('textColor');
-        if (playerColorInput && mapColorInput && ballColorInput && textColorInput) {
-            playerColorInput.value = localStorage.getItem('playerColor') || '#ffffff';
-            ballColorInput.value = localStorage.getItem('ballColor') || '#ffffff';
-            mapColorInput.value = localStorage.getItem('mapColor') || '#282931';
-            textColorInput.value = localStorage.getItem('textColor') || '#ffffff';
-        }
-
-        const resetSettingsButton = document.getElementById('resetSettings');
-        if (resetSettingsButton) {
-            resetSettingsButton.addEventListener('click', () => {
-                localStorage.removeItem('playerColor');
-                localStorage.removeItem('ballColor');
-                localStorage.removeItem('mapColor');
-                localStorage.removeItem('textColor');
-                playerColorInput.value = '#ffffff';
-                ballColorInput.value = '#ffffff';
-                mapColorInput.value = '#282931';
-                textColorInput.value = '#ffffff';
-            });
-        }
-
         const logoutButton = document.getElementById('logout-butt');
         if (logoutButton) {
             logoutButton.addEventListener('click', function () {
@@ -234,7 +187,6 @@ export class Monopoly extends Page {
                     showElementsByClass('game', 'flex');
                     addClassToElementsByClass('game', 'center');
                     try {
-                        // ADD CHOICE OF NB PLAYERS
                         const range = document.getElementById('customRange1');
                         const map = document.querySelector('.selected');
                         const module = await import(`/static/js/monopoly.js?timestamp=${new Date().getTime()}`);

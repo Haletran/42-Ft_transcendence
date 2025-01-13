@@ -2,6 +2,7 @@ import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { logoutUser } from '../src/logout.js';
 import { isUserLoggedIn, router } from '../app.js';
+import { setACookie } from '../js/utils.js';
 
 export class LoginPage extends Page {
     constructor() {
