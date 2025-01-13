@@ -89,8 +89,9 @@ export class loginBasePage extends Page {
 		const logBOOL = await isUserLoggedIn();
 		if (logBOOL == true)
 			logoutUser();
-		super.render(); // Call the parent render method
-		this.attachFormLoginListener(); // Now attach the listener here
+		setACookie('game_running', 'false', 1);
+		super.render();
+		this.attachFormLoginListener();
 		this.loading_42();
 	}
 
@@ -108,8 +109,6 @@ export class loginBasePage extends Page {
 		const form = document.getElementById('login_form');
 
 		form.addEventListener('submit', async (e) => {
-			//document.querySelector('.loader').style.display = 'flex';
-			//document.getElementById('app').style.display = 'none';
 			e.preventDefault();
 
 			const username = document.getElementById('loginUsername').value;

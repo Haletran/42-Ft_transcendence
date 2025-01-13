@@ -20,6 +20,7 @@ export class test extends Page {
         `;
     }
     async render() {
+        setACookie('game_running', 'false', 1);
         super.render();
     }
 }

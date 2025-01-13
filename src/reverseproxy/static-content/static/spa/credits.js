@@ -47,6 +47,7 @@ export class Credit extends Page {
             Router.goTo('/login_base');
             return;
         }
+        setACookie('game_running', 'false', 1);
         super.render();
         this.event();
         this.breakout(gameRunning);
