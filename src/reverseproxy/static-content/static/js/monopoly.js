@@ -1,3 +1,6 @@
+import { router } from "../app.js";
+import { setMonopolyVictory } from "../src/scoreTable.js";
+
 let canvas = document.querySelector('canvas#monopoly_canvas');
 if (!canvas) {
     const gameDiv = document.querySelector('.game');
@@ -152,13 +155,11 @@ function resetGame() {
     });
 
     currentPlayerIndex = 0;  // Reset the first player to start the game
-    turnCount = 0;           // Reset turn counter
-    isGameFinishedFlag = false; // Reset game finished flag
 
     document.getElementById("monopoly_canvas").style.display = "none";
     document.getElementById("menu").style.display = "flex";
+    router.goTo('/home');
 
-    players = [];
 }
 
 function endTurn() {
@@ -309,6 +310,8 @@ const noButton =
 };
 
 function rollDice() {
+
+    
     if (isPurchaseWindowOpen) return;
 
     let player = players[currentPlayerIndex];
@@ -401,6 +404,7 @@ function rollDice() {
             }
         }
     }
+
     drawPlayerInfo();
     drawBoard();
     drawPlayers();
@@ -711,10 +715,11 @@ function monopoly_game() {
     drawDiceButton();
     drawActionDisplay();
     drawChancesCard();
+    drawSetMoneyButton();
     endTurn();
 }
 
-window.addEventListener('resize', resizeCanvas, false);
+// window.addEventListener('resize', resizeCanvas, false);
 
 canvas.addEventListener('mousemove', (event) => {
     if (isPurchaseWindowOpen) return;
@@ -741,6 +746,7 @@ canvas.addEventListener('mousemove', (event) => {
     drawDiceButton();
     drawActionDisplay();
     drawChancesCard();
+    drawSetMoneyButton();
 });
 
 function showTileInfo(tile) {
@@ -817,4 +823,49 @@ function drawImageOnCanvas(imageSrc, x, y, width, height) {
     image.onload = function () {
         ctx.drawImage(image, x, y, width, height);
     };
+}
+
+
+// Function to draw the button
+function drawSetMoneyButton() {
+    // Define the button properties
+    const buttonX = 150;
+    const buttonY = 650;
+    const buttonWidth = 200;
+    const buttonHeight = 50;
+
+    ctx.fillStyle = "#4CAF50";
+    ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
+
+    ctx.fillStyle = "#FFF";
+    ctx.font = "16px Arial";
+    ctx.fillText("Set Money", buttonX + 50, buttonY + 30);
+
+    ctx.font = "12px Arial";
+}
+
+canvas.addEventListener('click', function(event) {
+    const buttonX = 150;
+    const buttonY = 650;
+    const buttonWidth = 200;
+    const buttonHeight = 50;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Check if the click is within the button's boundaries
+    if (x >= buttonX && x <= buttonX + buttonWidth && y >= buttonY && y <= buttonY + buttonHeight) {
+        setMoneyForAllPlayers(-1500); // Set the desired amount of money
+    }
+});
+
+function setMoneyForAllPlayers(amount) {
+    players.forEach(player => {
+        player.money = amount;
+        endTurn();
+    });
 }
