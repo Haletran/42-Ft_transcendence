@@ -189,9 +189,6 @@ export class Privacy extends Page {
                     defaultFileBlob = new File([blob], 'default-profile.jpg', { type: blob.type });
                     formData.append('profile_picture', defaultFileBlob);
 
-                    console.log('In update profile, data to send: ', formData);
-
-
                     const csrfToken = getCSRFToken('csrftoken');
                     if (!csrfToken) {
                         console.error('CSRF token is missing!');
@@ -226,8 +223,6 @@ export class Privacy extends Page {
 
                 const userData = await getUserInfos();
                 const username = userData.username;
-
-                console.log(username);
 
                 const formData = new FormData();
                 formData.append('username', username);
