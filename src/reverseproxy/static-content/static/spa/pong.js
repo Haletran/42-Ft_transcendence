@@ -286,21 +286,20 @@ export class Pong extends Page {
                             player1 = player1.trim() || 'player1';
                             player2 = player2.trim() || 'player2';
 
-			                if (player1.search(' ') != -1 || player2.search(' ') != -1) {
-			                	alert("no space allowed in fields, field will be changed");
+			                if (player1.search(' ') != -1 || player2.search(' ') != -1 || player2.search('\t') != -1) {
+			                	alert("no space allowed in fields");
                                 document.getElementById('player1name').value = "";
                                 document.getElementById('player2name').value = "";
-                                if (player1.search(' ') != -1) { player1 = 'player 1'; }
-                                if (player2.search(' ') != -1) { player2 = 'player 2'; }
+                                modal.hide();
 			                }
-
-                            if ((player1 === player2) || (player1.length > 10 || player2.length > 10)) {
-                                alert("display name is 10 char max, names cannot be identical, field will be changed");
+                            else if (player1.length > 10 || player2.length > 10) {
+                                alert("display name is 10 char max");
                                 document.getElementById('player1name').value = "";
                                 document.getElementById('player2name').value = "";
-                                if (player1.search(' ') != -1) { player1 = 'player 1'; }
-                                if (player2.search(' ') != -1) { player2 = 'player 2'; }
+                                modal.hide();
                             } else {
+                                document.getElementById('player1name').value = "";
+                                document.getElementById('player2name').value = "";
                                 modal.hide();
                                 gameInProgress = true;
                                 try {
@@ -350,11 +349,9 @@ async function startthegame(button, buttonId, player1, player2) {
                         player_name.push(`Player ${i}`);
                     } else {
                         if (player.value.length > 10) {
-                            alert("display name is 10 char max, names cannot be identical, field will be changed");
                             player_name.push(`Player ${i}`);
                         }
-                        else if (player.value.trim().search(' ') != -1 || player.value.trim() == "") {
-			                alert("no space allowed in fields, field will be changed");
+                        else if (player.value.trim().search(' ') != -1 || player.value.trim().search('\t') != -1 || player.value.trim() == "") {
                             player_name.push(`Player ${i}`);
                         }
                         else
