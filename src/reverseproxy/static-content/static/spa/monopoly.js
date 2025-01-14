@@ -201,11 +201,10 @@ export class Monopoly extends Page {
                                 player[i].type = 'text';
                                 player[i].id = `player_${i}`;
                                 player[i].value = `Player ${i}`;
-                            } else if (player[i].value === null || player[i].value === '') { player[i].value = `Player ${i}`; }
-                            console.log('player value: ', player[i].value);
-                            if (player[i].value.length > 10) {
-                                player[i].value = `Player ${i}`;
                             }
+                            player[i].value = player[i].value.trim();
+                            if (player[i].value === null || player[i].value.length > 10 || player[i].value === ''|| player[i].value.search(' ') != -1 || player[i].value.search('\t') != -1) { player[i].value = `Player ${i}`; }
+                            console.log('player value: ', player[i].value);
                         }
                         await module.init_monopoly_game(range.value, map.dataset.id, player);
                     }
