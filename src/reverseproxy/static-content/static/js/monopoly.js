@@ -167,7 +167,10 @@ function resetGame() {
 function endTurn() {
     if (isGameFinished(players)) {
         const winner = players.find(player => player.isActive);
-        setMonopolyVictory(winner);
+        console.log(winner);
+        const money = winner.money;
+        const properties = winner.propertyOwned.length;
+        setMonopolyVictory(winner, money, properties);
         alert(`Game over! ${winner.name} is the winner!`);
         resetGame();
     }
@@ -398,13 +401,13 @@ function rollDice() {
         if (owner) {
             if (player.money + landedTile.rent_price < 0) {
                 owner.money += player.money;
-                addActionMessage(`${player.name} paid ${landedTile.rent_price}$ in rent to Player ${owner.name}.`);
+                addActionMessage(`${player.name} paid ${-1 * landedTile.rent_price}$ in rent to Player ${owner.name}.`);
                 player.money = -1;
             }
             else {
                 player.money += landedTile.rent_price;
                 owner.money -= landedTile.rent_price;
-                addActionMessage(`${player.name} paid ${landedTile.rent_price} in rent to Player ${owner.name}.`);
+                addActionMessage(`${player.name} paid ${-1 * landedTile.rent_price} in rent to Player ${owner.name}.`);
             }
         }
     }
@@ -502,12 +505,12 @@ function waitForBuildDecision(player, landedTile, callback) {
 
 
 function drawBoard() {
-    if (isGameFinished(players)) {
-        const winner = players.find(player => player.isActive);
-        alert(`Game over! ${winner.name} is the winner!`);
-        resetGame();
-        return 0;
-    }
+    // if (isGameFinished(players)) {
+    //     const winner = players.find(player => player.isActive);
+    //     alert(`Game over! ${winner.name} is the winner!`);
+    //     resetGame();
+    //     return 0;
+    // }
 
     if (tiles.length === 0) {
         const margin = 10;
