@@ -549,7 +549,7 @@ function drawBoard() {
                 new Tile("42 Rouen", 6, startX + tileSize * 5, startY + boardSize - cornerSize - 7 * tileSize, tileSize, tileSize, "#fff", -300, -130), // Tile 20
                 new Tile("42 Reims", 6, startX + tileSize * 6, startY + boardSize - cornerSize - 7 * tileSize, tileSize, tileSize, "#fff", -300, -130), // Tile 21
                 new Tile("Go to Minishell", "jail", startX + tileSize * 7, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, cornerSize, "#ddd", 0, 0), // Tile 22
-                new Tile("42 Clermont-Ferrand", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 6 * tileSize, tileSize, cornerSize, "#fff", -350, -150), // Tile 23
+                new Tile("42 Clermont", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 6 * tileSize, tileSize, cornerSize, "#fff", -350, -150), // Tile 23
                 new Tile("Chance", "chance", startX + tileSize * 7, startY + boardSize - cornerSize - 5 * tileSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 24
                 new Tile("42 Angouleme", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 4 * tileSize, tileSize, cornerSize, "#fff", -350, -150), // Tile 25
                 new Tile("Special Tile", "special", startX + tileSize * 7, startY + boardSize - cornerSize - 3 * tileSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 26
