@@ -373,6 +373,42 @@ function initGame(gamemode) {
     }
 }
 
+class PowerUp {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = 50;
+        this.color = 'red';
+        this.isVisible = true;
+    }
+
+    draw() {
+        const img = new Image();
+        img.src = '/static/imgs/powerup.png';
+        img.onload = () => {
+            ctx.drawImage(img, this.x, this.y, this.size, this.size);
+        };
+    }
+    collision(ball) {
+        const distX = Math.abs(ball.x - this.x - this.size / 2);
+        const distY = Math.abs(ball.y - this.y - this.size / 2);
+
+        if (distX > (this.size / 2 + ball.radius) || distY > (this.size / 2 + ball.radius)) {
+            return false;
+        }
+
+        if (distX <= (this.size / 2) || distY <= (this.size / 2)) {
+            this.isVisible = false;
+            return true;
+        }
+
+        const dx = distX - this.size / 2;
+        const dy = distY - this.size / 2;
+        return (dx * dx + dy * dy <= (ball.radius * ball.radius));
+    }
+}
+
+let powerUp = new PowerUp();
 
 function predictBallYAtX(targetX) {
     let predictedX = game.ball.x + game.ball.radius;
@@ -459,11 +495,13 @@ async function moveBall() {
             player_win = 1;
             game.player1.score += 1
             shoot(3)
+            powerUp = new PowerUp();
         } else if (game.ball.x - game.ball.radius < game.player1.x + game.player1.width) {
             hitEffect();
             player_win = 2;
             game.player2.score += 1
             shoot(2);
+            powerUp = new PowerUp();
         }
         const angleRange = Math.PI / 2;
         const baseAngle = player_win === 1 ? Math.PI : 0;
@@ -516,6 +554,11 @@ async function moveBall() {
         game.ball.velocity.y = Math.abs(game.ball.velocity.y);
     }
 
+    if (powerUp.collision(game.ball)) {
+        game.ball.speed += 2;
+        powerUp = new PowerUp();
+    }
+
     game.ball.x += game.ball.velocity.x * game.ball.speed
     game.ball.y += game.ball.velocity.y * game.ball.speed
 }
@@ -561,6 +604,8 @@ function linkPause(pong, resolve) {
     })
 }
 
+
+
 async function animate(pong, resolve) {
     if (getACookie('game_running') === 'false') {
         return;
@@ -571,7 +616,8 @@ async function animate(pong, resolve) {
         set1v1victory(game.player1, game.player2, scores, game.player2.isAi, false);
         const winner = getWinner(game.player1, game.player2);
         game.player1.reset()
-        game.player2.reset()
+        game.player2.reset();
+        console.log(winner, "won!");
         playSound(victorySound);
         alert(`${winner} won!`);
         cancelAnimationFrame(animationFrameId);
@@ -587,6 +633,7 @@ async function animate(pong, resolve) {
     game.player1.update()
     game.player2.update()
     game.ball.update()
+    powerUp.draw()
     animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
 }
 
