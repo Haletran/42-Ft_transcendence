@@ -1,10 +1,11 @@
 import { Page } from '../src/pages.js';
 import { shoot } from '../src/particles.js';
-import { Router } from '../src/router.js';
 import { isUserLoggedIn } from '../app.js';
 import { getACookie, setACookie } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 import { logoutUser } from '../src/logout.js';
+import { router } from '../app.js';
+
 
 export class Credit extends Page {
     constructor() {
@@ -76,10 +77,10 @@ export class Credit extends Page {
         </div>
         `;
     }
-    render() {
-        const loggedIn = isUserLoggedIn();
+    async render() {
+        const loggedIn = await isUserLoggedIn();
         if (loggedIn == false) {
-            Router.goTo('/login_base');
+            router.goTo('/login_base');
             return;
         }
         setACookie('game_running', 'false', 1);
@@ -114,6 +115,7 @@ export class Credit extends Page {
         const ctx = canvas.getContext('2d');
 
         let score = 0;
+        let animationFrameId = null;
 
         const brickRowCount = 7;
         const brickColumnCount = 4;
@@ -186,6 +188,8 @@ export class Credit extends Page {
                 }
                 shoot(4);
                 setACookie('credits', 'false', 1);
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
             }
         }
 
@@ -303,12 +307,14 @@ export class Credit extends Page {
 
         function update() {
             if (getACookie('credits') == 'false') {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
                 return;
             }
             movePaddle();
             moveBall();
             draw();
-            requestAnimationFrame(update);
+            animationFrameId = requestAnimationFrame(update);
         }
         update();
 
