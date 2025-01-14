@@ -118,11 +118,10 @@ export class Credit extends Page {
         const brickRowCount = 7;
         const brickColumnCount = 4;
         const delay = 500;
-        let start = false;
 
         const ball = {
             x: canvas.width / 2,
-            y: canvas.height / 2 + 70,
+            y: canvas.height / 2 + 100,
             size: 10,
             speed: 8,
             dx: 4,
@@ -302,35 +301,16 @@ export class Credit extends Page {
             drawBricks();
         }
 
-        function startScreen() {
-            ctx.font = '20px Arial';
-            ctx.fillStyle = 'white';
-            ctx.fillText('Press Enter to start', canvas.width / 2 - 100, canvas.height / 2);
-        }
-
         function update() {
             if (getACookie('credits') == 'false') {
                 return;
             }
-            if (start) {
-                console.log(getACookie('credits'));
-                movePaddle();
-                moveBall();
-                draw();
-                requestAnimationFrame(update);
-            } else {
-                startScreen();
-            }
+            movePaddle();
+            moveBall();
+            draw();
+            requestAnimationFrame(update);
         }
-
         update();
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                start = true;
-                requestAnimationFrame(update);
-            }
-        });
 
         function keyDown(e) {
             if (e.key === 'Right' || e.key === 'ArrowRight') {
