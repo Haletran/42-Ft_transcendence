@@ -73,7 +73,7 @@ export class Profile extends Page {
                             <label for="profileInput">Email address</label>
                             <p id="email" class="form-control-plaintext"></p>
                         </div>
-                        <h5 class="card-title">Statistics (against AI)</h5>
+                        <h5 class="card-title">Pong statistics (against AI)</h5>
                         <div class="d-flex flex-column gap-2">
                             <div class="d-flex flex-row gap-3">
                                 <div class="card border-light mb-3">
@@ -94,6 +94,26 @@ export class Profile extends Page {
                                 <div class="card border-light mb-3">
                                     <div class="card-body">
                                         <p id="rate" class="card-text"><strong></strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h5 class="card-title">Monopoly statistics</h5>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="d-flex flex-row gap-3">
+                                <div class="card border-light mb-3">
+                                    <div class="card-body">
+                                        <p id="monopoly_total" class="card-text"><strong></strong></p>
+                                    </div>
+                                </div>
+                                <div class="card text-white bg-warning mb-3">
+                                    <div class="card-body">
+                                        <p id="monopoly_avg_money" class="card-text"><strong>Average winner's money</strong></p>
+                                    </div>
+                                </div>
+                                <div class="card text-white bg-secondary mb-3">
+                                    <div class="card-body">
+                                        <p id="monopoly_avg_properties" class="card-text"><strong>Average winner's money</strong></p>
                                     </div>
                                 </div>
                             </div>

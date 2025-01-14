@@ -4,6 +4,7 @@ import requests, json
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.db import transaction
+from django.db.models import Avg
 
 # Create your views here.
 
@@ -56,7 +57,7 @@ def add_monopoly(request):
             user_origin = request.POST.get('user_origin')
             winner_username = request.POST.get('winner_username')
             winner_money = request.POST.get('winner_money')
-            winner_properties = request.POST.get
+            winner_properties = request.POST.get('winner_properties')
 
             new_game = Game.objects.create(
                 user_origin=user_origin,
@@ -110,6 +111,26 @@ def statistics(request):
             'wins': wins,
             'losses':losses,
             'rate': win_percentage
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def monopoly_stat(request):
+    username = request.GET.get('username')
+    if not username:
+        return JsonResponse({'error': 'Username is required'}, status=400)
+
+    try:
+        monopoly_games = Game.objects.filter(is_pong=False).filter(user_origin=username)
+        total_matches = monopoly_games.count()
+        average_money = monopoly_games.aggregate(avg_money=Avg('player1_score'))['avg_money']
+        average_properties = monopoly_games.aggregate(avg_prop=Avg('player2_score'))['avg_prop']
+
+        return JsonResponse({
+            'total_monopoly_games': total_matches,
+            'average_money': average_money,
+            'average_properties': average_properties
         })
 
     except Exception as e:

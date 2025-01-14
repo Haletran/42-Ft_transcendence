@@ -1,3 +1,6 @@
+import { router } from "../app.js";
+import { setMonopolyVictory } from "../src/scoreTable.js";
+
 let canvas = document.querySelector('canvas#monopoly_canvas');
 if (!canvas) {
     const gameDiv = document.querySelector('.game');
@@ -17,8 +20,10 @@ let map;
 
 
 class Player {
-    constructor(id) {
+    constructor(id, name) {
         this.id = id;
+        this.name = name.value;
+        console.log("name : ",this.name.value);
         this.money = 1000;
         this.position = 0;
         this.isTurn = false;
@@ -114,7 +119,7 @@ function drawPlayerInfo() {
 
         // Set text color and draw player's name on top of the color block
         ctx.fillStyle = "#FFF";
-        ctx.fillText(`Player ${player.id}`, sidebarX + 20, infoY);
+        ctx.fillText(`${player.name}`, sidebarX + 20, infoY);
 
         // Display the rest of the player's information
         ctx.fillText(`Position: ${player.position}`, sidebarX + 20, infoY + 20);
@@ -152,20 +157,18 @@ function resetGame() {
     });
 
     currentPlayerIndex = 0;  // Reset the first player to start the game
-    turnCount = 0;           // Reset turn counter
-    isGameFinishedFlag = false; // Reset game finished flag
 
     document.getElementById("monopoly_canvas").style.display = "none";
     document.getElementById("menu").style.display = "flex";
+    router.goTo('/home');
 
-    players = [];
 }
 
 function endTurn() {
     if (isGameFinished(players)) {
         const winner = players.find(player => player.isActive);
         setMonopolyVictory(winner);
-        alert(`Game over! Player ${winner.id} is the winner!`);
+        alert(`Game over! ${winner.name} is the winner!`);
         resetGame();
     }
     players.forEach(player => {
@@ -227,7 +230,7 @@ class Tile {
                 ctx.fillStyle = "#FFF";
             ctx.fillText(this.name, this.x + 10, this.y + 20); // Draw tile name
             if (this.price != 0)
-                ctx.fillText(this.price + "$", this.x + 10, this.y + 40); // Draw tile name
+                ctx.fillText(-1 * this.price + "$", this.x + 10, this.y + 40); // Draw tile name
             if (this.owner != 0) {
                 // Draw the colored rectangle behind the owner's name
                 const ownerColor = this.getOwnerColor(this.owner); // Get the owner's color (add logic for the color here)
@@ -235,7 +238,7 @@ class Tile {
                 ctx.fillRect(this.x, this.y + 90, 105, 15); // Rectangle for the owner (adjust size and position)
 
                 ctx.fillStyle = "#FFF"; // Set text color to white for visibility
-                ctx.fillText("Owner: " + this.owner, this.x + 10, this.y + 100); // Owner text position
+                ctx.fillText("Owner: " + players[this.owner - 1].name, this.x + 10, this.y + 100); // Owner text position
             }
         }
     }
@@ -309,6 +312,8 @@ const noButton =
 };
 
 function rollDice() {
+
+    
     if (isPurchaseWindowOpen) return;
 
     let player = players[currentPlayerIndex];
@@ -320,9 +325,9 @@ function rollDice() {
 
     if (player.inJail > 0) {
         player.inJail--; // Decrement jail turn count
-        addActionMessage(`Player ${player.id} has ${player.inJail} turns left in jail.`);
+        addActionMessage(`${player.name} has ${player.inJail} turns left in jail.`);
         if (player.inJail === 0) {
-            addActionMessage(`Player ${player.id} is now released from jail!`);
+            addActionMessage(`${player.name} is now released from jail!`);
         }
         continueGame(player);
         return;
@@ -349,11 +354,13 @@ function rollDice() {
     }
     const landedTile = tiles[player.position];
 
-    addActionMessage(`Player ${currentPlayerIndex + 1} rolled a ${diceValue}, and landed on ${landedTile.name}.`);
+    //addActionMessage(`Player ${currentPlayerIndex + 1} rolled a ${diceValue}, and landed on ${landedTile.name}.`);
+    addActionMessage(`${player.name} rolled a ${diceValue}, and landed on ${landedTile.name}.`);
+
     if (player.price <= 0)
         continueGame(player);
 
-    console.log(`Player ${player.id} pos ${player.position}`);
+    console.log(`${player.name} pos ${player.position}`);
 
     if (landedTile.name === "Go to Minishell") {
         player.position = 7; // Tile index for "Minishell"
@@ -391,16 +398,17 @@ function rollDice() {
         if (owner) {
             if (player.money + landedTile.rent_price < 0) {
                 owner.money += player.money;
-                addActionMessage(`Player ${player.id} paid ${landedTile.rent_price}$ in rent to Player ${owner.id}.`);
+                addActionMessage(`${player.name} paid ${landedTile.rent_price}$ in rent to Player ${owner.name}.`);
                 player.money = -1;
             }
             else {
                 player.money += landedTile.rent_price;
                 owner.money -= landedTile.rent_price;
-                addActionMessage(`Player ${player.id} paid ${landedTile.rent_price} in rent to Player ${owner.id}.`);
+                addActionMessage(`${player.name} paid ${landedTile.rent_price} in rent to Player ${owner.name}.`);
             }
         }
     }
+
     drawPlayerInfo();
     drawBoard();
     drawPlayers();
@@ -441,7 +449,7 @@ function waitForPurchaseDecision(player, landedTile, callback) {
                 if (player.money >= Math.abs(landedTile.price)) {
                     player.money += landedTile.price; // Deduct the price
                     landedTile.owner = player.id;     // Assign ownership
-                    addActionMessage(`Player ${player.id} purchased ${landedTile.name}. Remaining balance: ${player.money}`);
+                    addActionMessage(`${player.name} purchased ${landedTile.name}. Remaining balance: ${player.money}`);
                 } else {
                     console.log("Not enough money to purchase this property.");
                 }
@@ -479,7 +487,7 @@ function waitForBuildDecision(player, landedTile, callback) {
                     player.money -= houseCost;
                     landedTile.house++;
                     landedTile.rent_price = landedTile.rent_price * (0.5 + landedTile.house);
-                    console.log(`Player ${player.id} built a house on ${landedTile.name}. Houses: ${landedTile.house}, New Rent: ${landedTile.rent_price}`);
+                    console.log(`${player.name} built a house on ${landedTile.name}. Houses: ${landedTile.house}, New Rent: ${landedTile.rent_price}`);
                 }
                 else
                     console.log("Not enough money to build a house.");
@@ -496,7 +504,7 @@ function waitForBuildDecision(player, landedTile, callback) {
 function drawBoard() {
     if (isGameFinished(players)) {
         const winner = players.find(player => player.isActive);
-        alert(`Game over! Player ${winner.id} is the winner!`);
+        alert(`Game over! ${winner.name} is the winner!`);
         resetGame();
         return 0;
     }
@@ -601,9 +609,10 @@ canvas.addEventListener("click", function (event) {
 });
 
 function drawCurrentPlayerTurn() {
+    let player = players[currentPlayerIndex];
     ctx.fillStyle = "#FFF";
     ctx.font = "24px Arial";
-    ctx.fillText(`${currentPlayerIndex + 1} is playing...`, 350, 180);
+    ctx.fillText(`${player.name} is playing...`, 350, 180);
     ctx.font = "12px Arial";
 }
 
@@ -690,11 +699,11 @@ function resizeCanvas() {
 
 const players = [];
 
-export function init_monopoly_game(value, map_id) {
+export function init_monopoly_game(value, map_id, name) {
 
     if (players == 0) {
         for (let i = 1; i <= value; i++) {
-            players.push(new Player(i));
+            players.push(new Player(i, name[i]));
         }
         console.log(`Game started with ${value} players`);
     }
@@ -711,10 +720,11 @@ function monopoly_game() {
     drawDiceButton();
     drawActionDisplay();
     drawChancesCard();
+    drawSetMoneyButton();
     endTurn();
 }
 
-window.addEventListener('resize', resizeCanvas, false);
+// window.addEventListener('resize', resizeCanvas, false);
 
 canvas.addEventListener('mousemove', (event) => {
     if (isPurchaseWindowOpen) return;
@@ -741,6 +751,7 @@ canvas.addEventListener('mousemove', (event) => {
     drawDiceButton();
     drawActionDisplay();
     drawChancesCard();
+    drawSetMoneyButton();
 });
 
 function showTileInfo(tile) {
@@ -754,7 +765,7 @@ function showTileInfo(tile) {
     ctx.fillStyle = 'white';
     ctx.fillText(`Name: ${tile.name}`, posX + 15, posY + 25);
     if (tile.owner !== 0) {
-        ctx.fillText(`Owner: ${tile.owner}`, posX + 15, posY + 60);
+        ctx.fillText(`Owner: ${players[tile.owner - 1].name}`, posX + 15, posY + 60);
         ctx.fillText(`Houses: ${tile.house}`, posX + 150, posY + 60);
     }
     if (tile.price < 0) {
@@ -817,4 +828,49 @@ function drawImageOnCanvas(imageSrc, x, y, width, height) {
     image.onload = function () {
         ctx.drawImage(image, x, y, width, height);
     };
+}
+
+
+// Function to draw the button
+function drawSetMoneyButton() {
+    // Define the button properties
+    const buttonX = 150;
+    const buttonY = 650;
+    const buttonWidth = 200;
+    const buttonHeight = 50;
+
+    ctx.fillStyle = "#4CAF50";
+    ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
+
+    ctx.fillStyle = "#FFF";
+    ctx.font = "16px Arial";
+    ctx.fillText("Set Money", buttonX + 50, buttonY + 30);
+
+    ctx.font = "12px Arial";
+}
+
+canvas.addEventListener('click', function(event) {
+    const buttonX = 150;
+    const buttonY = 650;
+    const buttonWidth = 200;
+    const buttonHeight = 50;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Check if the click is within the button's boundaries
+    if (x >= buttonX && x <= buttonX + buttonWidth && y >= buttonY && y <= buttonY + buttonHeight) {
+        setMoneyForAllPlayers(-1500); // Set the desired amount of money
+    }
+});
+
+function setMoneyForAllPlayers(amount) {
+    players.forEach(player => {
+        player.money = amount;
+        endTurn();
+    });
 }

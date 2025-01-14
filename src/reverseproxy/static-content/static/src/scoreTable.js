@@ -51,11 +51,12 @@ export async function setMonopolyVictory(winner) {
         console.log("User does not want to keep match history")
         return;
     }
+    console.log('ICI', winner);
     const formData = new FormData();
     formData.append('user_origin', userData.username);
     formData.append('winner_username', winner.name);
     formData.append('winner_money', winner.money);
-    formData.append('winner_properties', winner.propertyOwned.size());
+    formData.append('winner_properties', winner.propertyOwned.length);
     try {
         const csrfToken = getCSRFToken('csrftoken');
         if (!csrfToken) {
@@ -189,7 +190,13 @@ export async function fetchStatistics() {
             credentials: 'include',
         });
 
+        const monop_response = await fetch(`/api/scores/monopoly_stat/?username=${encodeURIComponent(userData.username)}`, {
+            method: 'GET',
+            credentials: 'include',
+        })
+
         const data = await response.json();
+        const monop_data = await monop_response.json();
 
         const total_f = document.getElementById('total');
         const wins_f = document.getElementById('wins');
@@ -202,6 +209,15 @@ export async function fetchStatistics() {
         wins_f.innerHTML = 'WINS: ' + data.wins;
         losses_f.innerHTML = 'LOSSES: ' + data.losses;
         rate_f.innerHTML = data.rate + ' % of wins';
+
+        // edit monopoly stats
+        document.getElementById('monopoly_total').innerHTML = 'TOT: ' + monop_data.total_monopoly_games;
+        let money;
+        let estate;
+        if (monop_data.average_properties) { estate = Math.round(monop_data.average_properties); } else { estate = 0; }
+        if (monop_data.average_money) { money = Math.round(monop_data.average_money); } else { money = 0; }
+        document.getElementById('monopoly_avg_money').innerHTML = 'MONEY: $' + money + ' avg';
+        document.getElementById('monopoly_avg_properties').innerHTML = 'REAL ESTATE: ' + estate + ' avg';
 
     } catch (error) {
         console.error('Error fetching statistics:', error);
@@ -249,12 +265,26 @@ export async function fetchFriendStatistics(username) {
             method: 'GET',
             credentials: 'include',
         });
+
+        const monop_response = await fetch(`/api/scores/monopoly_stat/?username=${encodeURIComponent(username)}`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+
         const data = await response.json();
+        const monop_data = await monop_response.json();
+
+        let money;
+        let estate;
+        if (monop_data.average_properties) { estate = Math.round(monop_data.average_properties); } else { estate = 0; }
+        if (monop_data.average_money) { money = Math.round(monop_data.average_money); } else { money = 0; }
 
         let StatList = `<strong>${username} stats vs AI:</strong><br>
             ${data.total_matches} games played, ${data.rate} % of wins
+            <br><strong>${username} monopoly stats:</strong><br>
+            ${monop_data.total_monopoly_games} games played, $${money} avg,<br>
+            ${estate} estate avg
         `;
-
         return StatList;
 
     } catch (error) {
