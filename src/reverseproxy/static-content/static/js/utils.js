@@ -36,6 +36,12 @@ export function setACookie(name, value, days) {
     document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
 }
 
+
+export function deleteACookie(name) {
+    console.log('deleting cookie');
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/; SameSite=Lax';
+}
+
 export function getACookie(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
