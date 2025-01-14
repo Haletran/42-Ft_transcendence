@@ -14,7 +14,7 @@ export class test extends Page {
                 <p class="lead">
                     The page you’re looking for doesn’t exist.
                 </p>
-                <a href="/" class="btn btn-primary">Go Home</a>
+                <href="/" data-link="/" class="btn btn-primary">Go Home</a>
                 </div>
             </div>
         </div>
