@@ -94,7 +94,10 @@ export async function fetchMatchHistory() {
             credentials: 'include',
         });
 
-        const data = await response.json();
+        let data = await response.json();
+        if (Array.isArray(data)) {
+            data = data.reverse();
+        }
 
         const MatchHistoryList = document.getElementById('match-history-list');
         MatchHistoryList.innerHTML = '';
@@ -103,19 +106,26 @@ export async function fetchMatchHistory() {
         const itemsPerPage = 3;
         const totalPages = Math.ceil(data.length / itemsPerPage);
 
+        const nb = document.getElementById('nb');
+        nb.innerHTML = `Match History (${data.length} games)`;
+        const paginationContainer = document.createElement('div');
+        paginationContainer.classList.add('pagination-container');
+        MatchHistoryList.appendChild(paginationContainer);
+
+
         function renderPage(page) {
             MatchHistoryList.innerHTML = '';
             const start = (page - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const pageItems = data.slice(start, end);
 
-            pageItems.reverse().forEach(match => {
+            pageItems.forEach(match => {
                 const matchItem = document.createElement('a');
                 matchItem.classList.add('list-group-item');
                 if (match.is_pong === true) {
                     matchItem.innerHTML = `
                 <h5 class="mb-1">Pong Game: ${match.player1_username} vs ${match.player2_username}</h5>
-                <p class="mb-1">Winner: ${match.result}</p>
+                <p class="mb-1">Winner: <strong>${match.result}</strong></p>
                 <small>Score: ${match.player1_score} - ${match.player2_score}</small>
                 <small>AI: ${match.is_ai} Tournament: ${match.is_tournament}</small>
                 <br>

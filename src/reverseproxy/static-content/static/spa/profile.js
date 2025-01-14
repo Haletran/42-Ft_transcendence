@@ -118,7 +118,7 @@ export class Profile extends Page {
                                 </div>
                             </div>
                         </div>
-                        <h5 class="card-title">Match History</h5>
+                        <h5 id="nb" class="card-title"></h5>
                         <div id="match-history-list" class="list-group">
                             <!-- Dynamic content will be added here -->
                         </div>
