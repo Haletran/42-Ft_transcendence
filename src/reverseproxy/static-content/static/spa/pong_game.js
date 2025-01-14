@@ -22,6 +22,8 @@ const coutdownSound = new Audio('/static/imgs/countdown.mp3');
 const victorySound = new Audio('/static/imgs/victory.mp3');
 const pointSound = new Audio('/static/imgs/point.mp3');
 let pauseButtonHandler = null;
+const powerUpImage = new Image();
+powerUpImage.src = '/static/imgs/powerup.png';
 
 // VARIABLES
 canvas.width = innerWidth - 400
@@ -376,19 +378,18 @@ function initGame(gamemode) {
 
 class PowerUp {
     constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+        const margin = 50;
+        this.x = margin + Math.random() * (canvas.width - 2 * margin);
+        this.y = margin + Math.random() * (canvas.height - 2 * margin);
         this.size = 50;
         this.color = 'red';
         this.isVisible = true;
     }
 
     draw() {
-        const img = new Image();
-        img.src = '/static/imgs/powerup.png';
-        img.onload = () => {
-            ctx.drawImage(img, this.x, this.y, this.size, this.size);
-        };
+        if (this.isVisible && powerUpImage.complete) {
+            ctx.drawImage(powerUpImage, this.x, this.y, this.size, this.size);
+        }
     }
     collision(ball) {
         const distX = Math.abs(ball.x - this.x - this.size / 2);
@@ -406,6 +407,9 @@ class PowerUp {
         const dx = distX - this.size / 2;
         const dy = distY - this.size / 2;
         return (dx * dx + dy * dy <= (ball.radius * ball.radius));
+    }
+    update() {
+        this.draw();
     }
 }
 
@@ -653,7 +657,7 @@ async function animate(pong, resolve) {
     game.player1.update();
     game.player2.update();
     game.ball.update();
-    powerUp.draw();
+    powerUp.update();
     animationFrameId = requestAnimationFrame(() => animate(pong, resolve));
 }
 
