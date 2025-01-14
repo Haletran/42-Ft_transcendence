@@ -67,7 +67,7 @@ export class Privacy extends Page {
             <div class="card">
             <div class="card-body">
             <h3 class="card-title">Terms and Conditions</h3>
-            <p class="text-muted">Effective date: December 2025</p>
+            <p class="text-muted">Effective date: December 2024</p>
             <p class="card-text">
                 Welcome to ft_transcendence. These terms and conditions govern your use of our website, services, and any related content. By accessing or using ft_transcendence, you agree to comply with and be bound by these terms.
             </p>
