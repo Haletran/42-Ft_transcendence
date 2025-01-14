@@ -1,6 +1,7 @@
 import { getCSRFToken } from './csrf.js';
 import { closeWebSocket } from '../spa/login_base.js';
 import { router } from '../app.js';
+import { deleteACookie } from '../js/utils.js';
 
 export function logoutUser() {
 
@@ -20,13 +21,8 @@ export function logoutUser() {
         .then((response) => {
             if (response.ok) {
                 closeWebSocket();
-                document.cookie.split(";").forEach((cookie) => {
-                    if (!cookie.trim().startsWith('csrftoken=')) {
-                        document.cookie = cookie
-                            .replace(/^ +/, "")
-                            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                    }
-                });
+                deleteACookie('game_running');
+                deleteACookie('credits');
                 localStorage.clear();
                 console.log('Successfully logged out');
             } else {

@@ -286,12 +286,12 @@ export class Pong extends Page {
                             player1 = player1.trim() || 'player1';
                             player2 = player2.trim() || 'player2';
 
-			                if (player1.search(' ') != -1 || player2.search(' ') != -1 || player2.search('\t') != -1) {
-			                	alert("no space allowed in fields");
+                            if (player1.search(' ') != -1 || player2.search(' ') != -1 || player2.search('\t') != -1) {
+                                alert("no space allowed in fields");
                                 document.getElementById('player1name').value = "";
                                 document.getElementById('player2name').value = "";
                                 modal.hide();
-			                }
+                            }
                             else if (player1.length > 10 || player2.length > 10) {
                                 alert("display name is 10 char max");
                                 document.getElementById('player1name').value = "";

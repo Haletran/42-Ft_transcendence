@@ -1,4 +1,5 @@
 import { checkUserAuthentification, isUserLoggedIn } from "../app.js";
+
 export class Router {
 
 	constructor(routes) {

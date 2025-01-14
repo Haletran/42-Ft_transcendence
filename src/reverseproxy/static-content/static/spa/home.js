@@ -71,7 +71,7 @@ export class HomePage extends Page {
         fetchMinInfo();
         isUserOnline();
         super.render();
-        subscribeToProfilePicture((profilePictureUrl) => {
+        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
