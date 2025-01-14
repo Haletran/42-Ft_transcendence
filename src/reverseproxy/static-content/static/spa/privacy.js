@@ -4,7 +4,7 @@ import { Page } from '../src/pages.js';
 import { logoutUser } from "../src/logout.js";
 import { getCSRFToken } from "../src/csrf.js";
 import { deleteAccount } from "../src/logout.js";
-import { unload } from '../js/utils.js';
+import { unload, showToast } from '../js/utils.js';
 import { router, isUserLoggedIn } from '../app.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
@@ -140,6 +140,9 @@ export class Privacy extends Page {
             </div>
             </div>
         </div>
+            <div aria-live="polite" aria-atomic="true" class="position-relative">
+                <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+            </div>
         </div>
         <br>
          `;
@@ -159,7 +162,6 @@ export class Privacy extends Page {
             if (profilePic) profilePic.src = profilePictureUrl;
         });
 
-        // update checkboxes value
         const userData = await getUserInfos();
         userData.match_history == true ? document.getElementById('matchHistory').checked = false : document.getElementById('matchHistory').checked = true;
         userData.display_friends == true ? document.getElementById('displayFriends').checked = false : document.getElementById('displayFriends').checked = true;
@@ -195,8 +197,6 @@ export class Privacy extends Page {
                         console.error('CSRF token is missing!');
                     }
 
-                    // Send data to the backend
-                    console.log('about to go back to default profile picture');
                     const response = await fetch('/api/credentials/update_profile/', {
                         method: 'POST',
                         headers: { 'X-CSRFToken': csrfToken, },
@@ -206,14 +206,14 @@ export class Privacy extends Page {
 
                     if (response.ok) {
                         const result = await response.json();
-                        console.log('Edit successful:', result);
                         this.render();
+                        showToast('Profile picture updated successfully', 'success');
                     } else {
                         const error = await response.json();
-                        console.error('Edit failed:', error);
+                        showToast('Edit failed: ' + error.message, 'error');
                     }
                 } catch (error) {
-                    console.error('Error:', error);
+                    showToast('An error occurred: ' + error.message, 'error');
                     alert('An error occurred: ' + error.message);
                 }
             });
@@ -248,14 +248,14 @@ export class Privacy extends Page {
 
                     const data = await response.json();
                     if (response.ok) {
-                        console.log("Match history cleared");
+                        showToast('Match history cleared successfully', 'success');
                     }
                     else {
-                        console.error('Error when clearing history:', data);
+                        showToast('Match history clear failed: ' + data.message, 'error');
                     }
 
                 } catch (error) {
-                    console.error('Error:', error);
+                    showToast('An error occurred: ' + error.message, 'error');
                     alert('An error occurred: ' + error.message);
                 }
 
@@ -294,7 +294,6 @@ export class Privacy extends Page {
             e.preventDefault();
 
             const formData = new FormData();
-            // console.log('display_friends: ', userData.display_friends, ' match_history: ', userData.match_history);
             formData.append('matchHistory', matchHistoryBOOL);
             formData.append('friendsDisplay', friendsBOOL);
             try {
@@ -314,15 +313,16 @@ export class Privacy extends Page {
 
                 if (response.ok) {
                     const result = await response.json();
-                    console.log('Privacy edit successful:', result);
                     this.render();
+                    showToast('Privacy settings updated successfully', 'success');
                 } else {
                     const error = await response.json();
+                    showToast('Privacy edit failed: ' + error.message, 'error');
                     console.error('Privacy edit failed:', error);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred: ' + error.message);
+                showToast('An error occurred: ' + error.message, 'error');
             }
         });
 

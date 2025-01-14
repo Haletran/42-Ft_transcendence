@@ -5,7 +5,7 @@ import { logoutUser } from '../src/logout.js';
 import { router, isUserLoggedIn } from '../app.js';
 import { fetchFriendHistory, fetchFriendStatistics } from '../src/scoreTable.js';
 import { isFriendOnline, isUserOnline } from './home.js';
-import { unload } from '../js/utils.js';
+import { unload, showToast } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
@@ -166,30 +166,6 @@ export class Friends extends Page {
 
                 const usernameOrEmail = document.getElementById('friend-username').value;
 
-                // Function to display a toast message
-                const showToast = (message, type = 'info') => {
-                    const toastContainer = document.getElementById('toast-container');
-                    const toastId = `toast-${Date.now()}`;
-                    const toastHTML = `
-                        <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
-                            <div class="d-flex">
-                                <div class="toast-body">${message}</div>
-                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
-                        </div>
-                    `;
-                    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-
-                    const toastElement = document.getElementById(toastId);
-                    const toast = new bootstrap.Toast(toastElement);
-                    toast.show();
-
-                    toastElement.addEventListener('hidden.bs.toast', () => {
-                        toastElement.remove();
-                    });
-                };
-
-
                 if (usernameOrEmail === currentUserEmail || usernameOrEmail === currentUserName) {
                     showToast('You cannot add yourself as a friend.', 'danger');
                     return;
@@ -260,8 +236,8 @@ export class Friends extends Page {
 
                         const addFriendData = await addFriendResponse.json();
                         if (addFriendResponse.ok) {
-                            showToast('Friend invitation sent successfully!', 'success');
                             router.goTo('/friends');
+                            showToast('Friend invitation sent successfully!', 'success');
                         } else {
                             showToast(addFriendData.error || 'Failed to add friend.', 'danger');
                         }
@@ -421,7 +397,7 @@ async function handleInvitationResponse(invitationId, accept, currentUserId) {
             }),
         });
         if (!response.ok) {
-            const errorMessage = `Failed to respond to invitation: ${response.statusText} (Status: ${response.status})`;
+            showToast('Failed to respond to invitation', 'danger');
             throw new Error(errorMessage);
         }
         const data = await response.json();

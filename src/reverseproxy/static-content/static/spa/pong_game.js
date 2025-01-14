@@ -13,6 +13,7 @@ if (!canvas) {
     canvas.classList.add('position-absolute', 'top-50', 'start-50', 'translate-middle');
     gameDiv.appendChild(canvas);
 }
+
 const ctx = canvas.getContext("2d");
 let game = 0;
 const collisionSound_PONG = new Audio('/static/imgs/pong.mp3');
@@ -20,14 +21,14 @@ const collisionSound_PING = new Audio('/static/imgs/ping.mp3');
 const coutdownSound = new Audio('/static/imgs/countdown.mp3');
 const victorySound = new Audio('/static/imgs/victory.mp3');
 const pointSound = new Audio('/static/imgs/point.mp3');
+let pauseButtonHandler = null;
 
 // VARIABLES
 canvas.width = innerWidth - 400
 canvas.height = innerHeight - 200
 let keys = {};
 let first_hit = 0;
-let animationFrameId;
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+let animationFrameId = 0;
 const hitEffect = () => {
     ctx.save();
     ctx.fillStyle = 'red';
@@ -586,55 +587,74 @@ function linkPause(pong, resolve) {
     if (getACookie('game_running') === 'false') {
         return;
     }
-    let value = 0;
-    const pauseButton = document.getElementById('pause_button')
+    const pauseButton = document.getElementById('pause_button');
     const pause = document.querySelector('.bi-pause-fill');
-    pauseButton.addEventListener('click', () => {
-        if (value % 2 == 0) {
+    if (pauseButtonHandler) {
+        pauseButton.removeEventListener('click', pauseButtonHandler);
+    }
+    let isPaused = false;
+    pauseButtonHandler = () => {
+        isPaused = !isPaused;
+
+        if (isPaused) {
             pause.classList.remove('bi-pause-fill');
             pause.classList.add('bi-play-fill');
-            cancelAnimationFrame(animationFrameId)
-        }
-        else {
+            cancelAnimationFrame(animationFrameId);
+        } else {
             pause.classList.remove('bi-play-fill');
             pause.classList.add('bi-pause-fill');
-            animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
+            animationFrameId = requestAnimationFrame(() => animate(pong, resolve));
         }
-        value += 1
-    })
+    };
+    pauseButton.addEventListener('click', pauseButtonHandler);
 }
 
 
 
 async function animate(pong, resolve) {
     if (getACookie('game_running') === 'false') {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
         return;
     }
 
     if (GameEnd()) {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+
         const scores = { p1: game.player1.score, p2: game.player2.score };
         set1v1victory(game.player1, game.player2, scores, game.player2.isAi, false);
         const winner = getWinner(game.player1, game.player2);
-        game.player1.reset()
+        game.player1.reset();
         game.player2.reset();
-        console.log(winner, "won!");
         playSound(victorySound);
         alert(`${winner} won!`);
-        cancelAnimationFrame(animationFrameId);
         clearCanvas();
         hideElementsByClass('game');
         showElementsByClass('menu', 'flex');
         addClassToElementsByClass('menu', 'center');
+
+        if (pauseButtonHandler) {
+            const pauseButton = document.getElementById('pause_button');
+            pauseButton.removeEventListener('click', pauseButtonHandler);
+            pauseButtonHandler = null;
+        }
+
         resolve(winner);
         return;
     }
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    game.table.update()
-    game.player1.update()
-    game.player2.update()
-    game.ball.update()
-    powerUp.draw()
-    animationFrameId = requestAnimationFrame(() => animate(pong, resolve))
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    game.table.update();
+    game.player1.update();
+    game.player2.update();
+    game.ball.update();
+    powerUp.draw();
+    animationFrameId = requestAnimationFrame(() => animate(pong, resolve));
 }
 
 // UTILS
@@ -650,12 +670,6 @@ function checkKeyUp(e) {
     keys[e.keyCode] = false;
 }
 
-async function pauseGame(value) {
-    setACookie('game_running', 'false', 1);
-    await sleep(value);
-    setACookie('game_running', 'true', 1);
-}
-
 function playSound(sound) {
     sound.currentTime = 0;
     getACookie('game_running') === 'true' ? sound.play() : sound.pause();
@@ -665,8 +679,20 @@ window.addEventListener('keydown', checkKeyDown, false);
 window.addEventListener('keyup', checkKeyUp, false);
 
 export function startGame(gamemode, playerNames) {
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+
+    if (pauseButtonHandler) {
+        const pauseButton = document.getElementById('pause_button');
+        pauseButton.removeEventListener('click', pauseButtonHandler);
+        pauseButtonHandler = null;
+    }
+
     const randomNumber = Math.floor(Math.random() * 100);
     console.log('Starting game:', gamemode, " seed :", randomNumber);
+
     if (getACookie('game_running') === 'true') {
         playSound(coutdownSound);
         return new Promise((resolve) => {
@@ -681,13 +707,7 @@ export function startGame(gamemode, playerNames) {
                 i++;
                 if (i > 4) {
                     clearInterval(interval);
-                    if (gamemode === 'pvp') {
-                        const pong = new Pong(gamemode);
-                        game = pong.game;
-                        linkPause(pong, resolve);
-                        animate(pong, resolve);
-                    }
-                    else if (gamemode === 'vsa') {
+                    if (gamemode === 'pvp' || gamemode === 'vsa') {
                         const pong = new Pong(gamemode);
                         game = pong.game;
                         linkPause(pong, resolve);
@@ -704,7 +724,6 @@ export function startGame(gamemode, playerNames) {
         });
     }
 }
-
 export function startTournament(playerNames, resolve) {
     const tournament = new Tournament(playerNames);
     tournament.startTournament(resolve);

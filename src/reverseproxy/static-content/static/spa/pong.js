@@ -278,7 +278,6 @@ export class Pong extends Page {
                         modal.show();
 
                         const play = document.getElementById('Start1v1');
-                        // Remove the play button cloning
                         play.addEventListener('click', async () => {
                             let player1 = document.getElementById('player1name').value;
                             let player2 = document.getElementById('player2name').value;
@@ -308,7 +307,7 @@ export class Pong extends Page {
                                     gameInProgress = false;
                                 }
                             }
-                        }, { once: true }); // Add once: true to prevent multiple listeners
+                        }, { once: true });
                     } else if (buttonId === 'start_button2' || buttonId === 'tournament_button') {
                         gameInProgress = true;
                         try {
