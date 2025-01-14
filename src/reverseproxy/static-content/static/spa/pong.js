@@ -1,5 +1,5 @@
 import { Page } from '../src/pages.js';
-import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, setACookie } from '../js/utils.js';
+import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, unload, setACookie } from '../js/utils.js';
 import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
@@ -165,7 +165,7 @@ export class Pong extends Page {
             router.goTo('/login_base');
             return;
         }
-        setACookie('game_running', 'false', 1);
+        unload();
         fetchMinInfo();
         startWebSocket();
         super.render();

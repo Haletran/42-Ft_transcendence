@@ -1,12 +1,11 @@
 import { Page } from '../src/pages.js';
-import { Router } from '../src/router.js';
 import { router, isUserLoggedIn } from '../app.js';
 import { fetchSettingsInfo, getUserInfos } from '../src/fetchUser.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { setupProfilePictureSelection } from '../js/event.js';
 import { logoutUser } from '../src/logout.js';
 import { isUserOnline } from './home.js';
-import { setACookie } from '../js/utils.js';
+import { unload } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
@@ -118,7 +117,7 @@ export class Settings extends Page {
             router.goTo('/login_base');
         }
         fetchMinInfo();
-        setACookie('game_running', 'false', 1);
+        unload();
         fetchSettingsInfo();
         isUserOnline();
         super.render();
@@ -156,16 +155,16 @@ export class Settings extends Page {
             console.log(_42auth);
             if (_42auth.forty_two) {
                 alert("42 users cannot update their profile.");
-                return ;
+                return;
             }
 
             // check for whitespaces in username and email
             username = username.trim();
-			email = email.trim();
-			if (username.search(' ') != -1 || email.search(' ') != -1) {
-				alert("No space allowed in fields");
-				return;
-			}
+            email = email.trim();
+            if (username.search(' ') != -1 || email.search(' ') != -1) {
+                alert("No space allowed in fields");
+                return;
+            }
 
             // Prepare the data to send
             const formData = new FormData();
@@ -182,10 +181,10 @@ export class Settings extends Page {
                 }
                 if (profileInput.files[0].size > 1024 * 1024) {
                     alert('File size is too big');
-                    return ;
+                    return;
                 }
                 const isValid = await checkImageType(profileInput.files[0]);
-                if (isValid === false) { return ; }
+                if (isValid === false) { return; }
                 formData.append('profile_picture', profileInput.files[0]);
             }
 
@@ -219,8 +218,8 @@ export class Settings extends Page {
                     alert('Edit failed: ' + error.error);
                 }
             } catch (error) {
-			    alert('Error:' + error.error);
-			}
+                alert('Error:' + error.error);
+            }
         });
 
     }
@@ -234,11 +233,11 @@ export function checkImageType(file) {
             const imageUrl = URL.createObjectURL(file);
             image.src = imageUrl;
 
-            image.onload = function() {
+            image.onload = function () {
                 console.log('Valid image');
                 resolve(true);
             }
-            image.onerror = function() {
+            image.onerror = function () {
                 alert('Invalid image');
                 resolve(false);
             }

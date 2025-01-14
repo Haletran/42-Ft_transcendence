@@ -2,10 +2,9 @@ import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { router } from '../app.js';
 import { logoutUser } from '../src/logout.js';
-import { startWebSocket } from './login_base.js';
 import { isUserLoggedIn } from '../app.js';
 import { checkImageType } from './settings.js';
-import { setACookie } from '../js/utils.js';
+import { unload } from '../js/utils.js';
 
 export class RegisterPage extends Page {
 	constructor() {
@@ -138,7 +137,7 @@ export class RegisterPage extends Page {
 		const logBOOL = await isUserLoggedIn();
 		if (logBOOL == true)
 			logoutUser();
-		setACookie('game_running', 'false', 1);
+		unload();
 		super.render();
 		this.attachFormListener();
 	}

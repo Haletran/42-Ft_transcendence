@@ -50,3 +50,8 @@ export function getACookie(name) {
 export function redirectTo(url) {
     window.location.href = url;
 }
+
+export function unload() {
+    setACookie('game_running', 'false', 1);
+    setACookie('credits', 'false', 1);
+}

@@ -2,9 +2,8 @@ import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { router, get42 } from '../app.js';
 import { logoutUser } from '../src/logout.js';
-import { getUserInfos } from '../src/fetchUser.js';
 import { isUserLoggedIn } from '../app.js';
-import { setACookie } from '../js/utils.js';
+import { unload } from '../js/utils.js';
 
 
 export class loginBasePage extends Page {
@@ -72,6 +71,7 @@ export class loginBasePage extends Page {
 				Login
 			  </button>
 			  <button id="42_oauth"
+			  type="button"
 				class="btn btn-custom btn-42 d-flex align-items-center justify-content-center gap-1"
 			  >
 				Login with
@@ -91,7 +91,7 @@ export class loginBasePage extends Page {
 		const logBOOL = await isUserLoggedIn();
 		if (logBOOL == true)
 			logoutUser();
-		setACookie('game_running', 'false', 1);
+		unload();
 		super.render();
 		this.attachFormLoginListener();
 		this.loading_42();

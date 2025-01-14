@@ -2,7 +2,7 @@ import { Page } from '../src/pages.js';
 import { shoot } from '../src/particles.js';
 import { Router } from '../src/router.js';
 import { isUserLoggedIn } from '../app.js';
-import { setACookie } from '../js/utils.js';
+import { getACookie, setACookie } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
@@ -77,13 +77,13 @@ export class Credit extends Page {
         `;
     }
     async render() {
-        let gameRunning = true;
         const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             Router.goTo('/login_base');
             return;
         }
         setACookie('game_running', 'false', 1);
+        setACookie('credits', 'true', 1);
         fetchMinInfo();
         subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
@@ -91,7 +91,7 @@ export class Credit extends Page {
         });
         super.render();
         this.event();
-        this.breakout(gameRunning);
+        this.breakout();
     }
 
 
@@ -103,8 +103,11 @@ export class Credit extends Page {
             });
         }
     }
-    breakout(gameRunning) {
+    breakout() {
         const canvas = document.getElementById('credits_canvas');
+        if (!canvas) {
+            return;
+        }
         const ctx = canvas.getContext('2d');
 
         let score = 0;
@@ -112,6 +115,7 @@ export class Credit extends Page {
         const brickRowCount = 7;
         const brickColumnCount = 4;
         const delay = 500;
+        let start = false;
 
         const ball = {
             x: canvas.width / 2,
@@ -172,10 +176,14 @@ export class Credit extends Page {
             ctx.font = '20px Arial';
             if (score === brickRowCount * brickColumnCount) {
                 ctx.fillText('YOU WON!', canvas.width / 2 - 50, canvas.height / 2);
-                document.querySelector('.row').classList.remove('d-none');
-                document.getElementById('credits_canvas').classList.add('d-none');
+                const rowElement = document.querySelector('.row');
+                const canvasElement = document.getElementById('credits_canvas');
+                if (rowElement && canvasElement) {
+                    rowElement.classList.remove('d-none');
+                    canvasElement.classList.add('d-none');
+                }
                 shoot(4);
-                gameRunning = false;
+                setACookie('credits', 'false', 1);
             }
         }
 
@@ -291,17 +299,35 @@ export class Credit extends Page {
             drawBricks();
         }
 
+        function startScreen() {
+            ctx.font = '20px Arial';
+            ctx.fillStyle = 'white';
+            ctx.fillText('Press Enter to start', canvas.width / 2 - 100, canvas.height / 2);
+        }
+
         function update() {
-            if (gameRunning === false) {
+            if (getACookie('credits') == 'false') {
                 return;
             }
-            movePaddle();
-            moveBall();
-            draw();
-            requestAnimationFrame(update);
+            if (start) {
+                console.log(getACookie('credits'));
+                movePaddle();
+                moveBall();
+                draw();
+                requestAnimationFrame(update);
+            } else {
+                startScreen();
+            }
         }
 
         update();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                start = true;
+                requestAnimationFrame(update);
+            }
+        });
 
         function keyDown(e) {
             if (e.key === 'Right' || e.key === 'ArrowRight') {

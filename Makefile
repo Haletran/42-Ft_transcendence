@@ -1,5 +1,6 @@
 COMPOSE_FILE:=./docker-compose.yml
 ENV_VAR:=0
+REPLACE:=0
 
 all: banner build
 
@@ -13,6 +14,9 @@ build:
 	@if [ ! -d /src/crypto/node_modules ]; then \
 		cd src/crypto ;\
 		npm install --legacy-peer-deps > /dev/null;\
+	fi
+	@if [ $(REPLACE) -eq 1 ]; then \
+		bash replace.sh; \
 	fi
 	@docker compose -f ${COMPOSE_FILE} up --build --remove-orphans
 
@@ -31,15 +35,6 @@ down:
 stop:
 	@echo "Down the project"
 	-docker compose -f ${COMPOSE_FILE} stop
-
-
-reload:
-	@echo "Reloading a specific container"
-	@docker ps --format "table {{.Names}}\t{{.Status}}"
-	@echo -n "Enter the container name to reload: "; \
-	read CONTAINER_NAME; \
-	docker restart $$CONTAINER_NAME
-
 
 reset: down
 	-docker volume rm $(docker volume ls -q)
@@ -61,10 +56,7 @@ contract:
 replace:
 	@bash replace.sh
 
-re: reset all
-
-subject:
-	@xdg-open https://cdn.intra.42.fr/pdf/pdf/133398/en.subject.pdf </dev/null >/dev/null 2>&1
+re: hard-reset all
 
 banner:
 	@clear
