@@ -1,12 +1,11 @@
 import { fetchMinInfo2 } from '../src/fetchUser.js';
-import { updateProfilePicture } from '../src/fetchUser.js';
 import { Page } from '../src/pages.js';
 import { getCSRFToken } from '../src/csrf.js';
 import { logoutUser } from '../src/logout.js';
 import { router, isUserLoggedIn } from '../app.js';
 import { fetchFriendHistory, fetchFriendStatistics } from '../src/scoreTable.js';
 import { isFriendOnline, isUserOnline } from './home.js';
-import { setACookie } from '../js/utils.js';
+import { unload } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
@@ -131,7 +130,7 @@ export class Friends extends Page {
             router.goTo('/login_base');
             return;
         }
-        setACookie('game_running', 'false', 1);
+        unload();
         fetchMinInfo();
         isUserOnline();
         super.render();

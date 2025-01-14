@@ -3,7 +3,7 @@ import { Page } from '../src/pages.js';
 import { fetchMatchHistory, fetchStatistics } from '../src/scoreTable.js';
 import { isUserOnline } from './home.js';
 import { logoutUser } from '../src/logout.js';
-import { setACookie } from '../js/utils.js';
+import { unload } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 import { router, isUserLoggedIn } from '../app.js';
 
@@ -134,7 +134,7 @@ export class Profile extends Page {
         if (loggedIn == false) {
             router.goTo('/login_base');
         }
-        setACookie('game_running', 'false', 1);
+        unload();
         fetchProfileInfo();
         fetchMinInfo();
         fetchStatistics();

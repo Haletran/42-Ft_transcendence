@@ -1,24 +1,19 @@
-# Use an official Node.js image as a base
 FROM node:18
 
-# Set the working directory in the container
 WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get install -y vim
+RUN apt-get update
 
-# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install project dependencies
 RUN npm install ethers axios sync-request dotenv --legacy-peer-deps
 
-# Create the Hardhat config directory and set permissions
 RUN mkdir -p /root/.config/hardhat-nodejs && chmod -R 777 /root/.config
 
-# Expose a port if your Hardhat project requires one
 EXPOSE 8545
 
 COPY entrypoint.sh /entrypoint.sh
+
 RUN chmod +x /entrypoint.sh
 
 CMD ["/entrypoint.sh"]

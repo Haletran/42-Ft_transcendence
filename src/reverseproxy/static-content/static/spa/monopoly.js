@@ -4,6 +4,7 @@ import { addClassToElementsByClass, hideElementsByClass, showElementsByClass, se
 import { startWebSocket } from './login_base.js';
 import { logoutUser } from '../src/logout.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
+import { getProfileUsername } from '../src/fetchUser.js';
 
 
 export class Monopoly extends Page {

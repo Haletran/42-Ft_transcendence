@@ -1,5 +1,5 @@
 import { Page } from '../src/pages.js';
-import { setACookie } from '../js/utils.js';
+import { setACookie, unload } from '../js/utils.js';
 
 export class test extends Page {
     constructor() {
@@ -21,6 +21,7 @@ export class test extends Page {
         `;
     }
     async render() {
+        unload();
         setACookie('game_running', 'false', 1);
         super.render();
     }

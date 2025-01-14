@@ -1,7 +1,7 @@
 import { Page } from '../src/pages.js';
 import { logoutUser } from '../src/logout.js';
 import { startWebSocket } from './login_base.js';
-import { getACookie, setACookie } from '../js/utils.js';
+import { unload } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 import { isUserLoggedIn, router } from '../app.js';
 
@@ -62,16 +62,16 @@ export class HomePage extends Page {
     }
 
     async render() {
-        const loggedIn = await isUserLoggedIn();
+        const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             router.goTo('/login_base');
             return;
         }
-        setACookie('game_running', 'false', 1);
+        unload();
         fetchMinInfo();
         isUserOnline();
         super.render();
-        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+        subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
