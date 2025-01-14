@@ -551,7 +551,7 @@ function drawBoard() {
                 new Tile("Go to Minishell", "jail", startX + tileSize * 7, startY + boardSize - cornerSize - 7 * tileSize, cornerSize, cornerSize, "#ddd", 0, 0), // Tile 22
                 new Tile("42 Clermont-Ferrand", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 6 * tileSize, tileSize, cornerSize, "#fff", -350, -150), // Tile 23
                 new Tile("Chance", "chance", startX + tileSize * 7, startY + boardSize - cornerSize - 5 * tileSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 24
-                new Tile("42 Angouleme", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 4 * tileSize, tileSize, cornerSize, "#fff", -350, -150, "/static/imgs/42_angouleme.jpg"), // Tile 25
+                new Tile("42 Angouleme", 7, startX + tileSize * 7, startY + boardSize - cornerSize - 4 * tileSize, tileSize, cornerSize, "#fff", -350, -150), // Tile 25
                 new Tile("Special Tile", "special", startX + tileSize * 7, startY + boardSize - cornerSize - 3 * tileSize, tileSize, cornerSize, "#ffcc00", 0, 0), // Tile 26
                 new Tile("Event", "event", startX + tileSize * 7, startY + boardSize - cornerSize - 2 * tileSize, cornerSize, tileSize, "#ffcc00", 0, 0), // Tile 27
                 new Tile("42 Paris", 8, startX + tileSize * 7, startY + boardSize - cornerSize - tileSize, tileSize, cornerSize, "#fff", -400, -200, "/static/imgs/42.png"), // Tile 28
@@ -693,8 +693,10 @@ function clearCanvas() {
 function resizeCanvas() {
     clearCanvas();
     const canvas = document.getElementById('monopoly_canvas');
-    canvas.width = window.innerWidth - 50;
-    canvas.height = window.innerHeight - 100;
+    if (canvas) {
+        canvas.width = window.innerWidth - 50;
+        canvas.height = window.innerHeight - 100;
+    }
     monopoly_game();
 }
 

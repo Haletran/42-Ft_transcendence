@@ -101,7 +101,7 @@ export class RegisterPage extends Page {
 			<div id="terms-modal" class="terms-modal">
 			  <div>
 			    <h2>Terms and Conditions</h2>
-			    <p>Effective date: december 2025<br><br>
+			    <p>Effective date: december 2024<br><br>
 					Welcome to ft_transcendence. These terms and conditions govern your use of our Website, services, and any related content. By accessing or using ft_transcendence, you agree to comply with a be bound by these Terms.<br>
 					To access the website, play the two games available, send friend requests and see your results history, you are required to create an account.<
 					To do so, you need to agree to provide a username and an email (no emails will be sent), and optionally a profile picture. Other users will be able to send you friend request either using your username or your email.
