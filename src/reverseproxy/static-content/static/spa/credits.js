@@ -76,7 +76,7 @@ export class Credit extends Page {
         </div>
         `;
     }
-    async render() {
+    render() {
         const loggedIn = isUserLoggedIn();
         if (loggedIn == false) {
             Router.goTo('/login_base');
@@ -85,25 +85,23 @@ export class Credit extends Page {
         setACookie('game_running', 'false', 1);
         setACookie('credits', 'true', 1);
         fetchMinInfo();
-        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
+        subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
-        super.render();
         this.event();
         this.breakout();
-
-        const logoutButton = document.getElementById('logout-butt');
-        if (logoutButton) {
-            logoutButton.addEventListener('click', function (event) {
-                unsubscribe();
-                logoutUser();
-            });
-        }
     }
 
 
     event() {
+        const logoutButton = document.getElementById('logout-butt');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function (event) {
+                logoutUser();
+            });
+        }
+
         const maker = ["dboire", "aboulore", "bapasqui"];
         for (let i = 0; i < maker.length; i++) {
             document.getElementById(maker[i]).addEventListener('click', () => {
@@ -113,9 +111,6 @@ export class Credit extends Page {
     }
     breakout() {
         const canvas = document.getElementById('credits_canvas');
-        if (!canvas) {
-            return;
-        }
         const ctx = canvas.getContext('2d');
 
         let score = 0;

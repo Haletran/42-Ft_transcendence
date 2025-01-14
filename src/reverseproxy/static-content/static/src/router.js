@@ -6,8 +6,7 @@ export class Router {
 		this.routes = routes;
 		this.authPath = null;
 		window.addEventListener('popstate', () => {
-			console.log('back and forth');
-			this.navigate(window.location.pathname); // back/forward arrows
+			this.navigate(window.location.pathname);
 		});
 	}
 

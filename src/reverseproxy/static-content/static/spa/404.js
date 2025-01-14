@@ -21,8 +21,12 @@ export class test extends Page {
         `;
     }
     async render() {
+        const loggedIn = await isUserLoggedIn();
+        if (loggedIn == false) {
+            Router.goTo('/login_base');
+            return;
+        }
         unload();
-        setACookie('game_running', 'false', 1);
         super.render();
     }
 }
