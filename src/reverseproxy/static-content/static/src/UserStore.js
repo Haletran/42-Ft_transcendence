@@ -1,4 +1,5 @@
-// UserStore.js
+import { router } from '../app.js';
+
 class UserStore {
     constructor() {
         this._userData = null;

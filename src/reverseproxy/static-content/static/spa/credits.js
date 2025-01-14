@@ -4,7 +4,7 @@ import { Router } from '../src/router.js';
 import { isUserLoggedIn } from '../app.js';
 import { getACookie, setACookie } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
-
+import { logoutUser } from '../src/logout.js';
 
 export class Credit extends Page {
     constructor() {
@@ -85,13 +85,21 @@ export class Credit extends Page {
         setACookie('game_running', 'false', 1);
         setACookie('credits', 'true', 1);
         fetchMinInfo();
-        subscribeToProfilePicture((profilePictureUrl) => {
+        const unsubscribe = subscribeToProfilePicture((profilePictureUrl) => {
             const profilePic = document.querySelector('img[alt="logo_profile_picture"]');
             if (profilePic) profilePic.src = profilePictureUrl;
         });
         super.render();
         this.event();
         this.breakout();
+
+        const logoutButton = document.getElementById('logout-butt');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function (event) {
+                unsubscribe();
+                logoutUser();
+            });
+        }
     }
 
 

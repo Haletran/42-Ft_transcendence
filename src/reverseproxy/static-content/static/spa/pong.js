@@ -286,13 +286,13 @@ export class Pong extends Page {
                             player1 = player1.trim() || 'player1';
                             player2 = player2.trim() || 'player2';
 
-			                if (player1.search(' ') != -1 || player2.search(' ') != -1) {
-			                	alert("no space allowed in fields, field will be changed");
+                            if (player1.search(' ') != -1 || player2.search(' ') != -1) {
+                                alert("no space allowed in fields, field will be changed");
                                 document.getElementById('player1name').value = "";
                                 document.getElementById('player2name').value = "";
                                 if (player1.search(' ') != -1) { player1 = 'player 1'; }
                                 if (player2.search(' ') != -1) { player2 = 'player 2'; }
-			                }
+                            }
 
                             if ((player1 === player2) || (player1.length > 10 || player2.length > 10)) {
                                 alert("display name is 10 char max, names cannot be identical, field will be changed");
@@ -354,7 +354,7 @@ async function startthegame(button, buttonId, player1, player2) {
                             player_name.push(`Player ${i}`);
                         }
                         else if (player.value.trim().search(' ') != -1 || player.value.trim() == "") {
-			                alert("no space allowed in fields, field will be changed");
+                            alert("no space allowed in fields, field will be changed");
                             player_name.push(`Player ${i}`);
                         }
                         else
