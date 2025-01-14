@@ -113,6 +113,7 @@ function drawPlayerInfo() {
         ctx.fillRect(sidebarX + 20, infoY - 15, 100, 20); // Rectangle behind name
 
         if (player.isTurn == true) {
+            console.log("BEGINNING ", player.propertyOwned.length);
             ctx.fillStyle = "#FFF";
             ctx.fillRect(sidebarX + 10, infoY - 15, 5, 50); // Draw a vertical line
         }
@@ -124,10 +125,6 @@ function drawPlayerInfo() {
         // Display the rest of the player's information
         ctx.fillText(`Position: ${player.position}`, sidebarX + 20, infoY + 20);
         ctx.fillText(`Balance: $${player.money}`, sidebarX + 20, infoY + 40);
-        ctx.fillText(`Owned property: `, sidebarX + 20, infoY + 60);
-        player.propertyOwned.forEach((property, index) => {
-            ctx.fillText(`- ${property.name}`, sidebarX + 40, infoY + 90 + index * 20);
-        });
 
 
     });
@@ -167,7 +164,10 @@ function resetGame() {
 function endTurn() {
     if (isGameFinished(players)) {
         const winner = players.find(player => player.isActive);
-        setMonopolyVictory(winner);
+        console.log(winner);
+        const money = winner.money;
+        const properties = winner.propertyOwned.length;
+        setMonopolyVictory(winner, money, properties);
         alert(`Game over! ${winner.name} is the winner!`);
         resetGame();
     }
@@ -398,13 +398,13 @@ function rollDice() {
         if (owner) {
             if (player.money + landedTile.rent_price < 0) {
                 owner.money += player.money;
-                addActionMessage(`${player.name} paid ${landedTile.rent_price}$ in rent to Player ${owner.name}.`);
+                addActionMessage(`${player.name} paid ${-1 * landedTile.rent_price}$ in rent to Player ${owner.name}.`);
                 player.money = -1;
             }
             else {
                 player.money += landedTile.rent_price;
                 owner.money -= landedTile.rent_price;
-                addActionMessage(`${player.name} paid ${landedTile.rent_price} in rent to Player ${owner.name}.`);
+                addActionMessage(`${player.name} paid ${-1 * landedTile.rent_price} in rent to Player ${owner.name}.`);
             }
         }
     }
@@ -449,6 +449,7 @@ function waitForPurchaseDecision(player, landedTile, callback) {
                 if (player.money >= Math.abs(landedTile.price)) {
                     player.money += landedTile.price; // Deduct the price
                     landedTile.owner = player.id;     // Assign ownership
+                    player.propertyOwned.push(landedTile);
                     addActionMessage(`${player.name} purchased ${landedTile.name}. Remaining balance: ${player.money}`);
                 } else {
                     console.log("Not enough money to purchase this property.");
@@ -724,7 +725,7 @@ function monopoly_game() {
     endTurn();
 }
 
-// window.addEventListener('resize', resizeCanvas, false);
+window.addEventListener('resize', resizeCanvas, false);
 
 canvas.addEventListener('mousemove', (event) => {
     if (isPurchaseWindowOpen) return;

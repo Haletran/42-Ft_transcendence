@@ -45,18 +45,17 @@ export async function set1v1victory(player1, player2, scores, is_ai, is_tourname
     }
 }
 
-export async function setMonopolyVictory(winner) {
+export async function setMonopolyVictory(winner, money, properties) {
     const userData = await getUserInfos();
     if (userData.match_history === false) {
         console.log("User does not want to keep match history")
         return;
     }
-    console.log('ICI', winner);
     const formData = new FormData();
     formData.append('user_origin', userData.username);
     formData.append('winner_username', winner.name);
-    formData.append('winner_money', winner.money);
-    formData.append('winner_properties', winner.propertyOwned.length);
+    formData.append('winner_money', money);
+    formData.append('winner_properties', properties);
     try {
         const csrfToken = getCSRFToken('csrftoken');
         if (!csrfToken) {
