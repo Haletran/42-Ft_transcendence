@@ -168,7 +168,7 @@ function endTurn() {
     if (isGameFinished(players)) {
         const winner = players.find(player => player.isActive);
         setMonopolyVictory(winner);
-        alert(`Game over! Player ${winner.id} is the winner!`);
+        alert(`Game over! ${winner.name} is the winner!`);
         resetGame();
     }
     players.forEach(player => {
@@ -230,7 +230,7 @@ class Tile {
                 ctx.fillStyle = "#FFF";
             ctx.fillText(this.name, this.x + 10, this.y + 20); // Draw tile name
             if (this.price != 0)
-                ctx.fillText(this.price + "$", this.x + 10, this.y + 40); // Draw tile name
+                ctx.fillText(-1 * this.price + "$", this.x + 10, this.y + 40); // Draw tile name
             if (this.owner != 0) {
                 // Draw the colored rectangle behind the owner's name
                 const ownerColor = this.getOwnerColor(this.owner); // Get the owner's color (add logic for the color here)
@@ -238,7 +238,7 @@ class Tile {
                 ctx.fillRect(this.x, this.y + 90, 105, 15); // Rectangle for the owner (adjust size and position)
 
                 ctx.fillStyle = "#FFF"; // Set text color to white for visibility
-                ctx.fillText("Owner: " + this.owner, this.x + 10, this.y + 100); // Owner text position
+                ctx.fillText("Owner: " + players[this.owner - 1].name, this.x + 10, this.y + 100); // Owner text position
             }
         }
     }
@@ -325,9 +325,9 @@ function rollDice() {
 
     if (player.inJail > 0) {
         player.inJail--; // Decrement jail turn count
-        addActionMessage(`Player ${player.id} has ${player.inJail} turns left in jail.`);
+        addActionMessage(`${player.name} has ${player.inJail} turns left in jail.`);
         if (player.inJail === 0) {
-            addActionMessage(`Player ${player.id} is now released from jail!`);
+            addActionMessage(`${player.name} is now released from jail!`);
         }
         continueGame(player);
         return;
@@ -354,11 +354,13 @@ function rollDice() {
     }
     const landedTile = tiles[player.position];
 
-    addActionMessage(`Player ${currentPlayerIndex + 1} rolled a ${diceValue}, and landed on ${landedTile.name}.`);
+    //addActionMessage(`Player ${currentPlayerIndex + 1} rolled a ${diceValue}, and landed on ${landedTile.name}.`);
+    addActionMessage(`${player.name} rolled a ${diceValue}, and landed on ${landedTile.name}.`);
+
     if (player.price <= 0)
         continueGame(player);
 
-    console.log(`Player ${player.id} pos ${player.position}`);
+    console.log(`${player.name} pos ${player.position}`);
 
     if (landedTile.name === "Go to Minishell") {
         player.position = 7; // Tile index for "Minishell"
@@ -396,13 +398,13 @@ function rollDice() {
         if (owner) {
             if (player.money + landedTile.rent_price < 0) {
                 owner.money += player.money;
-                addActionMessage(`Player ${player.id} paid ${landedTile.rent_price}$ in rent to Player ${owner.id}.`);
+                addActionMessage(`${player.name} paid ${landedTile.rent_price}$ in rent to Player ${owner.name}.`);
                 player.money = -1;
             }
             else {
                 player.money += landedTile.rent_price;
                 owner.money -= landedTile.rent_price;
-                addActionMessage(`Player ${player.id} paid ${landedTile.rent_price} in rent to Player ${owner.id}.`);
+                addActionMessage(`${player.name} paid ${landedTile.rent_price} in rent to Player ${owner.name}.`);
             }
         }
     }
@@ -447,7 +449,7 @@ function waitForPurchaseDecision(player, landedTile, callback) {
                 if (player.money >= Math.abs(landedTile.price)) {
                     player.money += landedTile.price; // Deduct the price
                     landedTile.owner = player.id;     // Assign ownership
-                    addActionMessage(`Player ${player.id} purchased ${landedTile.name}. Remaining balance: ${player.money}`);
+                    addActionMessage(`${player.name} purchased ${landedTile.name}. Remaining balance: ${player.money}`);
                 } else {
                     console.log("Not enough money to purchase this property.");
                 }
@@ -485,7 +487,7 @@ function waitForBuildDecision(player, landedTile, callback) {
                     player.money -= houseCost;
                     landedTile.house++;
                     landedTile.rent_price = landedTile.rent_price * (0.5 + landedTile.house);
-                    console.log(`Player ${player.id} built a house on ${landedTile.name}. Houses: ${landedTile.house}, New Rent: ${landedTile.rent_price}`);
+                    console.log(`${player.name} built a house on ${landedTile.name}. Houses: ${landedTile.house}, New Rent: ${landedTile.rent_price}`);
                 }
                 else
                     console.log("Not enough money to build a house.");
@@ -502,7 +504,7 @@ function waitForBuildDecision(player, landedTile, callback) {
 function drawBoard() {
     if (isGameFinished(players)) {
         const winner = players.find(player => player.isActive);
-        alert(`Game over! Player ${winner.id} is the winner!`);
+        alert(`Game over! ${winner.name} is the winner!`);
         resetGame();
         return 0;
     }
@@ -607,9 +609,10 @@ canvas.addEventListener("click", function (event) {
 });
 
 function drawCurrentPlayerTurn() {
+    let player = players[currentPlayerIndex];
     ctx.fillStyle = "#FFF";
     ctx.font = "24px Arial";
-    ctx.fillText(`${currentPlayerIndex + 1} is playing...`, 350, 180);
+    ctx.fillText(`${player.name} is playing...`, 350, 180);
     ctx.font = "12px Arial";
 }
 
@@ -762,7 +765,7 @@ function showTileInfo(tile) {
     ctx.fillStyle = 'white';
     ctx.fillText(`Name: ${tile.name}`, posX + 15, posY + 25);
     if (tile.owner !== 0) {
-        ctx.fillText(`Owner: ${tile.owner}`, posX + 15, posY + 60);
+        ctx.fillText(`Owner: ${players[tile.owner - 1].name}`, posX + 15, posY + 60);
         ctx.fillText(`Houses: ${tile.house}`, posX + 150, posY + 60);
     }
     if (tile.price < 0) {
