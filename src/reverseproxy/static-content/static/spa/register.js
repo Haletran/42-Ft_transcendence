@@ -229,6 +229,10 @@ export class RegisterPage extends Page {
 				alert("no space allowed in fields");
 				return;
 			}
+			if (username.length > 20 || email.length > 30) {
+				alert('username or email is too long');
+				return ;
+			}
 
 			if (profileInput.files[0]) {
 				const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];

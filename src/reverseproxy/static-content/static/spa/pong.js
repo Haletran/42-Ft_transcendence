@@ -230,6 +230,7 @@ export class Pong extends Page {
                 logoutUser();
             });
         }
+        let rangelengthCheck;
 
         document.getElementById('customRange1').addEventListener('input', function () {
             const tour_button = document.getElementById('tournament_button');
@@ -249,6 +250,7 @@ export class Pong extends Page {
             }
             const rangeValue = document.getElementById('rangeValue');
             rangeValue.innerHTML = range.value;
+            rangelengthCheck = range.value; // pour plus tard
         });
 
 
@@ -281,13 +283,23 @@ export class Pong extends Page {
                             let player1 = document.getElementById('player1name').value;
                             let player2 = document.getElementById('player2name').value;
 
-                            player1 = player1 || 'player1';
-                            player2 = player2 || 'player2';
+                            player1 = player1.trim() || 'player1';
+                            player2 = player2.trim() || 'player2';
 
-                            if ((player1 === player2) || (player1.length > 10 || player2.length > 10)) {
-                                alert("display name is 10 char max, names cannot be identical");
+			                if (player1.search(' ') != -1 || player2.search(' ') != -1) {
+			                	alert("no space allowed in fields, field will be changed");
                                 document.getElementById('player1name').value = "";
                                 document.getElementById('player2name').value = "";
+                                if (player1.search(' ') != -1) { player1 = 'player 1'; }
+                                if (player2.search(' ') != -1) { player2 = 'player 2'; }
+			                }
+
+                            if ((player1 === player2) || (player1.length > 10 || player2.length > 10)) {
+                                alert("display name is 10 char max, names cannot be identical, field will be changed");
+                                document.getElementById('player1name').value = "";
+                                document.getElementById('player2name').value = "";
+                                if (player1.search(' ') != -1) { player1 = 'player 1'; }
+                                if (player2.search(' ') != -1) { player2 = 'player 2'; }
                             } else {
                                 modal.hide();
                                 gameInProgress = true;
@@ -336,8 +348,18 @@ async function startthegame(button, buttonId, player1, player2) {
                 if (player) {
                     if (player.value == "") {
                         player_name.push(`Player ${i}`);
-                    } else
-                        player_name.push(player.value);
+                    } else {
+                        if (player.value.length > 10) {
+                            alert("display name is 10 char max, names cannot be identical, field will be changed");
+                            player_name.push(`Player ${i}`);
+                        }
+                        else if (player.value.trim().search(' ') != -1 || player.value.trim() == "") {
+			                alert("no space allowed in fields, field will be changed");
+                            player_name.push(`Player ${i}`);
+                        }
+                        else
+                            player_name.push(player.value.trim());
+                    }
                 }
             }
             winner = await module.startGame(button.value, player_name);
