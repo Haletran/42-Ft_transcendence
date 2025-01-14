@@ -21,6 +21,7 @@ const collisionSound_PING = new Audio('/static/imgs/ping.mp3');
 const coutdownSound = new Audio('/static/imgs/countdown.mp3');
 const victorySound = new Audio('/static/imgs/victory.mp3');
 const pointSound = new Audio('/static/imgs/point.mp3');
+const isPowerUp = localStorage.getItem('powerUp');
 let pauseButtonHandler = null;
 const powerUpImage = new Image();
 powerUpImage.src = '/static/imgs/powerup.png';
@@ -387,7 +388,7 @@ class PowerUp {
     }
 
     draw() {
-        if (this.isVisible && powerUpImage.complete) {
+        if (this.isVisible && powerUpImage.complete && isPowerUp === 'true') {
             ctx.drawImage(powerUpImage, this.x, this.y, this.size, this.size);
         }
     }
@@ -480,11 +481,11 @@ function movePlayers() {
     if (keys['83'] && game.player1.y < canvas.height - game.player1.height) { // S
         game.player1.y += game.player1.speed;
     }
-    if (keys['32']) { // SPACE
-        // PRESS SPACE if you want to make a user won (debug purpose)
-        console.log("SPACE PRESSED")
-        game.player1.score = 5
-    }
+    // if (keys['32']) { // SPACE
+    //     // PRESS SPACE if you want to make a user won (debug purpose)
+    //     console.log("SPACE PRESSED")
+    //     game.player1.score = 5
+    // }
 }
 
 async function moveBall() {

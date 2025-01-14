@@ -83,6 +83,10 @@ export class HomePage extends Page {
                 logoutUser();
             });
         }
+        const footer = document.querySelector('footer');
+        if (footer) {
+            footer.setAttribute('data-link', '/credits');
+        }
     }
 }
 

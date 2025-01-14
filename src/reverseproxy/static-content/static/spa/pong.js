@@ -88,6 +88,10 @@ export class Pong extends Page {
                             <label for="textColor" class="form-label">Text Color</label>
                             <input type="color" class="form-control form-control-color" id="textColor" value="#000000">
                         </div>
+                        <div class="col mb-3">
+                            <label for="powerUp" class="form-label">Power Up</label>
+                            <input type="checkbox" class="form-check-input" id="powerUp">
+                        </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -191,10 +195,12 @@ export class Pong extends Page {
                 const ballColor = document.getElementById('ballColor').value;
                 const mapColor = document.getElementById('mapColor').value;
                 const textColor = document.getElementById('textColor').value;
+                const powerUp = document.getElementById('powerUp').checked;
                 localStorage.setItem('playerColor', playerColor);
                 localStorage.setItem('ballColor', ballColor);
                 localStorage.setItem('mapColor', mapColor);
                 localStorage.setItem('textColor', textColor);
+                localStorage.setItem('powerUp', powerUp);
                 const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
                 modal.hide();
             });
@@ -203,11 +209,13 @@ export class Pong extends Page {
         const mapColorInput = document.getElementById('mapColor');
         const ballColorInput = document.getElementById('ballColor');
         const textColorInput = document.getElementById('textColor');
+        const powerUpInput = document.getElementById('powerUp');
         if (playerColorInput && mapColorInput && ballColorInput && textColorInput) {
             playerColorInput.value = localStorage.getItem('playerColor') || '#ffffff';
             ballColorInput.value = localStorage.getItem('ballColor') || '#ffffff';
             mapColorInput.value = localStorage.getItem('mapColor') || '#282931';
             textColorInput.value = localStorage.getItem('textColor') || '#ffffff';
+            powerUpInput.checked = localStorage.getItem('powerUp') === 'true';
         }
 
         const resetSettingsButton = document.getElementById('resetSettings');
@@ -217,10 +225,12 @@ export class Pong extends Page {
                 localStorage.removeItem('ballColor');
                 localStorage.removeItem('mapColor');
                 localStorage.removeItem('textColor');
+                localStorage.removeItem('powerUp');
                 playerColorInput.value = '#ffffff';
                 ballColorInput.value = '#ffffff';
                 mapColorInput.value = '#282931';
                 textColorInput.value = '#ffffff';
+                powerUpInput.checked = false;
             });
         }
 

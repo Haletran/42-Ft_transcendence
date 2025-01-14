@@ -5,7 +5,7 @@ import { getCSRFToken } from '../src/csrf.js';
 import { setupProfilePictureSelection } from '../js/event.js';
 import { logoutUser } from '../src/logout.js';
 import { isUserOnline } from './home.js';
-import { unload } from '../js/utils.js';
+import { unload, showToast } from '../js/utils.js';
 import { fetchMinInfo, subscribeToProfilePicture } from '../src/UserStore.js';
 
 
@@ -99,13 +99,8 @@ export class Settings extends Page {
                 </div>
             </div>
         </div>
-        <div class="toast align-items-center position-fixed bottom-0 end-0" role="alert" aria-live="assertive"
-            aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
+        <div aria-live="polite" aria-atomic="true" class="position-relative">
+            <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
         </div>
     </div>
     `
@@ -154,7 +149,7 @@ export class Settings extends Page {
             const _42auth = await getUserInfos();
             console.log(_42auth);
             if (_42auth.forty_two) {
-                alert("42 users cannot update their profile.");
+                showToast('You are authenticated with 42, you cannot change your profile', 'danger');
                 return;
             }
 
@@ -162,7 +157,7 @@ export class Settings extends Page {
             username = username.trim();
             email = email.trim();
             if (username.search(' ') != -1 || email.search(' ') != -1) {
-                alert("No space allowed in fields");
+                showToast('Username and email cannot contain whitespaces', 'danger');
                 return;
             }
 
@@ -176,20 +171,17 @@ export class Settings extends Page {
             if (profileInput.files[0]) {
                 const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
                 if (!allowedTypes.includes(profileInput.files[0].type)) {
-                    alert('Only JPG, JPEG, PNG, and GIF files are allowed.');
+                    showToast('Invalid file type (allowed: jpg, jpeg, gif, png)', 'danger');
                     return;
                 }
                 if (profileInput.files[0].size > 1024 * 1024) {
-                    alert('File size is too big');
+                    showToast('File is too big (max 1MB)', 'danger');
                     return;
                 }
                 const isValid = await checkImageType(profileInput.files[0]);
                 if (isValid === false) { return; }
                 formData.append('profile_picture', profileInput.files[0]);
             }
-
-            console.log('In update profile, data to send: ', formData);
-
             try {
 
                 const csrfToken = getCSRFToken('csrftoken');
@@ -198,7 +190,6 @@ export class Settings extends Page {
                 }
 
                 // Send data to the backend
-
                 const response = await fetch('/api/credentials/update_profile/', {
                     method: 'POST',
                     headers: {
@@ -210,15 +201,15 @@ export class Settings extends Page {
 
                 if (response.ok) {
                     const result = await response.json();
-                    console.log('Edit successful:', result);
                     this.render();
+                    showToast('Profile updated successfully', 'success');
                 } else {
                     const error = await response.json();
                     console.log('Edit failed:', error);
-                    alert('Edit failed: ' + error.error);
+                    showToast('Edit failed: ' + error.message, 'danger');
                 }
             } catch (error) {
-                alert('Error:' + error.error);
+                showToast('An error occurred: ' + error.message, 'danger');
             }
         });
 
