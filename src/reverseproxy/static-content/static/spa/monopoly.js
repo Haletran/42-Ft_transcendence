@@ -195,6 +195,12 @@ export class Monopoly extends Page {
                         for (let i = 1; i <= range.value; i++) {
                             player[i] = document.getElementById(`player_${i}`);
                             console.log(player[i].value);
+                            if (player[i] === null) {
+                                player[i] = document.createElement('input');
+                                player[i].type = 'text';
+                                player[i].id = `player_${i}`;
+                                player[i].value = `Player ${i}`;
+                            } else if (player[i].value === null || player[i].value === '') { player[i].value = `Player ${i}`; }
                         }
                         await module.init_monopoly_game(range.value, map.dataset.id, player);
                     }
