@@ -502,12 +502,12 @@ function waitForBuildDecision(player, landedTile, callback) {
 
 
 function drawBoard() {
-    if (isGameFinished(players)) {
-        const winner = players.find(player => player.isActive);
-        alert(`Game over! ${winner.name} is the winner!`);
-        resetGame();
-        return 0;
-    }
+    // if (isGameFinished(players)) {
+    //     const winner = players.find(player => player.isActive);
+    //     alert(`Game over! ${winner.name} is the winner!`);
+    //     resetGame();
+    //     return 0;
+    // }
 
     if (tiles.length === 0) {
         const margin = 10;
