@@ -102,7 +102,7 @@ export async function isUserOnline() {
             throw new Error('Error fetching online status');
         }
     } catch (error) {
-        console.error("Error fetching online status");
+        //console.error("Error fetching online status");
     }
 
 }
